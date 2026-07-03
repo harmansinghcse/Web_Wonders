@@ -10,6 +10,12 @@ const getAllDinosaurs = async (req, res) => {
     if (req.query.period) {
         filter.period = req.query.period;
     }
+    if (req.query.name) {
+        filter.name = {
+            $regex: req.query.name,
+            $options: "i",
+        };
+    }
 
     const dinosaurs = await Dinosaur.find(filter);
 
@@ -27,6 +33,12 @@ const getDinosaurBySlug = async (req, res) => {
     const dinosaur = await Dinosaur.findOne({
         slug: req.params.slug,
     });
+
+    if (!dinosaur) {
+        return res.status(404).json({
+            message: "Dinosaur not found",
+        });
+    }
 
     res.json(dinosaur);
 };
