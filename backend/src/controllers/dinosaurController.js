@@ -1,65 +1,130 @@
 const Dinosaur = require("../models/Dinosaur");
 
 const getAllDinosaurs = async (req, res) => {
-    console.log(req.query);
-    const filter = {};
+    try {
+        const filter = {};
 
-    if (req.query.diet) {
-        filter.diet = req.query.diet;
-    }
-    if (req.query.period) {
-        filter.period = req.query.period;
-    }
-    if (req.query.name) {
-        filter.name = {
-            $regex: req.query.name,
-            $options: "i",
-        };
-    }
+        if (req.query.diet) {
+            filter.diet = req.query.diet;
+        }
 
-    const dinosaurs = await Dinosaur.find(filter);
+        if (req.query.period) {
+            filter.period = req.query.period;
+        }
 
-    res.json(dinosaurs);
+        if (req.query.name) {
+            filter.name = {
+                $regex: req.query.name,
+                $options: "i",
+            };
+        }
+
+        const dinosaurs = await Dinosaur.find(filter);
+
+        res.status(200).json({
+            success: true,
+            data: dinosaurs,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
 };
 
 const createDinosaur = async (req, res) => {
-    console.log(req.body);
-    const dinosaur = await Dinosaur.create(req.body);
+    try {
+        const dinosaur = await Dinosaur.create(req.body);
 
-    res.status(201).json(dinosaur);
+        res.status(201).json({
+            success: true,
+            data: dinosaur,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
 };
 
 const getDinosaurBySlug = async (req, res) => {
-    const dinosaur = await Dinosaur.findOne({
-        slug: req.params.slug,
-    });
+    try {
+        const dinosaur = await Dinosaur.findOne({
+            slug: req.params.slug,
+        });
 
-    if (!dinosaur) {
-        return res.status(404).json({
-            message: "Dinosaur not found",
+        if (!dinosaur) {
+            return res.status(404).json({
+                success: false,
+                message: "Dinosaur not found",
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: dinosaur,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
         });
     }
-
-    res.json(dinosaur);
 };
 
 const updateDinosaur = async (req, res) => {
-    const dinosaur = await Dinosaur.findOneAndUpdate(
-        { slug: req.params.slug },
-        req.body,
-        { new: true },
-    );
+    try {
+        const dinosaur = await Dinosaur.findOneAndUpdate(
+            { slug: req.params.slug },
+            req.body,
+            { new: true },
+        );
 
-    res.json(dinosaur);
+        if (!dinosaur) {
+            return res.status(404).json({
+                success: false,
+                message: "Dinosaur not found",
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: dinosaur,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
 };
 
 const deleteDinosaur = async (req, res) => {
-    const dinosaur = await Dinosaur.findOneAndDelete({ slug: req.params.slug });
+    try {
+        const dinosaur = await Dinosaur.findOneAndDelete({
+            slug: req.params.slug,
+        });
 
-    res.json({
-        message: "Dinosaur deleted successfully",
-        dinosaur,
-    });
+        if (!dinosaur) {
+            return res.status(404).json({
+                success: false,
+                message: "Dinosaur not found",
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Dinosaur deleted successfully",
+            data: dinosaur,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
 };
 
 module.exports = {
