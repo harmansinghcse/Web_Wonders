@@ -1,7 +1,17 @@
 const Dinosaur = require("../models/Dinosaur");
 
 const getAllDinosaurs = async (req, res) => {
-    const dinosaurs = await Dinosaur.find();
+    console.log(req.query);
+    const filter = {};
+
+    if (req.query.diet) {
+        filter.diet = req.query.diet;
+    }
+    if (req.query.period) {
+        filter.period = req.query.period;
+    }
+
+    const dinosaurs = await Dinosaur.find(filter);
 
     res.json(dinosaurs);
 };
