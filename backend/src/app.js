@@ -6,7 +6,7 @@ const dinosaurRoutes = require("./routes/dinosaurRoutes");
 const userRoutes = require("./routes/userRoutes");
 const errorHandler = require("./middleware/errorMiddleware");
 
-app.use(express.json());
+app.set("query parser", "extended");
 app.use("/api/dinosaur", dinosaurRoutes);
 app.use("/api/users", userRoutes);
 app.use(errorHandler);
