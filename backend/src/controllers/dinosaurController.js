@@ -1,6 +1,6 @@
 const Dinosaur = require("../models/Dinosaur");
 
-const getAllDinosaurs = async (req, res) => {
+const getAllDinosaurs = async (req, res, next) => {
     try {
         const filter = {};
 
@@ -26,14 +26,11 @@ const getAllDinosaurs = async (req, res) => {
             data: dinosaurs,
         });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+        next(error);
     }
 };
 
-const createDinosaur = async (req, res) => {
+const createDinosaur = async (req, res, next) => {
     try {
         const dinosaur = await Dinosaur.create(req.body);
 
@@ -42,14 +39,11 @@ const createDinosaur = async (req, res) => {
             data: dinosaur,
         });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+        next(error);
     }
 };
 
-const getDinosaurBySlug = async (req, res) => {
+const getDinosaurBySlug = async (req, res, next) => {
     try {
         const dinosaur = await Dinosaur.findOne({
             slug: req.params.slug,
@@ -67,14 +61,11 @@ const getDinosaurBySlug = async (req, res) => {
             data: dinosaur,
         });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+        next(error);
     }
 };
 
-const updateDinosaur = async (req, res) => {
+const updateDinosaur = async (req, res, next) => {
     try {
         const dinosaur = await Dinosaur.findOneAndUpdate(
             { slug: req.params.slug },
@@ -94,14 +85,11 @@ const updateDinosaur = async (req, res) => {
             data: dinosaur,
         });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+        next(error);
     }
 };
 
-const deleteDinosaur = async (req, res) => {
+const deleteDinosaur = async (req, res, next) => {
     try {
         const dinosaur = await Dinosaur.findOneAndDelete({
             slug: req.params.slug,
@@ -120,10 +108,7 @@ const deleteDinosaur = async (req, res) => {
             data: dinosaur,
         });
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: error.message,
-        });
+        next(error);
     }
 };
 
