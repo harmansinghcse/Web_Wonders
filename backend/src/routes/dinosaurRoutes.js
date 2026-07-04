@@ -1,6 +1,8 @@
 const express = require("express");
-const { protect } = require("../middleware/authMiddleware");
-const { authorize } = require("../middleware/authMiddleware");
+const { protect, authorize } = require("../middleware/authMiddleware");
+const { validate } = require("../middleware/validateMiddleware");
+const { dinosaurSchema } = require("../validations/dinosaurValidation");
+
 const {
     getAllDinosaurs,
     createDinosaur,
@@ -13,7 +15,13 @@ const router = express.Router();
 
 router.get("/", getAllDinosaurs);
 router.get("/:slug", getDinosaurBySlug);
-router.post("/", protect, authorize("admin"), createDinosaur);
+router.post(
+    "/",
+    protect,
+    authorize("admin"),
+    validate(dinosaurSchema),
+    createDinosaur,
+);
 router.put("/:slug", protect, authorize("admin"), updateDinosaur);
 router.delete("/:slug", protect, authorize("admin"), deleteDinosaur);
 
