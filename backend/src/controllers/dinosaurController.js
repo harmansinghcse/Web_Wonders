@@ -28,7 +28,8 @@ const getAllDinosaurs = async (req, res, next) => {
         // const dinosaurs = await Dinosaur.find(filter).skip(skip).limit(limit);
 
         // build the query first rather then a chain of query like above
-        let query = Dinosaur.find(JSON.parse(queryString));
+        const mongoFilters = JSON.parse(queryString);
+        let query = Dinosaur.find(mongoFilters);
 
         if (req.query.diet) {
             filter.diet = req.query.diet;
@@ -54,10 +55,22 @@ const getAllDinosaurs = async (req, res, next) => {
         // pagination
         query = query.skip(skip).limit(limit);
 
+        // pagination metadata
+        const totalDocuments = await Dinosaur.countDocuments(mongoFilters);
+        const totalPages = Math.ceil(totalDocuments / limit);
+
+        // execute query
         const dinosaurs = await query;
 
         res.status(200).json({
             success: true,
+            page,
+            limit,
+            count: dinosaurs.length,
+            totalDocuments,
+            totalPages,
+            hasNextPage: page < totalPages,
+            hasPreviousPage: page > 1,
             data: dinosaurs,
         });
     } catch (error) {
