@@ -1,12 +1,22 @@
-import { useState } from "react";
 import "./App.css";
+import Navbar from "./components/Navbar";
 
 function App() {
-    const [count, setCount] = useState(0);
-
     return (
         <>
-            <h1>Welcome to Jurrasic Park</h1>
+            <div
+                className="
+                    fixed
+                    inset-0
+                    -z-10
+                    bg-cover
+                    bg-center
+                "
+                style={{ backgroundImage: "url('/jurrasic-home-bg.jpeg')" }}
+            ></div>
+            <div className="px-2 py-4">
+                <Navbar />
+            </div>
         </>
     );
 }
