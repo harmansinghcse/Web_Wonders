@@ -57,11 +57,18 @@ const loginUser = async (req, res) => {
             },
         );
 
-        res.status(200).json({
-            success: true,
-            message: "Login Successful",
-            token,
-        });
+        // change respone according to frontend design in future
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "Lax",
+            maxAge: 1000 * 60 * 60 * 24 * 7,
+        })
+            .status(200)
+            .json({
+                success: true,
+                message: "Login Successful",
+            });
     } catch (error) {
         res.status(500).json({
             success: false,
