@@ -2,7 +2,7 @@ import logo from "../assets/jurrasic-logo.png";
 
 function Navbar() {
     return (
-        <nav className="flex justify-between items-center h-20 px-10 bg-[#516858]/93 rounded-full backdrop:blur-md text-white">
+        <nav className="flex justify-between items-center h-20 px-10 bg-[#2E4A37]/80 rounded-full backdrop:blur-md text-white">
             {/* left-section */}
             <div>
                 <img src={logo} alt="logo" className="h-20" />

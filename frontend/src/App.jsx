@@ -1,23 +1,22 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
-import Navbar from "./components/Navbar";
+
+// import pages
+import Home from "./pages/Home";
+import Explore from "./pages/Explore";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
 
 function App() {
     return (
-        <>
-            <div
-                className="
-                    fixed
-                    inset-0
-                    -z-10
-                    bg-cover
-                    bg-center
-                "
-                style={{ backgroundImage: "url('/jurrasic-home-bg.jpeg')" }}
-            ></div>
-            <div className="px-2 py-4">
-                <Navbar />
-            </div>
-        </>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/explore" element={<Explore />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+            </Routes>
+        </BrowserRouter>
     );
 }
 
