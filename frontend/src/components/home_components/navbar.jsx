@@ -1,17 +1,20 @@
-import logo from "../assets/jurrasic-logo.png";
+import logo from "../../assets/jurrasic-logo.png";
+import { Link } from "react-router-dom";
 
 function Navbar() {
     return (
         <nav className="flex justify-between items-center h-20 px-10 bg-[#2E4A37]/80 rounded-full backdrop:blur-md text-white">
             {/* left-section */}
             <div>
-                <img src={logo} alt="logo" className="h-20" />
+                <Link to="/">
+                    <img src={logo} alt="logo" className="h-20" />
+                </Link>
             </div>
 
             {/* Mid-Section */}
             <div className="flex justify-between">
                 <button className="px-4 py-2 rounded-full hover:bg-white/20 transition">
-                    Explore
+                    <Link to="/explore">Explore</Link>
                 </button>
                 <button className="px-4 py-2 rounded-full hover:bg-white/20 transition">
                     Quiz
@@ -50,10 +53,14 @@ function Navbar() {
                     />
                 </div>
                 <div className="px-5 py-2 rounded-full hover:bg-white hover:text-[#516858] transition-all duration-300 border bg-[#516858]">
-                    <button>Login</button>
+                    <button>
+                        <Link to="/login">Login</Link>
+                    </button>
                 </div>
                 <div className="px-5 py-2 rounded-full hover:bg-white hover:text-[#516858] transition duration-300 border bg-[#516858]">
-                    <button>Sign-Up</button>
+                    <button>
+                        <Link to="/signup">Sign-Up</Link>
+                    </button>
                 </div>
             </div>
         </nav>
