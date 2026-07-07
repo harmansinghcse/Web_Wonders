@@ -2,160 +2,259 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+// make the signup animations better later
+
 function Signup() {
-  const [name, setname] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const navigate = useNavigate();
+    const [name, setname] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSignup = async (e) => {
-    e.preventDefault();
+    const navigate = useNavigate();
+    const [showOtpForm, setShowOtpForm] = useState(false);
+    const [otp, setOtp] = useState("");
+    const [isSigningUp, setIsSigningUp] = useState(false);
+    const [isVerifying, setIsVerifying] = useState(false);
 
-    if (!name || !email || !password || !confirmPassword) {
-      toast.error("Please fill all fields.");
-      return;
-    }
+    const handleVerifyOtp = async (e) => {
+        if (isVerifying) return;
+        e.preventDefault();
 
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match.");
-      return;
-    }
+        if (!otp) {
+            toast.error("Please enter the OTP.");
+            return;
+        }
 
-    try {
-      const response = await fetch("http://localhost:5000/api/users/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          password,
-        }),
-      });
+        try {
+            setIsVerifying(true);
+            const response = await fetch(
+                "http://localhost:5000/api/users/verify-otp",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        email,
+                        otp,
+                    }),
+                },
+            );
 
-      const data = await response.json();
+            const data = await response.json();
 
-      if (!response.ok) {
-        toast.error(data.message);
-        return;
-      }
+            if (!response.ok) {
+                toast.error(data.message);
+                return;
+            }
 
-      toast.success("Account created successfully! Please log in.");
+            toast.success("Account verified successfully!");
 
-      setTimeout(() => {
-        navigate("/login");
-      }, 1500);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+            setTimeout(() => {
+                navigate("/login");
+            }, 1500);
+        } catch (error) {
+            console.error(error);
+            toast.error("Something went wrong.");
+        } finally {
+            setIsVerifying(false);
+        }
+    };
 
-  return (
-    <>
-      <div
-        className="flex min-h-screen justify-center overflow-y-auto bg-cover bg-center bg-no-repeat px-4 py-10"
-        style={{
-          backgroundImage: "url('/login-bg.jpg')",
-        }}
-      >
-        <div className="my-6 flex w-full max-w-xl flex-col items-center rounded-4xl bg-[#14221c]/60 pt-4 pb-8 lg:my-10 lg:max-w-4xl lg:pb-12">
-          <Link to="/">
-            <img
-              src="jurassic-explorer-logo.png"
-              alt="logo"
-              className="w-24 sm:w-28 lg:w-32"
-            />
-          </Link>
-          <h2 className="mb-8 text-center text-2xl leading-tight font-bold text-[#c4c09a] sm:text-3xl lg:text-4xl">
-            Create Account
-            <br />
-            Be an Adventurer
-          </h2>
-          <div className="flex w-full flex-col items-center justify-center gap-10 px-6 lg:flex-row lg:gap-16 lg:px-10">
-            {/* Left Side - Inputs */}
-            <form
-              className="flex w-full flex-col gap-4 lg:w-1/2"
-              onSubmit={handleSignup}
-              id="signup-form"
+    const handleSignup = async (e) => {
+        if (isSigningUp) return;
+        e.preventDefault();
+
+        if (!name || !email || !password || !confirmPassword) {
+            toast.error("Please fill all fields.");
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            toast.error("Passwords do not match.");
+            return;
+        }
+
+        try {
+            setIsSigningUp(true);
+            const response = await fetch(
+                "http://localhost:5000/api/users/register",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        name,
+                        email,
+                        password,
+                    }),
+                },
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                toast.error(data.message);
+                return;
+            }
+
+            toast.success("OTP sent to your email.");
+            setShowOtpForm(true);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsSigningUp(false);
+        }
+    };
+
+    return (
+        <>
+            <div
+                className="flex min-h-screen justify-center overflow-y-auto bg-cover bg-center bg-no-repeat px-4 py-10"
+                style={{
+                    backgroundImage: "url('/login-bg.jpg')",
+                }}
             >
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => {
-                  setname(e.target.value);
-                }}
-                placeholder="Username"
-                className="h-12 w-full rounded-2xl border border-white/20 bg-[#6b7368]/20 px-4 font-bold text-white backdrop-blur-md transition outline-none placeholder:text-gray-300 focus:border-[#c4c09a] focus:ring-2 focus:ring-[#c4c09a]/40"
-              />
+                <div className="my-6 flex w-full max-w-xl flex-col items-center rounded-4xl bg-[#14221c]/60 pt-4 pb-8 lg:my-10 lg:max-w-2xl lg:pb-12">
+                    <Link to="/">
+                        <img
+                            src="jurassic-explorer-logo.png"
+                            alt="logo"
+                            className="w-24 sm:w-28 lg:w-32"
+                        />
+                    </Link>
+                    <h2 className="mb-8 text-center text-2xl leading-tight font-bold text-[#c4c09a] sm:text-3xl lg:text-4xl">
+                        Create Account
+                        <br />
+                        Be an Adventurer
+                    </h2>
+                    <div className="flex w-full flex-col items-center justify-center gap-10 px-6 lg:flex-row lg:gap-16 lg:px-10">
+                        {/* Left Side - Inputs */}
+                        {!showOtpForm ? (
+                            <form
+                                className="flex w-full flex-col gap-4 lg:w-1/2"
+                                onSubmit={handleSignup}
+                                id="signup-form"
+                            >
+                                {/* Username */}
+                                <input
+                                    disabled={isSigningUp}
+                                    type="text"
+                                    value={name}
+                                    onChange={(e) => setname(e.target.value)}
+                                    placeholder="Username"
+                                    className="h-12 w-full rounded-2xl border border-white/20 bg-[#6b7368]/20 px-4 font-bold text-white backdrop-blur-md outline-none"
+                                />
 
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                }}
-                placeholder="Email"
-                className="h-12 w-full rounded-2xl border border-white/20 bg-[#6b7368]/20 px-4 font-bold text-white backdrop-blur-md transition outline-none placeholder:text-gray-300 focus:border-[#c4c09a] focus:ring-2 focus:ring-[#c4c09a]/40"
-              />
+                                {/* Email */}
+                                <input
+                                    disabled={isSigningUp}
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="Email"
+                                    className="h-12 w-full rounded-2xl border border-white/20 bg-[#6b7368]/20 px-4 font-bold text-white backdrop-blur-md outline-none"
+                                />
 
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
-                placeholder="Password"
-                className="h-12 w-full rounded-2xl border border-white/20 bg-[#6b7368]/20 px-4 font-bold text-white backdrop-blur-md transition outline-none placeholder:text-gray-300 focus:border-[#c4c09a] focus:ring-2 focus:ring-[#c4c09a]/40"
-              />
+                                {/* Password */}
+                                <input
+                                    disabled={isSigningUp}
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) =>
+                                        setPassword(e.target.value)
+                                    }
+                                    placeholder="Password"
+                                    className="h-12 w-full rounded-2xl border border-white/20 bg-[#6b7368]/20 px-4 font-bold text-white backdrop-blur-md outline-none"
+                                />
 
-              <input
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => {
-                  setConfirmPassword(e.target.value);
-                }}
-                placeholder="Confirm Password"
-                className="h-12 w-full rounded-2xl border border-white/20 bg-[#6b7368]/20 px-4 font-bold text-white backdrop-blur-md transition outline-none placeholder:text-gray-300 focus:border-[#c4c09a] focus:ring-2 focus:ring-[#c4c09a]/40"
-              />
-            </form>
+                                {/* Confirm Password */}
+                                <input
+                                    disabled={isSigningUp}
+                                    type="password"
+                                    value={confirmPassword}
+                                    onChange={(e) =>
+                                        setConfirmPassword(e.target.value)
+                                    }
+                                    placeholder="Confirm Password"
+                                    className="h-12 w-full rounded-2xl border border-white/20 bg-[#6b7368]/20 px-4 font-bold text-white backdrop-blur-md outline-none"
+                                />
+                            </form>
+                        ) : (
+                            <form
+                                className="flex w-full flex-col gap-4 lg:w-1/2"
+                                id="otp-form"
+                                onSubmit={handleVerifyOtp}
+                            >
+                                <h3 className="text-center text-2xl font-bold text-[#c4c09a]">
+                                    Verify OTP
+                                </h3>
 
-            {/* Right Side - Buttons */}
-            <div className="flex w-full flex-col items-center justify-center gap-6 lg:w-1/2">
-              <button
-                type="submit"
-                form="signup-form"
-                className="h-12 w-full rounded-2xl bg-[#6c9d43] text-xl font-bold text-[#ece098] lg:w-60"
-              >
-                SIGN UP
-              </button>
+                                <p className="text-center text-sm text-gray-300">
+                                    Enter the OTP sent to
+                                    <br />
+                                    <span className="font-bold">{email}</span>
+                                </p>
 
-              <div className="my-4 flex w-full max-w-xs items-center">
-                <div className="h-px flex-1 bg-gray-400"></div>
+                                <input
+                                    disabled={isVerifying}
+                                    type="text"
+                                    value={otp}
+                                    onChange={(e) => setOtp(e.target.value)}
+                                    placeholder="Enter OTP"
+                                    className="h-12 w-full rounded-2xl border border-white/20 bg-[#6b7368]/20 px-4 text-center text-xl tracking-[10px] font-bold text-white backdrop-blur-md outline-none"
+                                />
+                            </form>
+                        )}
 
-                <span className="px-4 font-bold text-white">OR</span>
+                        {/* Right Side - Buttons */}
+                        <div className="flex w-full flex-col items-center justify-center gap-6 lg:w-1/2">
+                            <button
+                                disabled:cursor-not-allowed
+                                disabled:opacity-60
+                                transition-all
+                                duration-300
+                                type="submit"
+                                form={showOtpForm ? "otp-form" : "signup-form"}
+                                className="h-12 w-full rounded-2xl bg-[#6c9d43] text-xl font-bold text-[#ece098] lg:w-60 "
+                            >
+                                {showOtpForm
+                                    ? isVerifying
+                                        ? "VERIFYING..."
+                                        : "VERIFY OTP"
+                                    : isSigningUp
+                                      ? "CREATING ACCOUNT..."
+                                      : "SIGN UP"}
+                            </button>
 
-                <div className="h-px flex-1 bg-gray-400"></div>
-              </div>
+                            <div className="my-4 flex w-full max-w-xs items-center">
+                                <div className="h-px flex-1 bg-gray-400"></div>
 
-              <button className="h-12 w-full rounded-2xl bg-[#6b7368]/50 text-lg font-bold text-[#e4e4e4] lg:w-60">
-                Continue with Google
-              </button>
+                                <span className="px-4 font-bold text-white">
+                                    OR
+                                </span>
 
-              <Link
-                to="/login"
-                className="mt-2 text-center text-sm font-bold text-white lg:text-base"
-              >
-                Already have an account?
-                <span className="text-[#a7cd1c]"> Login</span>
-              </Link>
+                                <div className="h-px flex-1 bg-gray-400"></div>
+                            </div>
+
+                            <button className="h-12 w-full rounded-2xl bg-[#6b7368]/50 text-lg font-bold text-[#e4e4e4] lg:w-60">
+                                Continue with Google
+                            </button>
+
+                            <Link
+                                to="/login"
+                                className="mt-2 text-center text-sm font-bold text-white lg:text-base"
+                            >
+                                Already have an account?
+                                <span className="text-[#a7cd1c]"> Login</span>
+                            </Link>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </>
-  );
+        </>
+    );
 }
 
 export default Signup;
