@@ -10,7 +10,7 @@ function Login() {
 
         try {
             const response = await fetch(
-                "http://localhost:5000/api/users/login",
+                `${import.meta.env.VITE_BACKEND_URL}/api/users/login`,
                 {
                     method: "POST",
                     headers: {

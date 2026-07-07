@@ -211,9 +211,10 @@ If you didn't request this, simply ignore this email.`,
 
     try {
         const info = await transporter.sendMail(mailOptions);
-        console.log(info);
+        console.log("Email sent:", info);
     } catch (error) {
-        console.error(error);
+        console.error("Email Error:", error);
+        throw error;
     }
 };
 

@@ -52,13 +52,20 @@ const registerUser = async (req, res) => {
             otpExpires,
         });
 
-        // Send OTP email
-        await sendOTPEmail(email, otp);
+        console.log("Sending response to frontend...");
 
         res.status(200).json({
             success: true,
             message: "OTP sent successfully. Please verify your email.",
         });
+
+        console.log("Response sent.");
+
+        sendOTPEmail(email, otp)
+            .then(() => console.log("Email sent"))
+            .catch((err) => console.error("Email failed:", err));
+
+        return;
     } catch (error) {
         res.status(500).json({
             success: false,

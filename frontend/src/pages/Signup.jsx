@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import toast from "react-hot-toast";
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 // make the signup animations better later
 
@@ -27,19 +28,16 @@ function Signup() {
 
         try {
             setIsVerifying(true);
-            const response = await fetch(
-                "http://localhost:5000/api/users/verify-otp",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        email,
-                        otp,
-                    }),
+            const response = await fetch(`${API_URL}/api/users/verify-otp`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
                 },
-            );
+                body: JSON.stringify({
+                    email,
+                    otp,
+                }),
+            });
 
             const data = await response.json();
 
@@ -77,20 +75,17 @@ function Signup() {
 
         try {
             setIsSigningUp(true);
-            const response = await fetch(
-                "http://localhost:5000/api/users/register",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        name,
-                        email,
-                        password,
-                    }),
+            const response = await fetch(`${API_URL}/api/users/register`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
                 },
-            );
+                body: JSON.stringify({
+                    name,
+                    email,
+                    password,
+                }),
+            });
 
             const data = await response.json();
 
@@ -103,6 +98,7 @@ function Signup() {
             setShowOtpForm(true);
         } catch (error) {
             console.error(error);
+            toast.error("Unable to connect to the server.");
         } finally {
             setIsSigningUp(false);
         }
@@ -211,13 +207,12 @@ function Signup() {
                         {/* Right Side - Buttons */}
                         <div className="flex w-full flex-col items-center justify-center gap-6 lg:w-1/2">
                             <button
-                                disabled:cursor-not-allowed
-                                disabled:opacity-60
-                                transition-all
-                                duration-300
                                 type="submit"
+                                disabled={isSigningUp || isVerifying}
                                 form={showOtpForm ? "otp-form" : "signup-form"}
-                                className="h-12 w-full rounded-2xl bg-[#6c9d43] text-xl font-bold text-[#ece098] lg:w-60 "
+                                className="h-12 w-full rounded-2xl bg-[#6c9d43] transition-all
+                                duration-300 disabled:cursor-not-allowed
+                                disabled:opacity-60 text-xl font-bold text-[#ece098] lg:w-60 "
                             >
                                 {showOtpForm
                                     ? isVerifying
@@ -238,7 +233,10 @@ function Signup() {
                                 <div className="h-px flex-1 bg-gray-400"></div>
                             </div>
 
-                            <button className="h-12 w-full rounded-2xl bg-[#6b7368]/50 text-lg font-bold text-[#e4e4e4] lg:w-60">
+                            <button
+                                disabled={isSigningUp || isVerifying}
+                                className="h-12 w-full rounded-2xl bg-[#6b7368]/50 disabled:opacity-60 disabled:cursor-not-allowed text-lg font-bold text-[#e4e4e4] lg:w-60"
+                            >
                                 Continue with Google
                             </button>
 
