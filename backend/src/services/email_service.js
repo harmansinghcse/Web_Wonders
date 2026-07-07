@@ -4,7 +4,9 @@ console.log("EMAIL_USER:", process.env.EMAIL_USER);
 console.log("EMAIL_PASS:", process.env.EMAIL_PASS);
 
 const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: process.env.EMAIL_HOST,
+    port: Number(process.env.EMAIL_PORT),
+    secure: false, // Port 587 uses STARTTLS
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -13,7 +15,7 @@ const transporter = nodemailer.createTransport({
 
 const sendOTPEmail = async (email, otp) => {
     const mailOptions = {
-        from: `"Jurassic Explorer 🦖" <${process.env.EMAIL_USER}>`,
+        from: `"Jurassic Explorer 🦖" <${process.env.SENDER_EMAIL}>`,
         to: email,
         subject: "🦖 Verify Your Jurassic Explorer Account",
 
