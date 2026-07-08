@@ -118,7 +118,10 @@ const updateDinosaur = async (req, res, next) => {
         const dinosaur = await Dinosaur.findOneAndUpdate(
             { slug: req.params.slug },
             req.body,
-            { new: true },
+            { new: true,
+                runValidators : true,
+            },
+            
         );
 
         if (!dinosaur) {
