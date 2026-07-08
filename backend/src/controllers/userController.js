@@ -132,7 +132,7 @@ const verifyOTP = async (req, res) => {
 
 const loginUser = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, rememberMe } = req.body;
 
         const user = await User.findOne({ email });
 
@@ -152,6 +152,11 @@ const loginUser = async (req, res) => {
             });
         }
 
+        const rememberDays = 30;
+        const normalDays = 1;
+
+        const expiresIn = rememberMe ? `${rememberDays}d` : `${normalDays}d`;
+
         const token = jwt.sign(
             {
                 id: user._id,
@@ -159,17 +164,21 @@ const loginUser = async (req, res) => {
             },
             process.env.JWT_SECRET,
             {
-                expiresIn: "7d",
+                expiresIn,
             },
         );
 
-        // change respone according to frontend design in future
         return res
             .cookie("token", token, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
                 sameSite: "Lax",
-                maxAge: 1000 * 60 * 60 * 24 * 7,
+                maxAge:
+                    (rememberMe ? rememberDays : normalDays) *
+                    24 *
+                    60 *
+                    60 *
+                    1000,
             })
             .status(200)
             .json({

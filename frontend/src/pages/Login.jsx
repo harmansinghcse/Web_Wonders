@@ -12,6 +12,7 @@ function Login() {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const { checkAuth } = useAuth();
+    const [rememberMe, setRememberMe] = useState(false);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -27,20 +28,18 @@ function Login() {
         }
 
         try {
-            const response = await fetch(
-                `http://localhost:5000/api/users/login`,
-                {
-                    method: "POST",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        email,
-                        password,
-                    }),
+            const response = await fetch(`${API_URL}/api/users/login`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
                 },
-            );
+                body: JSON.stringify({
+                    email,
+                    password,
+                    rememberMe,
+                }),
+            });
 
             const data = await response.json();
 
@@ -73,15 +72,15 @@ function Login() {
             >
                 {/* Rest of your page */}
 
-                <div className="bg-[#14221c]/60 w-120 rounded-4xl items-center flex flex-col pt-4 pb-16">
+                <div className="mx-4 flex w-full max-w-md flex-col items-center rounded-4xl bg-[#14221c]/60 px-6 pt-6 pb-10 sm:px-8">
                     <Link to="/">
                         <img
                             src="jurassic-explorer-logo.png"
                             alt="logo"
-                            className="w-30"
+                            className="w-24 sm:w-30"
                         />
                     </Link>
-                    <h2 className="text-center mb-10 text-3xl font-bold text-[#c4c09a] leading-tight">
+                    <h2 className="mb-8 text-center text-2xl font-bold leading-tight text-[#c4c09a] sm:mb-10 sm:text-3xl">
                         Login to begin your
                         <br />
                         Expedition!
@@ -97,7 +96,7 @@ function Login() {
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="Email or Username"
                             className="
-                            w-80
+                            w-full
                             h-12
                             rounded-2xl
                             bg-[#6b7368]/20
@@ -124,7 +123,7 @@ function Login() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="password"
-                            className="w-80
+                            className="w-full
                             h-12
                             rounded-2xl
                             bg-[#6b7368]/20
@@ -144,11 +143,19 @@ function Login() {
                             transition"
                         />
 
-                        <div className="flex justify-between w-80">
+                        <div className="flex w-full justify-between text-sm sm:text-base">
                             <div>
-                                <Link to="" className="font-bold text-white">
+                                <label className="flex items-center gap-2 text-white font-bold cursor-pointer select-none">
+                                    <input
+                                        type="checkbox"
+                                        checked={rememberMe}
+                                        onChange={(e) =>
+                                            setRememberMe(e.target.checked)
+                                        }
+                                        className="h-4 w-4 accent-[#83a215]"
+                                    />
                                     Remember me
-                                </Link>
+                                </label>
                             </div>
                             <div>
                                 <Link
@@ -180,7 +187,7 @@ function Login() {
 
                         <button
                             type="button"
-                            className=" bg-[#6b7368]/50 font-bold text-[#e4e4e4] text-xl rounded-2xl h-12 w-80"
+                            className=" bg-[#6b7368]/50 font-bold text-[#e4e4e4] text-xl rounded-2xl h-12 w-full"
                         >
                             Continue with Google
                         </button>
