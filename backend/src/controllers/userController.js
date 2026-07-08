@@ -137,7 +137,7 @@ const loginUser = async (req, res) => {
         const user = await User.findOne({ email });
 
         if (!user) {
-            res.status(401).json({
+            return res.status(401).json({
                 success: false,
                 message: "Invalid email or Password",
             });
@@ -146,7 +146,7 @@ const loginUser = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
-            res.status(401).json({
+            return res.status(401).json({
                 success: false,
                 message: "Invalid email or Password",
             });
@@ -164,19 +164,49 @@ const loginUser = async (req, res) => {
         );
 
         // change respone according to frontend design in future
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "Lax",
-            maxAge: 1000 * 60 * 60 * 24 * 7,
-        })
+        return res
+            .cookie("token", token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "Lax",
+                maxAge: 1000 * 60 * 60 * 24 * 7,
+            })
             .status(200)
             .json({
                 success: true,
                 message: "Login Successful",
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role,
+                },
             });
     } catch (error) {
         res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+const getCurrentUser = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select("-password");
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            user,
+        });
+    } catch (error) {
+        return res.status(500).json({
             success: false,
             message: error.message,
         });
@@ -187,4 +217,5 @@ module.exports = {
     registerUser,
     loginUser,
     verifyOTP,
+    getCurrentUser,
 };

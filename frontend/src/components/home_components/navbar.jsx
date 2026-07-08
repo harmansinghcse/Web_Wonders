@@ -2,6 +2,7 @@ import logo from "../../assets/jurrasic-logo.png";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import UserMenu from "./UserMenu";
 
 function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -61,18 +62,7 @@ function Navbar() {
                                 className="w-32 bg-transparent text-white outline-none placeholder:text-white/60 xl:w-auto"
                             />
                         </div>
-                        <Link
-                            to="/login"
-                            className="rounded-full border bg-[#516858] px-5 py-2 transition-all duration-300 hover:bg-white hover:text-[#516858]"
-                        >
-                            Login
-                        </Link>
-                        <Link
-                            to="/signup"
-                            className="rounded-full border bg-[#516858] px-5 py-2 transition duration-300 hover:bg-white hover:text-[#516858]"
-                        >
-                            Sign-Up
-                        </Link>
+                        <UserMenu />
                     </div>
                 </nav>
             </div>

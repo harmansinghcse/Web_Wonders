@@ -1,18 +1,37 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+
+const API_URL = import.meta.env.VITE_BACKEND_URL;
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
+    const { checkAuth } = useAuth();
 
     const handleLogin = async (e) => {
         e.preventDefault();
 
+        if (isLoading) return;
+
+        setIsLoading(true);
+
+        if (!email || !password) {
+            toast.error("Please fill all fields.");
+            setIsLoading(false);
+            return;
+        }
+
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_BACKEND_URL}/api/users/login`,
+                `http://localhost:5000/api/users/login`,
                 {
                     method: "POST",
+                    credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
                     },
@@ -25,9 +44,22 @@ function Login() {
 
             const data = await response.json();
 
-            console.log(data);
+            if (!response.ok) {
+                toast.error(data.message || "Login failed");
+                return;
+            }
+            toast.success("Login successful! 🦕");
+
+            await checkAuth();
+
+            setTimeout(() => {
+                navigate("/", { replace: true });
+            }, 1000);
         } catch (error) {
-            console.error(error);
+            console.error("Login Error:", error);
+            toast.error(error.message);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -60,6 +92,7 @@ function Login() {
                     >
                         <input
                             type="email"
+                            disabled={isLoading}
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="Email or Username"
@@ -72,6 +105,8 @@ function Login() {
                             font-bold
                             border
                             border-white/20
+                            disabled:opacity-50 
+                            disabled:cursor-not-allowed
                             px-4
                             text-white
                             placeholder:text-gray-300
@@ -85,6 +120,7 @@ function Login() {
 
                         <input
                             type="password"
+                            disabled={isLoading}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             placeholder="password"
@@ -95,7 +131,9 @@ function Login() {
                             backdrop-blur-md
                             font-bold
                             border
-                            border-white/20
+                            border-white/20 
+                            disabled:opacity-50 
+                            disabled:cursor-not-allowed
                             px-4
                             text-white
                             placeholder:text-gray-300
@@ -124,7 +162,8 @@ function Login() {
 
                         <button
                             type="submit"
-                            className="bg-[#6c9d43] font-bold text-[#ece098] text-xl rounded-2xl h-12 w-80"
+                            disabled={isLoading}
+                            className="bg-[#6c9d43] disabled:opacity-50 disabled:cursor-not-allowed font-bold text-[#ece098] text-xl rounded-2xl h-12 w-80"
                         >
                             LOGIN
                         </button>
@@ -140,7 +179,7 @@ function Login() {
                         </div>
 
                         <button
-                            type="submit"
+                            type="button"
                             className=" bg-[#6b7368]/50 font-bold text-[#e4e4e4] text-xl rounded-2xl h-12 w-80"
                         >
                             Continue with Google
