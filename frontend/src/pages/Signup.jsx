@@ -78,7 +78,7 @@ function Signup() {
                         <br />
                         Be an Adventurer
                     </h2>
-                    <div className="flex justify-center gap-12 px-10">
+                    <div className="lg:flex flex flex-col justify-center gap-12 px-10">
                         {/* Left Side - Inputs */}
                         <form
                             className="flex flex-col gap-4"
@@ -127,7 +127,7 @@ function Signup() {
                         </form>
 
                         {/* Right Side - Buttons */}
-                        <div className="flex flex-col justify-between">
+                        <div className="lg:flex items-center flex flex-col justify-between">
                             <button
                                 type="submit"
                                 form="signup-form"
