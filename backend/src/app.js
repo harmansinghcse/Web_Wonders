@@ -7,6 +7,7 @@ const app = express();
 const dinosaurRoutes = require("./routes/dinosaurRoutes");
 const userRoutes = require("./routes/userRoutes");
 const errorHandler = require("./middleware/errorMiddleware");
+const uploadRoutes = require("./routes/uploadRoutes");
 
 // allowed origins
 const allowedOrigins = [
@@ -29,6 +30,7 @@ app.use(
     }),
 );
 app.use(cookieParser());
+app.use("/api/upload", uploadRoutes);
 app.set("query parser", "extended");
 app.use("/api/dinosaur", dinosaurRoutes);
 app.use("/api/users", userRoutes);
