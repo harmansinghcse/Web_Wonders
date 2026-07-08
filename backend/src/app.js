@@ -8,10 +8,23 @@ const dinosaurRoutes = require("./routes/dinosaurRoutes");
 const userRoutes = require("./routes/userRoutes");
 const errorHandler = require("./middleware/errorMiddleware");
 
+// allowed origins
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://web-wonders-coral.vercel.app",
+];
+
 app.use(express.json());
+
 app.use(
     cors({
-        origin: "http://localhost:5173", // Your Vite frontend
+        origin: function (origin, callback) {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
         credentials: true,
     }),
 );
