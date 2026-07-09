@@ -97,8 +97,13 @@ const CreateDinosaur = () => {
             }
 
             console.log(data);
-        } catch (err) {
-            console.error(err);
+        } catch (error) {
+            console.error(error);
+
+            return res.status(500).json({
+                success: false,
+                message: error.message,
+            });
         } finally {
             setSubmitting(false);
         }
