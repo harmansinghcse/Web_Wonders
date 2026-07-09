@@ -83,7 +83,6 @@ const createDinosaur = async (req, res, next) => {
         console.log("Body:", req.body);
         console.log("Files:", req.files);
         const dinosaur = JSON.parse(req.body.dinosaur);
-        const dinosaur = JSON.parse(req.body.dinosaur);
 
         console.log("Parsed dinosaur:", dinosaur);
         if (!req.files.heroBackground?.length) {
