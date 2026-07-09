@@ -17,20 +17,17 @@ router.get("/:slug", getDinosaurBySlug);
 router.post(
     "/",
     protect,
+    (req, res, next) => {
+        next();
+    },
     upload.fields([
-        {
-            name: "heroBackground",
-            maxCount: 1,
-        },
-        {
-            name: "fossilImage",
-            maxCount: 1,
-        },
-        {
-            name: "featureImages",
-            maxCount: 4,
-        },
+        { name: "heroBackground", maxCount: 1 },
+        { name: "fossilImage", maxCount: 1 },
+        { name: "featureImages", maxCount: 4 },
     ]),
+    (req, res, next) => {
+        next();
+    },
     createDinosaur,
 );
 router.put("/:slug", updateDinosaur);
