@@ -1,17 +1,60 @@
+import { motion } from "framer-motion";
+
+const left = {
+    hidden: {
+        opacity: 0,
+        x: -60,
+    },
+    show: {
+        opacity: 1,
+        x: 0,
+        transition: {
+            duration: 0.8,
+        },
+    },
+};
+
+const right = {
+    hidden: {
+        opacity: 0,
+        x: 60,
+    },
+    show: {
+        opacity: 1,
+        x: 0,
+        transition: {
+            duration: 0.8,
+            delay: 0.15,
+        },
+    },
+};
+
 export default function Fossil({ about, fossil }) {
     return (
         <div className="bg-white py-20">
             <div className="mx-auto max-w-7xl px-6 lg:px-12">
                 <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-2">
                     {/* Description */}
-                    <div>
-                        <h2 className="mb-8 text-2xl font-extrabold text-[#1B1B1B] uppercase lg:text-4xl">
+                    <motion.div
+                        variants={left}
+                        initial="hidden"
+                        whileInView="show"
+                        viewport={{ once: true, amount: 0.3 }}
+                    >
+                        <h2 className="mb-8 text-2xl font-extrabold uppercase text-[#1B1B1B] lg:text-4xl">
                             {about.heading}
                         </h2>
 
                         {about.paragraphs.map((paragraph, index) => (
-                            <p
+                            <motion.p
                                 key={index}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{
+                                    delay: index * 0.12,
+                                    duration: 0.5,
+                                }}
                                 className={`text-lg leading-9 text-gray-700 ${
                                     index !== about.paragraphs.length - 1
                                         ? "mb-8"
@@ -19,28 +62,55 @@ export default function Fossil({ about, fossil }) {
                                 }`}
                             >
                                 {paragraph}
-                            </p>
+                            </motion.p>
                         ))}
-                    </div>
+                    </motion.div>
 
-                    {/* Fossil Record */}
-                    <div>
-                        <div className="relative overflow-hidden rounded-[30px] shadow-2xl">
-                            <img
+                    {/* Fossil */}
+                    <motion.div
+                        variants={right}
+                        initial="hidden"
+                        whileInView="show"
+                        viewport={{ once: true, amount: 0.3 }}
+                    >
+                        <motion.div
+                            whileHover={{
+                                y: -8,
+                                transition: {
+                                    duration: 0.25,
+                                },
+                            }}
+                            className="relative overflow-hidden rounded-[30px] shadow-2xl"
+                        >
+                            <motion.img
                                 src={fossil.image}
                                 alt={`${about.heading} Fossil`}
+                                whileHover={{
+                                    scale: 1.05,
+                                }}
+                                transition={{
+                                    duration: 0.5,
+                                }}
                                 className="h-130 w-full object-cover"
                             />
 
                             <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/10 to-transparent" />
 
-                            <div className="absolute bottom-8 left-8 flex items-center gap-4">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{
+                                    delay: 0.4,
+                                }}
+                                className="absolute bottom-8 left-8 flex items-center gap-4"
+                            >
                                 <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-[#C79A4A] bg-black/50 text-3xl text-[#C79A4A]">
                                     🦴
                                 </div>
 
                                 <div>
-                                    <h3 className="text-3xl font-bold tracking-wide text-white uppercase">
+                                    <h3 className="text-3xl font-bold uppercase tracking-wide text-white">
                                         Fossil Record
                                     </h3>
 
@@ -49,9 +119,9 @@ export default function Fossil({ about, fossil }) {
                                         {fossil.locations.join(", ")}
                                     </p>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
+                            </motion.div>
+                        </motion.div>
+                    </motion.div>
                 </div>
             </div>
         </div>

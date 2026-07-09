@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { motion } from "framer-motion";
 
 import DinoIntro from "../components/info-components/dinoIntro";
 import Fossil from "../components/info-components/fossil";
@@ -39,40 +40,48 @@ const DinoPage = () => {
 
     return (
         <>
-            <div className="relative flex min-h-screen flex-col justify-end overflow-hidden bg-black font-sans">
-                {/* Background Image with Overlays */}
-                <div className="absolute inset-0 z-0">
-                    <img
-                        src={dinosaur.images.heroBackground}
-                        alt={dinosaur.name}
-                        className="h-full w-full object-cover opacity-70"
-                    />
-                    {/* Gradients to darken edges for text readability */}
-                    <div className="absolute inset-0 bg-linear-to-r from-black/90 via-black/40 to-transparent"></div>
-                    <div className="absolute inset-0 bg-linear-to-r from-black/80 via-transparent to-transparent"></div>
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+            >
+                <div className="relative flex min-h-screen flex-col justify-end overflow-hidden bg-black font-sans">
+                    {/* Background Image with Overlays */}
+                    <div className="absolute inset-0 z-0">
+                        <img
+                            src={dinosaur.images.heroBackground}
+                            alt={dinosaur.name}
+                            className="h-full w-full object-cover opacity-70"
+                        />
+                        {/* Gradients to darken edges for text readability */}
+                        <div className="absolute inset-0 bg-linear-to-r from-black/90 via-black/40 to-transparent"></div>
+                        <div className="absolute inset-0 bg-linear-to-r from-black/80 via-transparent to-transparent"></div>
+                    </div>
+
+                    {/* Main Content Area */}
+                    <DinoIntro hero={dinosaur.hero} />
+                    <QuickFacts stats={dinosaur.stats} />
                 </div>
 
-                {/* Main Content Area */}
-                <DinoIntro hero={dinosaur.hero} />
-                <QuickFacts stats={dinosaur.stats} />
-            </div>
+                {/* fossil section */}
+                <Fossil about={dinosaur.about} fossil={dinosaur.fossil} />
 
-            {/* fossil section */}
-            <Fossil about={dinosaur.about} fossil={dinosaur.fossil} />
+                <hr className="border-[#c6a87c]" />
 
-            <hr className="border-[#c6a87c]" />
+                {/* physical feature */}
+                <PhysicalFeatures
+                    physicalFeatures={dinosaur.physicalFeatures}
+                />
 
-            {/* physical feature */}
-            <PhysicalFeatures physicalFeatures={dinosaur.physicalFeatures} />
+                {/*Time line and hunting startegy  */}
+                <TimelineStrat
+                    timeline={dinosaur.timeline}
+                    hunting={dinosaur.hunting}
+                />
 
-            {/*Time line and hunting startegy  */}
-            <TimelineStrat
-                timeline={dinosaur.timeline}
-                hunting={dinosaur.hunting}
-            />
-
-            {/* Diet and Facts */}
-            <DietFact diet={dinosaur.diet} />
+                {/* Diet and Facts */}
+                <DietFact diet={dinosaur.diet} />
+            </motion.div>
         </>
     );
 };
