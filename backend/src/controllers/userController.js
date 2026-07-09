@@ -200,6 +200,19 @@ const loginUser = async (req, res) => {
     }
 };
 
+const logoutUser = (req, res) => {
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+    })
+        .status(200)
+        .json({
+            success: true,
+            message: "Logged out successfully",
+        });
+};
+
 const getCurrentUser = async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select("-password");
@@ -228,4 +241,5 @@ module.exports = {
     loginUser,
     verifyOTP,
     getCurrentUser,
+    logoutUser,
 };

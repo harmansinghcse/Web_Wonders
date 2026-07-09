@@ -14,29 +14,36 @@ export function AuthProvider({ children }) {
 
     const checkAuth = async () => {
         try {
-            console.log("Checking auth...");
-
             const response = await fetch(`${API_URL}/api/users/me`, {
                 credentials: "include",
             });
-
-            console.log("Status:", response.status);
-
-            const data = await response.json();
-            console.log("Response:", data);
 
             if (!response.ok) {
                 setUser(null);
                 return;
             }
 
+            const data = await response.json();
+
             setUser(data.user);
-            console.log("User updated:", data.user);
         } catch (error) {
-            console.error(error);
+            console.error("Auth check failed:", error);
             setUser(null);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const logout = async () => {
+        try {
+            await fetch(`${API_URL}/api/users/logout`, {
+                method: "POST",
+                credentials: "include",
+            });
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setUser(null);
         }
     };
 
@@ -47,6 +54,7 @@ export function AuthProvider({ children }) {
                 isLoggedIn: !!user,
                 loading,
                 checkAuth,
+                logout,
                 setUser,
             }}
         >

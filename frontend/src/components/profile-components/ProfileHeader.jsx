@@ -1,0 +1,42 @@
+export default function ProfileHeader({ profile, onEdit }) {
+    return (
+        <section className="overflow-hidden rounded-3xl border border-white/10 bg-[#12251C] shadow-lg">
+            <div className="h-64 w-full bg-[url('https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=1600&auto=format&fit=crop')] bg-cover bg-center" />
+
+            <div className="relative px-8 pb-8">
+                <div className="-mt-16 flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border-4 border-[#12251C] bg-gray-300 text-4xl font-bold text-black">
+                    {profile.avatar ? (
+                        <img
+                            src={profile?.avatar}
+                            alt={profile.name}
+                            className="h-full w-full object-cover"
+                        />
+                    ) : (
+                        profile?.name?.charAt(0).toUpperCase()
+                    )}
+                </div>
+
+                <div className="mt-6 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <h1 className="text-3xl font-bold">{profile.name}</h1>
+
+                        <p className="mt-1 text-sm text-gray-300">
+                            {profile.email}
+                        </p>
+
+                        <p className="mt-3 max-w-2xl text-gray-400">
+                            {profile.bio || "No bio yet."}
+                        </p>
+                    </div>
+
+                    <button
+                        onClick={onEdit}
+                        className="rounded-xl bg-[#E4C08D] px-6 py-3 font-semibold text-black transition hover:brightness-110"
+                    >
+                        Edit Profile
+                    </button>
+                </div>
+            </div>
+        </section>
+    );
+}

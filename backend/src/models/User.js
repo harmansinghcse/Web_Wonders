@@ -26,6 +26,35 @@ const userSchema = new mongoose.Schema(
             enum: ["user", "admin"],
             default: "user",
         },
+
+        avatar: {
+            type: String,
+            default: "",
+        },
+
+        bio: {
+            type: String,
+            default: "",
+            maxlength: 250,
+        },
+
+        score: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
+
+        quizzesSolved: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
+
+        achievementsUnlocked: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
     },
     {
         timestamps: true,

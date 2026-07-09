@@ -4,6 +4,7 @@ const {
     loginUser,
     verifyOTP,
     getCurrentUser,
+    logoutUser,
 } = require("../controllers/userController");
 
 const { protect, authorize } = require("../middleware/authMiddleware");
@@ -14,5 +15,6 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/verify-otp", verifyOTP);
 router.get("/me", protect, getCurrentUser);
+router.post("/logout", logoutUser);
 
 module.exports = router;
