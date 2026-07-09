@@ -45,10 +45,10 @@ function Navbar() {
                             Quiz
                         </Link>
                         <Link
-                            to="/games"
+                            to="/create"
                             className="rounded-full px-4 py-2 transition hover:bg-white/20"
                         >
-                            Games
+                            Create Dino
                         </Link>
                     </div>
 
@@ -97,8 +97,8 @@ function Navbar() {
                         <Link to="/quiz" onClick={() => setMenuOpen(false)}>
                             Quiz
                         </Link>
-                        <Link to="/games" onClick={() => setMenuOpen(false)}>
-                            Games
+                        <Link to="/create" onClick={() => setMenuOpen(false)}>
+                            Create Dino
                         </Link>
                         <Link to="/login" onClick={() => setMenuOpen(false)}>
                             Login
