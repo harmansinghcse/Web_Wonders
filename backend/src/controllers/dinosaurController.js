@@ -80,7 +80,12 @@ const getAllDinosaurs = async (req, res, next) => {
 
 const createDinosaur = async (req, res, next) => {
     try {
+        console.log("Body:", req.body);
+        console.log("Files:", req.files);
         const dinosaur = JSON.parse(req.body.dinosaur);
+        const dinosaur = JSON.parse(req.body.dinosaur);
+
+        console.log("Parsed dinosaur:", dinosaur);
         if (!req.files.heroBackground?.length) {
             return res.status(400).json({
                 success: false,
@@ -132,7 +137,9 @@ const createDinosaur = async (req, res, next) => {
             });
         }
 
+        console.log("About to create...");
         const createdDinosaur = await Dinosaur.create(dinosaur);
+        console.log("Created successfully");
 
         res.status(201).json({
             success: true,
