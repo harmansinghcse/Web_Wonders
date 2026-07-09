@@ -1,4 +1,5 @@
 const Dinosaur = require("../models/Dinosaur");
+const uploadToCloudinary = require("../utils/uploadToCloudiary");
 
 // i know this getalldinosaur is ugly i will fix its readabilty later
 const getAllDinosaurs = async (req, res, next) => {
@@ -80,26 +81,23 @@ const getAllDinosaurs = async (req, res, next) => {
 
 const createDinosaur = async (req, res, next) => {
     try {
-        console.log("Body:", req.body);
-        console.log("Files:", req.files);
         const dinosaur = JSON.parse(req.body.dinosaur);
 
-        console.log("Parsed dinosaur:", dinosaur);
-        if (!req.files.heroBackground?.length) {
+        if (!req.files?.heroBackground?.length) {
             return res.status(400).json({
                 success: false,
                 message: "Please upload a hero background image.",
             });
         }
 
-        if (!req.files.fossilImage?.length) {
+        if (!req.files?.fossilImage?.length) {
             return res.status(400).json({
                 success: false,
                 message: "Please upload a fossil image.",
             });
         }
 
-        if (req.files.featureImages?.length !== 4) {
+        if (req.files?.featureImages?.length !== 4) {
             return res.status(400).json({
                 success: false,
                 message: "Please upload all 4 physical feature images.",
@@ -117,34 +115,32 @@ const createDinosaur = async (req, res, next) => {
             });
         }
 
-        // Hero Background
-        if (req.files.heroBackground?.length) {
-            dinosaur.images.heroBackground = req.files.heroBackground[0].path;
+        // Upload Hero Background
+        const heroImage = await uploadToCloudinary(req.files.heroBackground[0]);
+        dinosaur.images.heroBackground = heroImage.secure_url;
+
+        // Upload Fossil Image
+        const fossilImage = await uploadToCloudinary(req.files.fossilImage[0]);
+        dinosaur.fossil.image = fossilImage.secure_url;
+
+        // Upload Physical Feature Images
+        for (let i = 0; i < req.files.featureImages.length; i++) {
+            const uploadedImage = await uploadToCloudinary(
+                req.files.featureImages[i],
+            );
+
+            dinosaur.physicalFeatures.features[i].image =
+                uploadedImage.secure_url;
         }
 
-        // Fossil Image
-        if (req.files.fossilImage?.length) {
-            dinosaur.fossil.image = req.files.fossilImage[0].path;
-        }
-
-        // Physical Feature Images
-        if (req.files.featureImages?.length) {
-            req.files.featureImages.forEach((file, index) => {
-                if (dinosaur.physicalFeatures.features[index]) {
-                    dinosaur.physicalFeatures.features[index].image = file.path;
-                }
-            });
-        }
-
-        console.log("About to create...");
         const createdDinosaur = await Dinosaur.create(dinosaur);
-        console.log("Created successfully");
 
-        res.status(201).json({
+        return res.status(201).json({
             success: true,
             data: createdDinosaur,
         });
     } catch (error) {
+        console.error("Create Dinosaur Error:", error);
         next(error);
     }
 };

@@ -1,11 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const protect = (req, res, next) => {
-    console.log("Cookies:", req.cookies);
-
     const token = req.cookies.token;
-
-    console.log("Token:", token);
 
     if (!token) {
         return res.status(401).json({
