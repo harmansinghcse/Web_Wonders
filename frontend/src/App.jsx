@@ -8,22 +8,24 @@ import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import InterestingFact from "./pages/interesting_fact";
 import DinosaurPage from "./pages/Dinosaur-page";
+import CreateDinosaur from "./pages/createDinosaur";
 
 function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/explore" element={<Explore />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/fact" element={<InterestingFact />} />
-        <Route path="/signup" element={<Signup />} />
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/explore" element={<Explore />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/fact" element={<InterestingFact />} />
+                <Route path="/signup" element={<Signup />} />
 
-        {/* Dynamic dinosaur page */}
-        <Route path="/dinosaur/:slug" element={<DinosaurPage />} />
-      </Routes>
-    </BrowserRouter>
-  );
+                {/* Dynamic dinosaur page */}
+                <Route path="/dinosaur/:slug" element={<DinosaurPage />} />
+                <Route path="/create" element={<CreateDinosaur />} />
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
 export default App;

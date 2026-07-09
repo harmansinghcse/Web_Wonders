@@ -80,11 +80,63 @@ const getAllDinosaurs = async (req, res, next) => {
 
 const createDinosaur = async (req, res, next) => {
     try {
-        const dinosaur = await Dinosaur.create(req.body);
+        const dinosaur = JSON.parse(req.body.dinosaur);
+        if (!req.files.heroBackground?.length) {
+            return res.status(400).json({
+                success: false,
+                message: "Please upload a hero background image.",
+            });
+        }
+
+        if (!req.files.fossilImage?.length) {
+            return res.status(400).json({
+                success: false,
+                message: "Please upload a fossil image.",
+            });
+        }
+
+        if (req.files.featureImages?.length !== 4) {
+            return res.status(400).json({
+                success: false,
+                message: "Please upload all 4 physical feature images.",
+            });
+        }
+
+        const existing = await Dinosaur.findOne({
+            slug: dinosaur.slug,
+        });
+
+        if (existing) {
+            return res.status(409).json({
+                success: false,
+                message: "A dinosaur with this name already exists.",
+            });
+        }
+
+        // Hero Background
+        if (req.files.heroBackground?.length) {
+            dinosaur.images.heroBackground = req.files.heroBackground[0].path;
+        }
+
+        // Fossil Image
+        if (req.files.fossilImage?.length) {
+            dinosaur.fossil.image = req.files.fossilImage[0].path;
+        }
+
+        // Physical Feature Images
+        if (req.files.featureImages?.length) {
+            req.files.featureImages.forEach((file, index) => {
+                if (dinosaur.physicalFeatures.features[index]) {
+                    dinosaur.physicalFeatures.features[index].image = file.path;
+                }
+            });
+        }
+
+        const createdDinosaur = await Dinosaur.create(dinosaur);
 
         res.status(201).json({
             success: true,
-            data: dinosaur,
+            data: createdDinosaur,
         });
     } catch (error) {
         next(error);
@@ -118,10 +170,7 @@ const updateDinosaur = async (req, res, next) => {
         const dinosaur = await Dinosaur.findOneAndUpdate(
             { slug: req.params.slug },
             req.body,
-            { new: true,
-                runValidators : true,
-            },
-            
+            { new: true, runValidators: true },
         );
 
         if (!dinosaur) {
