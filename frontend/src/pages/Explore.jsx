@@ -1,14 +1,29 @@
-import hero from "../components/explore_complonents/hero";
-import searchBar from "../components/explore_complonents/searchbar";
-import filter from "../components/explore_complonents/filter";
+import { useState } from "react";
 
+import hero from "../components/explore_complonents/hero";
+import dinosaurList from "../components/explore_complonents/dinosaurList";
 
 
 function Explore() { 
+    const [search, setSearch] = useState("");
+    const [diet, setDiet] = useState("");
+    const [period, setPeriod] = useState("");   
     return ( 
-        <div>
-            <h1>Explore Page</h1>
-        </div>
+    <>
+        <hero
+            search={search}
+            setSearch={setSearch}
+            diet={diet}
+            setDiet={setDiet}
+            period={period}
+            setPeriod={setPeriod}
+        />
+        <dinosaurList
+            search={search}
+            diet={diet}
+            period={period}
+        />
+    </>
         
     ); 
 }
