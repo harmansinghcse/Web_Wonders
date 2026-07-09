@@ -10,6 +10,7 @@ import InterestingFact from "./pages/interesting_fact";
 import DinosaurPage from "./pages/Dinosaur-page";
 import CreateDinosaur from "./pages/createDinosaur";
 import Profile from "./pages/profile";
+import Timeline from "./pages/Timeline";
 
 function App() {
     return (
@@ -26,6 +27,7 @@ function App() {
                 {/* Dynamic dinosaur page */}
                 <Route path="/dinosaur/:slug" element={<DinosaurPage />} />
                 <Route path="/create" element={<CreateDinosaur />} />
+                <Route path="/timeline" element={<Timeline />} />
             </Routes>
         </BrowserRouter>
     );
