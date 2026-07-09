@@ -8,11 +8,13 @@ const {
     getDinosaurBySlug,
     updateDinosaur,
     deleteDinosaur,
+    searchDinosaurs,
 } = require("../controllers/dinosaurController");
 
 const router = express.Router();
 
 router.get("/", getAllDinosaurs);
+router.get("/search", searchDinosaurs);
 router.get("/:slug", getDinosaurBySlug);
 router.post(
     "/",

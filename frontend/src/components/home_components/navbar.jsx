@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import UserMenu from "./UserMenu";
+import SearchBar from "../search/SearchBar";
 
 function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
+    const [query, setQuery] = useState("");
 
     return (
         <>
@@ -54,14 +56,12 @@ function Navbar() {
 
                     {/* Right-Section (Desktop) */}
                     <div className="hidden items-center gap-4 lg:flex">
-                        <div className="flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-2 backdrop-blur transition-all focus-within:border-[#516858] focus-within:ring-2 focus-within:ring-[#516858]/40">
-                            <span className="mr-2">🔍</span>
-                            <input
-                                type="text"
-                                placeholder="Search"
-                                className="w-32 bg-transparent text-white outline-none placeholder:text-white/60 xl:w-auto"
-                            />
-                        </div>
+                        <SearchBar
+                            value={query}
+                            onChange={setQuery}
+                            placeholder="Search dinosaurs..."
+                            className="w-72"
+                        />
                         <UserMenu />
                     </div>
                 </nav>

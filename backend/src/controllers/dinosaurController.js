@@ -4,19 +4,18 @@ const uploadToCloudinary = require("../utils/uploadToCloudiary");
 // i know this getalldinosaur is ugly i will fix its readabilty later
 const getAllDinosaurs = async (req, res, next) => {
     try {
-        // pagination
+        // Pagination
         const page = Number(req.query.page) || 1;
         const limit = Number(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
-        // sorting
+        // Sorting
         const sortBy = req.query.sort;
 
-        // filtering
+        // Filtering
         const filter = { ...req.query };
 
         const excludedFields = ["page", "limit", "sort"];
-
         excludedFields.forEach((field) => delete filter[field]);
 
         let queryString = JSON.stringify(filter);
@@ -26,42 +25,36 @@ const getAllDinosaurs = async (req, res, next) => {
             (match) => `$${match}`,
         );
 
-        // const dinosaurs = await Dinosaur.find(filter).skip(skip).limit(limit);
-
-        // build the query first rather then a chain of query like above
         const mongoFilters = JSON.parse(queryString);
+
+        // Name search
+        if (req.query.search) {
+            mongoFilters.$or = [
+                { name: { $regex: req.query.search, $options: "i" } },
+                { period: { $regex: req.query.search, $options: "i" } },
+                { diet: { $regex: req.query.search, $options: "i" } },
+            ];
+        }
+
+        // Build query
         let query = Dinosaur.find(mongoFilters);
 
-        if (req.query.diet) {
-            filter.diet = req.query.diet;
-        }
-
-        if (req.query.period) {
-            filter.period = req.query.period;
-        }
-
-        if (req.query.name) {
-            filter.name = {
-                $regex: req.query.name,
-                $options: "i",
-            };
-        }
-
+        // Sorting
         if (sortBy) {
             query = query.sort(sortBy);
         } else {
             query = query.sort("name");
         }
 
-        // pagination
+        // Pagination
         query = query.skip(skip).limit(limit);
 
-        // pagination metadata
+        // Execute query
+        const dinosaurs = await query;
+
+        // Pagination metadata
         const totalDocuments = await Dinosaur.countDocuments(mongoFilters);
         const totalPages = Math.ceil(totalDocuments / limit);
-
-        // execute query
-        const dinosaurs = await query;
 
         res.status(200).json({
             success: true,
@@ -72,6 +65,38 @@ const getAllDinosaurs = async (req, res, next) => {
             totalPages,
             hasNextPage: page < totalPages,
             hasPreviousPage: page > 1,
+            data: dinosaurs,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+const searchDinosaurs = async (req, res, next) => {
+    try {
+        const query = req.query.query?.trim();
+
+        if (!query) {
+            return res.status(200).json({
+                success: true,
+                data: [],
+            });
+        }
+
+        const dinosaurs = await Dinosaur.find({
+            name: {
+                $regex: query,
+                $options: "i",
+            },
+        })
+            .select(
+                "name slug scientificName images.heroBackground timeline.period",
+            )
+            .sort("name")
+            .limit(5);
+
+        res.status(200).json({
+            success: true,
             data: dinosaurs,
         });
     } catch (error) {
@@ -220,4 +245,5 @@ module.exports = {
     getDinosaurBySlug,
     updateDinosaur,
     deleteDinosaur,
+    searchDinosaurs,
 };
