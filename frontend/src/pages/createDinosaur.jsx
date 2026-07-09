@@ -150,11 +150,13 @@ const CreateDinosaur = () => {
                     <div className="absolute inset-0 bg-linear-to-r from-black/90 via-black/40 to-transparent"></div>
 
                     <div className="absolute inset-0 bg-linear-to-r from-black/80 via-transparent to-transparent"></div>
+                </div>
 
-                    {/* Upload Button */}
+                {/* Upload Button */}
 
-                    <label className="absolute top-6 right-6 z-50 cursor-pointer rounded-lg bg-black/70 px-5 py-3 text-sm font-semibold text-white backdrop-blur hover:bg-black">
-                        Change Background
+                <div className="relative z-20 mx-auto mt-8 w-full max-w-7xl px-8 md:px-16">
+                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-white/20 bg-black/60 px-5 py-3 text-sm font-semibold text-white backdrop-blur transition hover:bg-black/80">
+                        📷 Change Hero Background
                         <input
                             type="file"
                             accept="image/*"
@@ -163,7 +165,6 @@ const CreateDinosaur = () => {
                         />
                     </label>
                 </div>
-
                 {/* Hero */}
 
                 <DinoIntro hero={dinosaur.hero} setDinosaur={setDinosaur} />
@@ -191,6 +192,7 @@ const CreateDinosaur = () => {
             <TimelineStrat
                 timeline={dinosaur.timeline}
                 hunting={dinosaur.hunting}
+                setDinosaur={setDinosaur}
             />
 
             <DietFact
