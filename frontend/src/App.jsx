@@ -28,6 +28,7 @@ function App() {
                 <Route path="/dinosaur/:slug" element={<DinosaurPage />} />
                 <Route path="/create" element={<CreateDinosaur />} />
                 <Route path="/timeline" element={<Timeline />} />
+                <Route path="/explorer" element={<Explore />} />
             </Routes>
         </BrowserRouter>
     );
