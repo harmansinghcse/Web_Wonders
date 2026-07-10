@@ -10,49 +10,70 @@ const getAllDinosaurs = async (req, res, next) => {
         const skip = (page - 1) * limit;
 
         // Sorting
-        const sortBy = req.query.sort;
+        const sortBy = req.query.sort || "name";
 
-        // Filtering
-        const filter = { ...req.query };
+        // Build Filters
+        const mongoFilters = {};
 
-        const excludedFields = ["page", "limit", "sort"];
-        excludedFields.forEach((field) => delete filter[field]);
+        if (req.query.period) {
+            mongoFilters["stats.period"] = {
+                $regex: req.query.period,
+                $options: "i",
+            };
+        }
 
-        let queryString = JSON.stringify(filter);
+        if (req.query.diet) {
+            mongoFilters["stats.diet"] = {
+                $regex: req.query.diet,
+                $options: "i",
+            };
+        }
 
-        queryString = queryString.replace(
-            /\b(gte|gt|lte|lt|in)\b/g,
-            (match) => `$${match}`,
-        );
+        if (req.query.location) {
+            mongoFilters["stats.location"] = {
+                $regex: req.query.location,
+                $options: "i",
+            };
+        }
 
-        const mongoFilters = JSON.parse(queryString);
-
-        // Name search
+        // Search
         if (req.query.search) {
             mongoFilters.$or = [
-                { name: { $regex: req.query.search, $options: "i" } },
-                { period: { $regex: req.query.search, $options: "i" } },
-                { diet: { $regex: req.query.search, $options: "i" } },
+                {
+                    name: {
+                        $regex: req.query.search,
+                        $options: "i",
+                    },
+                },
+                {
+                    "stats.period": {
+                        $regex: req.query.search,
+                        $options: "i",
+                    },
+                },
+                {
+                    "stats.diet": {
+                        $regex: req.query.search,
+                        $options: "i",
+                    },
+                },
+                {
+                    scientificName: {
+                        $regex: req.query.search,
+                        $options: "i",
+                    },
+                },
             ];
         }
 
-        // Build query
-        let query = Dinosaur.find(mongoFilters);
-
-        // Sorting
-        if (sortBy) {
-            query = query.sort(sortBy);
-        } else {
-            query = query.sort("name");
-        }
+        // Query
+        const dinosaurs = await Dinosaur.find(mongoFilters)
+            .sort(sortBy)
+            .skip(skip)
+            .limit(limit)
+            .select("name slug images.heroBackground stats scientificName");
 
         // Pagination
-        query = query.skip(skip).limit(limit);
-
-        // Execute query
-        const dinosaurs = await query;
-
-        // Pagination metadata
         const totalDocuments = await Dinosaur.countDocuments(mongoFilters);
         const totalPages = Math.ceil(totalDocuments / limit);
 

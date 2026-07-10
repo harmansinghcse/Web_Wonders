@@ -35,7 +35,7 @@ function Navbar() {
                     {/* Mid-Section (Desktop) */}
                     <div className="hidden justify-between gap-2 lg:flex">
                         <Link
-                            to="/dinosaur-info"
+                            to="/explorer"
                             className="rounded-full px-4 py-2 transition hover:bg-white/20"
                         >
                             Explore
