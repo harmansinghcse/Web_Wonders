@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import StatsSection from "../home_components/stat_section";
 
 export default function WelcomeHome() {
     const navigate = useNavigate();
@@ -7,39 +8,55 @@ export default function WelcomeHome() {
         <>
             {/* home-content */}
             <div className="mt-16 max-w-xl px-6 lg:mt-30 lg:px-20">
-                <h1 className="text-2xl font-bold text-[#d68c37] lg:text-3xl">
-                    Journey Back In Time
+                <h2 className="text-2xl font-semibold text-[#D8B56A] lg:text-3xl">
+                    Journey Back in Time
+                </h2>
+
+                <h1 className="mt-2 text-5xl font-black leading-none text-white lg:text-7xl">
+                    Explore the
                 </h1>
-                <h1 className="text-4xl font-bold text-white lg:text-5xl">
-                    EXPLORE THE
-                </h1>
-                <h1 className="text-4xl font-bold text-[#cc9401] lg:text-5xl">
-                    AGE OF DINOSAURS.
+
+                <h1 className="text-5xl font-black leading-none text-[#C9962A] lg:text-7xl">
+                    Age of Dinosaurs
                 </h1>
                 <div className="py-5 text-base text-white lg:text-xl">
-                    <p>
-                        Discover incredible dinosaurs, ancient fossils, and the
-                        fascinating stories of a world that lived millions of
-                        years ago.
+                    <p className="mt-8 max-w-xl text-lg leading-8 text-gray-200">
+                        Discover prehistoric giants, uncover ancient fossils,
+                        and travel through over
+                        <span className="font-semibold text-[#E7D3A7]">
+                            {" "}
+                            180 million years
+                        </span>{" "}
+                        of Earth's history.
                     </p>
                 </div>
 
                 <div className="pt-4">
-                    <div className="flex flex-col gap-4 lg:flex-row">
+                    <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+                        {/* Primary */}
                         <button
-                            className="w-full rounded-full bg-[#2f5031]/60 px-10 py-3 font-bold text-white lg:w-auto"
-                            onClick={() => {
-                                navigate("/timeline");
-                            }}
+                            onClick={() => navigate("/timeline")}
+                            className="group flex items-center justify-center rounded-full border border-[#D9B56A]/40 bg-[#36543E] px-8 py-4 font-semibold tracking-wide text-white shadow-xl shadow-black/30 transition-all duration-300 hover:-translate-y-1 hover:bg-[#44684D]"
                         >
-                            EXPLORE Timeline
+                            Explore Timeline
+                            <span className="ml-3 transition-transform duration-300 group-hover:translate-x-1">
+                                →
+                            </span>
                         </button>
-                        <button className="rounded-full bg-[#a18e4c]/80 px-10 py-2 font-bold text-[#264328]">
-                            PLAY QUIZ
+
+                        {/* Secondary */}
+                        <button className="group flex items-center justify-center rounded-full border border-[#D9B56A]/30 bg-[#8C7332] px-8 py-4 font-semibold tracking-wide text-white shadow-lg shadow-black/20 transition-all duration-300 hover:-translate-y-1 hover:bg-[#A7863D]">
+                            Play Quiz
+                            <span className="ml-3 transition-transform duration-300 group-hover:rotate-12">
+                                🦴
+                            </span>
                         </button>
                     </div>
                 </div>
             </div>
+            {/* <div className="mt-16 lg:mt-24">
+                <StatsSection />
+            </div> */}
         </>
     );
 }

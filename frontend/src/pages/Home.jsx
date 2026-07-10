@@ -9,7 +9,6 @@ function Home() {
                 <div className="pt-4">
                     <Navbar />
                     <WelcomeHome />
-                    <StatsSection />
                 </div>
             </div>
         </>
