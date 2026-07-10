@@ -10,24 +10,35 @@ export default function TimelineNavigator() {
 
     return (
         <>
-            <section className="relative min-h-screen overflow-hidden bg-[#0E120E]">
-                <nav className="absolute left-8 top-8 z-50 flex items-center gap-4 rounded-full border border-white/10 bg-black/25 px-5 py-3 backdrop-blur-xl">
-                    <button
-                        onClick={() => navigate("/")}
-                        className="group flex items-center gap-2 text-sm font-medium text-gray-300 transition-colors hover:text-white"
-                    >
-                        <span className="transition-transform duration-300 group-hover:-translate-x-1">
-                            ←
-                        </span>
-                        Home
-                    </button>
+            <section className="relative h-screen overflow-hidden bg-[#0E120E]">
+                <div className="relative z-50 mt-4 mb-6 flex w-full items-center justify-between">
+                    <div>
+                        <nav className="flex items-center gap-3 rounded-full border border-white/10 bg-black/25 px-4 py-2 backdrop-blur-xl md:gap-4 md:px-5 md:py-3">
+                            <button
+                                onClick={() => navigate("/")}
+                                className="group flex items-center gap-2 text-xs md:text-sm font-medium text-gray-300 transition-colors hover:text-white"
+                            >
+                                <span className="transition-transform duration-300 group-hover:-translate-x-1">
+                                    ←
+                                </span>
+                                Home
+                            </button>
 
-                    <div className="h-5 w-px bg-white/10" />
+                            <div className="h-5 w-px bg-white/10" />
 
-                    <span className="text-xs uppercase tracking-[0.25em] text-[#C9AA5B]">
-                        Geological Timeline
-                    </span>
-                </nav>
+                            <span className="text-xs uppercase tracking-[0.25em] text-[#C9AA5B]">
+                                Geological Timeline
+                            </span>
+                        </nav>
+                    </div>
+
+                    <div className="ml-auto rounded-full border border-[#C9AA5B]/20 bg-black/20 px-4 py-2 text-xs tracking-wide text-gray-400 backdrop-blur-xl">
+                        <span className="text-[#E7D3A7] font-medium">
+                            Timeline Note:
+                        </span>{" "}
+                        Ma = Million Years Ago
+                    </div>
+                </div>
                 {/* Background */}
                 <AnimatePresence mode="wait">
                     <motion.img
@@ -57,9 +68,9 @@ export default function TimelineNavigator() {
                 {/* Side vignette */}
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_35%,rgba(0,0,0,.6)_100%)]" />
 
-                <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-8">
+                <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col justify-center px-4 sm:px-6 lg:px-8">
                     {/* Hero */}
-                    <div className="grid grid-cols-[1.2fr_1fr] items-center gap-10 rounded-4xl border border-white/10 bg-white/5 p-10 backdrop-blur-xl shadow-[0_20px_80px_rgba(0,0,0,.45)]">
+                    <div className="grid grid-cols-1 items-center gap-8 rounded-4xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl shadow-[0_20px_80px_rgba(0,0,0,.45)] lg:grid-cols-[1.2fr_1fr] lg:gap-10 lg:p-10">
                         {/* Left */}
 
                         <AnimatePresence mode="wait">
@@ -77,6 +88,7 @@ export default function TimelineNavigator() {
                                     opacity: 0,
                                     y: -20,
                                 }}
+
                                 transition={{
                                     duration: 0.5,
                                 }}
@@ -100,7 +112,7 @@ export default function TimelineNavigator() {
                         </AnimatePresence>
 
                         {/* Right */}
-                        <div className="relative flex items-end justify-center">
+                        <div className="order-1 relative flex items-end justify-center lg:order-2">
                             {/* Golden ground glow */}
                             <div className="absolute bottom-6 h-24 w-72 rounded-full bg-[#C9AA5B]/20 blur-3xl" />
 
@@ -132,7 +144,7 @@ export default function TimelineNavigator() {
                     {/* Timeline */}
 
                     <div className="mt-10 rounded-[28px] border border-[#C9AA5B]/10 bg-black/30 p-10 backdrop-blur-xl shadow-[0_10px_50px_rgba(0,0,0,.35)]">
-                        <div className="flex justify-between text-sm text-gray-400">
+                        <div className="flex justify-between text-xs md:text-sm text-gray-400">
                             <span>{eras[0].start}</span>
                             <span>{eras[1].start}</span>
                             <span>{eras[2].start}</span>
@@ -205,7 +217,7 @@ export default function TimelineNavigator() {
                                     className="text-center"
                                 >
                                     <h3
-                                        className={`font-serif text-3xl transition-all ${
+                                        className={`font-serif md:text-3xl text-xl transition-all ${
                                             activeEra === index
                                                 ? "text-[#E7D3A7]"
                                                 : "text-gray-500"
@@ -214,8 +226,8 @@ export default function TimelineNavigator() {
                                         {era.name}
                                     </h3>
 
-                                    <p className="mt-2 text-sm text-gray-500">
-                                        {era.start} – {era.end}
+                                    <p className="mt-2 text-[10px] md:text-sm text-gray-500">
+                                        ({era.start} – {era.end})
                                     </p>
                                 </button>
                             ))}
