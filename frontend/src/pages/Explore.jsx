@@ -5,6 +5,7 @@ import ResultsHeader from "../components/explorer/ResultHeader";
 import DinosaurList from "../components/explorer/DinosaurList";
 import Pagination from "../components/explorer/Pagination";
 import { motion } from "framer-motion";
+import Navbar from "../components/home_components/hero/Navbar";
 
 import { useDebounce } from "use-debounce";
 
@@ -70,13 +71,18 @@ export default function Explorer() {
 
     return (
         <>
-            <ExplorerHero
-                search={search}
-                setSearch={setSearch}
-                filters={filters}
-                setFilters={setFilters}
-                setPage={setPage}
-            />
+            <header className="absolute top-6 left-1/2 z-999 w-full -translate-x-1/2 mb-10">
+                <Navbar />
+            </header>
+            <div className="pt-10">
+                <ExplorerHero
+                    search={search}
+                    setSearch={setSearch}
+                    filters={filters}
+                    setFilters={setFilters}
+                    setPage={setPage}
+                />
+            </div>
 
             <section className="bg-[#F7F5EF] py-16">
                 <div className="mx-auto max-w-7xl px-6">

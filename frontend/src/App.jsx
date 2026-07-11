@@ -6,7 +6,6 @@ import Home from "./pages/Home";
 import Explore from "./pages/Explore";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
-import InterestingFact from "./pages/interesting_fact";
 import DinosaurPage from "./pages/Dinosaur-page";
 import CreateDinosaur from "./pages/createDinosaur";
 import Profile from "./pages/profile";
@@ -19,7 +18,6 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/explore" element={<Explore />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/fact" element={<InterestingFact />} />
                 <Route path="/signup" element={<Signup />} />
 
                 <Route path="/profile" element={<Profile />} />

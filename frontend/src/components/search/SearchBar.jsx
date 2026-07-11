@@ -49,11 +49,31 @@ export default function SearchBar({
 
     return (
         <div className={`relative ${className}`}>
-            <div className="group flex items-center gap-3 rounded-full border border-white/10 bg-black/30 px-5 py-3 backdrop-blur-xl transition-all duration-300 hover:border-[#C9AA5B]/40 focus-within:border-[#C9AA5B] focus-within:shadow-[0_0_20px_rgba(201,170,91,.25)]">
+            <div
+                className={`
+        group flex h-12 items-center gap-3
+        rounded-full
+        bg-[#F3EEE3]
+        px-5
+        shadow-sm
+        transition-all duration-300
+        hover:bg-[#F7F3EB]
+        focus-within:bg-white
+        focus-within:shadow-md
+        outline-none
+        ring-0
+        border border-transparent
+        isolate
+        transform-gpu
+        ${className}
+    `}
+            >
                 <Search
                     size={18}
-                    className="text-gray-400 group-focus-within:text-[#C9AA5B]"
+                    className="text-[#36593D] transition-colors duration-300"
                 />
+
+                <div className="h-5 w-px bg-[#D8CDBA]" />
 
                 <input
                     type="text"
@@ -63,7 +83,21 @@ export default function SearchBar({
                         if (results.length > 0) setShowResults(true);
                     }}
                     placeholder={placeholder}
-                    className="w-56 bg-transparent text-white outline-none placeholder:text-gray-400"
+                    className="
+                        h-full
+                        flex-1
+                        bg-transparent
+                        text-sm
+                        font-medium
+                        text-[#2A2A2A]
+                        placeholder:text-[#8A8274]
+                        outline-none
+                        border-none
+                        ring-0
+                        focus:outline-none
+                        focus:ring-0
+                        focus:border-none
+                    "
                 />
             </div>
 

@@ -1,18 +1,15 @@
-import Navbar from "../components/home_components/navbar";
-import StatsSection from "../components/home_components/stat_section";
-import WelcomeHome from "../components/home_components/home-welcome";
+import Hero from "../components/home_components/hero/Hero";
+import CreateSection from "../components/home_components/create/CreateSection";
 
-function Home() {
+export default function Home() {
     return (
         <>
-            <div className="min-h-screen bg-[url('/mobile-home-page.png')] bg-cover bg-center bg-no-repeat lg:bg-[url('/jurrasic-home-bg.jpeg')]">
-                <div className="pt-4">
-                    <Navbar />
-                    <WelcomeHome />
-                </div>
-            </div>
+            <Hero />
+            <CreateSection />
+            {/* <TrendingSection />
+            <CreateSection />
+            <QuizSection />
+            <Footer /> */}
         </>
     );
 }
-
-export default Home;
