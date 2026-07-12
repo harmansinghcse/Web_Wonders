@@ -13,7 +13,7 @@ export default function ExplorerHero({
             {/* Overlay */}
             <div className="absolute inset-0 bg-black/70" />
 
-            <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center px-6 py-24">
+            <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center px-6 pt-40 pb-24">
                 {/* Heading */}
                 <h1 className="text-center text-5xl font-black uppercase tracking-wider text-white md:text-7xl">
                     Explore the

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 
+import Navbar from "../components/home_components/hero/Navbar";
 import DinoIntro from "../components/info-components/dinoIntro";
 import Fossil from "../components/info-components/fossil";
 import PhysicalFeatures from "../components/info-components/physicalFeatures";
@@ -40,12 +41,13 @@ const DinoPage = () => {
 
     return (
         <>
+            <Navbar />
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
             >
-                <div className="relative flex min-h-screen flex-col justify-end overflow-hidden bg-black font-sans">
+                <div className="relative flex min-h-screen flex-col justify-end overflow-hidden bg-black pt-28 font-sans">
                     {/* Background Image with Overlays */}
                     <div className="absolute inset-0 z-0">
                         <img
