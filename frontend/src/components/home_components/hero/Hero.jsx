@@ -1,5 +1,5 @@
 import HeroContent from "./HeroContent";
-import Navbar from "./Navbar";
+import Navbar from "./navbar";
 
 const heroImage = "/jurrasic-home-bg.jpeg";
 
