@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 
-import Navbar from "../components/home_components/hero/navbar";
+import Navbar from "../components/home_components/hero/Navbar";
 import DinoIntro from "../components/info-components/dinoIntro";
 import Fossil from "../components/info-components/fossil";
 import PhysicalFeatures from "../components/info-components/physicalFeatures";
