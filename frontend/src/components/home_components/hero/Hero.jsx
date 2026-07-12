@@ -17,10 +17,7 @@ export default function Hero() {
             <div className="absolute inset-0 bg-linear-to-r from-[#F8F6F1]/15 via-[#F8F6F1]/10 to-transparent" />
 
             {/* Soft Light */}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,#FFFFFF_0%,transparent_45%)] opacity-25" />
-
-            {/* Bottom fade into next section */}
-            {/* <div className="absolute inset-x-0 bottom-0 h-40 bg-linear-to-b from-transparent to-[#EFEAE0] sm:h-56" /> */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,#FFFFFF_0%,transparent_45%)] opacity-55" />
 
             {/* Content */}
             <div className="relative z-10 flex min-h-screen flex-col lg:h-full">
@@ -28,7 +25,7 @@ export default function Hero() {
                 <Navbar />
 
                 {/* Hero Content */}
-                <div className="relative mx-auto flex w-full max-w-7xl flex-1 items-center px-6 pt-32 pb-10 sm:px-8 sm:pt-40 lg:px-12 lg:pt-44">
+                <div className="relative mx-auto flex w-full max-w-7xl flex-1 items-center px-6 pt-32 pb-10 sm:px-8 sm:pt-40 lg:px-12 lg:pt-30">
                     <div className="flex-1">
                         <HeroContent />
                     </div>

@@ -5,12 +5,13 @@ export default function HeroContent() {
     return (
         <div className="max-w-2xl">
             {/* Label */}
-            <div className="mb-7 flex items-center gap-4">
-                <div className="h-px w-14 bg-[#746A57]" />
+            <div className="mb-6 flex items-center gap-4">
+                <div className="h-px w-14 bg-[#303030]" />
 
-                <p className="text-xs font-semibold uppercase tracking-[0.38em] text-[#655D52]">
+                <p className="text-xs font-semibold uppercase tracking-[0.38em] text-[#000000]">
                     Journey Back In Time
                 </p>
+                <div className="h-px w-14 bg-[#303030]" />
             </div>
 
             {/* Heading */}
@@ -19,7 +20,7 @@ export default function HeroContent() {
                     Explore the
                 </h1>
 
-                <h2 className="font-display text-5xl italic font-semibold leading-[1.15] tracking-[-0.03em] text-[#006f0f] sm:text-6xl lg:text-[6.2rem]">
+                <h2 className="font-display text-5xl italic font-semibold leading-[1.0] tracking-[-0.03em] text-[#006f0f] sm:text-6xl lg:text-[6.2rem]">
                     Age of Dinosaurs
                 </h2>
             </div>
