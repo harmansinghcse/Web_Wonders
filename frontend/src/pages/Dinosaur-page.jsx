@@ -47,7 +47,7 @@ const DinoPage = () => {
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
             >
-                <div className="relative flex min-h-screen flex-col justify-end overflow-hidden bg-black pt-28 font-sans">
+                <div className="relative flex min-h-screen flex-col justify-end overflow-hidden bg-black font-sans pt-36">
                     {/* Background Image with Overlays */}
                     <div className="absolute inset-0 z-0">
                         <img

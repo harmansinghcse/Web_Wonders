@@ -14,7 +14,7 @@ export default function Hero() {
             />
 
             {/* Overlay */}
-            <div className="absolute inset-0 bg-linear-to-r from-white/70 via-white/40 to-transparent sm:from-white/45 sm:via-white/25" />
+            <div className="absolute inset-0 bg-linear-to-r from-white/55 via-white/25 to-transparent sm:from-white/45 sm:via-white/15" />
 
             {/* Soft Light */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,#FFFFFF_0%,transparent_45%)] opacity-25" />
