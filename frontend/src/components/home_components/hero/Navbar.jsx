@@ -55,8 +55,8 @@ function Navbar() {
     return (
         <>
             <div className={menuOpen ? "hidden lg:block" : "block"}>
-                <header className="absolute top-6 left-1/2 z-50 w-full -translate-x-1/2 px-6">
-                    <nav className="mx-auto mt-6 flex h-18 w-[97%] max-w-400 items-center justify-between rounded-[28px] border border-[#E5DED1] bg-[#FCFBF7]/90 px-8 shadow-[0_12px_35px_rgba(0,0,0,0.08)] backdrop-blur-md transition-all duration-300">
+                <header className="absolute top-2 left-1/2 z-50 w-full -translate-x-1/2 px-6">
+                    <nav className="mx-auto flex h-18 w-[97%] max-w-400 items-center justify-between rounded-[28px] border border-[#E5DED1] bg-[#FCFBF7]/90 px-8 shadow-[0_12px_35px_rgba(0,0,0,0.08)] backdrop-blur-md transition-all duration-300">
                         <div className="flex items-center">
                             <Link to="/">
                                 <img

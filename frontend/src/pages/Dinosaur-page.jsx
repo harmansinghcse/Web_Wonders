@@ -10,6 +10,8 @@ import PhysicalFeatures from "../components/info-components/physicalFeatures";
 import TimelineStrat from "../components/info-components/TimlineStrat";
 import DietFact from "../components/info-components/DietFact";
 import QuickFacts from "../components/info-components/QuickFacts";
+import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -41,7 +43,13 @@ const DinoPage = () => {
 
     return (
         <>
-            <Navbar />
+            <Link
+                to="/"
+                className="fixed top-6 left-6 z-50 flex items-center gap-2 rounded-full bg-black/35 px-4 py-2 text-sm font-medium text-white backdrop-blur-md transition-all duration-300 hover:bg-black/55"
+            >
+                <ArrowLeft size={18} />
+                Home
+            </Link>
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
