@@ -43,13 +43,15 @@ const DinoPage = () => {
 
     return (
         <>
-            <Link
-                to="/"
-                className="fixed top-6 left-6 z-50 flex items-center gap-2 rounded-full bg-black/35 px-4 py-2 text-sm font-medium text-white backdrop-blur-md transition-all duration-300 hover:bg-black/55"
-            >
-                <ArrowLeft size={18} />
-                Home
-            </Link>
+            <div>
+                <Link
+                    to="/explore"
+                    className="fixed top-6 left-6 z-50 flex items-center gap-2 rounded-full bg-black/35 px-4 py-2 text-sm font-medium text-white backdrop-blur-md transition-all duration-300 hover:bg-black/55"
+                >
+                    <ArrowLeft size={18} />
+                    Explore
+                </Link>
+            </div>
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -61,7 +63,7 @@ const DinoPage = () => {
                         <img
                             src={dinosaur.images.heroBackground}
                             alt={dinosaur.name}
-                            className="h-full w-full object-cover opacity-70"
+                            className="h-full w-full object-top opacity-90 sm:object-bottom-right ob"
                         />
                         {/* Gradients to darken edges for text readability */}
                         <div className="absolute inset-0 bg-linear-to-r from-black/90 via-black/40 to-transparent"></div>

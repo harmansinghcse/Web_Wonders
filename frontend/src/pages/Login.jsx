@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { GoogleLogin } from "@react-oauth/google";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -116,7 +117,6 @@ function Login() {
                             transition
                             "
                         />
-
                         <input
                             type="password"
                             disabled={isLoading}
@@ -142,7 +142,6 @@ function Login() {
                             focus:ring-[#c4c09a]/40
                             transition"
                         />
-
                         <div className="flex w-full justify-between text-sm sm:text-base">
                             <div>
                                 <label className="flex items-center gap-2 text-white font-bold cursor-pointer select-none">
@@ -166,7 +165,6 @@ function Login() {
                                 </Link>
                             </div>
                         </div>
-
                         <button
                             type="submit"
                             disabled={isLoading}
@@ -174,7 +172,6 @@ function Login() {
                         >
                             LOGIN
                         </button>
-
                         <div className="flex items-center w-80 my-4">
                             <div className="flex-1 h-px bg-gray-400"></div>
 
@@ -185,13 +182,40 @@ function Login() {
                             <div className="flex-1 h-px bg-gray-400"></div>
                         </div>
 
-                        <button
-                            type="button"
-                            className=" bg-[#6b7368]/50 font-bold text-[#e4e4e4] text-xl rounded-2xl h-12 w-full"
-                        >
-                            Continue with Google
-                        </button>
+                        <GoogleLogin
+                            onSuccess={async (credentialResponse) => {
+                                try {
+                                    const response = await fetch(
+                                        `${API_URL}/api/users/google`,
+                                        {
+                                            method: "POST",
+                                            credentials: "include",
+                                            headers: {
+                                                "Content-Type":
+                                                    "application/json",
+                                            },
+                                            body: JSON.stringify({
+                                                token: credentialResponse.credential,
+                                            }),
+                                        },
+                                    );
 
+                                    const data = await response.json();
+
+                                    if (!response.ok) {
+                                        toast.error(data.message);
+                                        return;
+                                    }
+
+                                    await checkAuth(); // now correctly pulls from context
+                                    toast.success("Login Successful");
+                                    navigate("/");
+                                } catch (error) {
+                                    console.error(error);
+                                    toast.error("Something went wrong.");
+                                }
+                            }}
+                        />
                         <div>
                             <Link to="/signup" className="text-white font-bold">
                                 Don't have an account ? Sign up
