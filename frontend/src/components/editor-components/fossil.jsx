@@ -1,30 +1,22 @@
+import { useEditor } from "../../context/EditorContext";
 import EditableImage from "./generic/EditableImage";
 import EditableSection from "./generic/EditableSection";
 import EditableText from "./generic/EditableText";
 import EditableTextarea from "./generic/EditableTextarea";
 
-export default function Fossil({ about, fossil, setDinosaur, setFiles }) {
+export default function Fossil() {
+    const { dinosaur, updateDinosaur, updateFile } = useEditor();
+    const about = dinosaur.about;
+    const fossil = dinosaur.fossil;
+
     const handleAboutChange = (field, value) => {
-        setDinosaur((prev) => ({
-            ...prev,
-            about: {
-                ...prev.about,
-                [field]: value,
-            },
-        }));
+        updateDinosaur(`about.${field}`, value);
     };
 
     const handleParagraphChange = (index, value) => {
         const updatedParagraphs = [...about.paragraphs];
         updatedParagraphs[index] = value;
-
-        setDinosaur((prev) => ({
-            ...prev,
-            about: {
-                ...prev.about,
-                paragraphs: updatedParagraphs,
-            },
-        }));
+        updateDinosaur("about.paragraphs", updatedParagraphs);
     };
 
     const handleLocationChange = (value) => {
@@ -32,38 +24,16 @@ export default function Fossil({ about, fossil, setDinosaur, setFiles }) {
             .split(",")
             .map((location) => location.trim())
             .filter(Boolean);
-
-        setDinosaur((prev) => ({
-            ...prev,
-            fossil: {
-                ...prev.fossil,
-                locations,
-            },
-        }));
+        updateDinosaur("fossil.locations", locations);
     };
 
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
-
         if (!file) return;
 
-        // Store the real file
-        setFiles((prev) => ({
-            ...prev,
-            fossilImage: file,
-        }));
-
-        // Create preview
+        updateFile("fossilImage", file);
         const preview = URL.createObjectURL(file);
-
-        // Update preview in editor
-        setDinosaur((prev) => ({
-            ...prev,
-            fossil: {
-                ...prev.fossil,
-                image: preview,
-            },
-        }));
+        updateDinosaur("fossil.image", preview);
     };
 
     return (

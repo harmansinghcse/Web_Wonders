@@ -156,7 +156,7 @@ const PlayQuiz = () => {
                             )}
 
                             {/* Score Cards */}
-                            <div className="mt-8 grid gap-4 grid-cols-3">
+                            <div className="mt-8 grid gap-4 grid-cols-1 sm:grid-cols-3">
                                 <div className="rounded-2xl bg-amber-50/50 border border-amber-100 p-4">
                                     <div className="flex justify-center text-amber-600">
                                         <Target size={22} />

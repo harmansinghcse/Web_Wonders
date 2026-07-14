@@ -17,7 +17,7 @@ export default function EditProfileModal({ profile, setProfile, onClose }) {
         bio: profile.bio,
         avatar: profile.avatar,
     });
-        // Tracks the loading state while saving changes
+    // Tracks the loading state while saving changes
     const [loading, setLoading] = useState(false);
     // Updates the corresponding form field when the user types
     const handleChange = (e) => {
@@ -26,7 +26,7 @@ export default function EditProfileModal({ profile, setProfile, onClose }) {
             [e.target.name]: e.target.value,
         }));
     };
-// Handles profile update when the form is submitted
+    // Handles profile update when the form is submitted
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -49,15 +49,13 @@ export default function EditProfileModal({ profile, setProfile, onClose }) {
     };
 
     return (
-        // Background overlay for the modal
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-            {/* Edit profile modal */}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
             <div className="w-full max-w-lg rounded-3xl bg-[#12251C] p-8 shadow-2xl">
-                 {/* Modal heading */}
+                {/* Modal heading */}
                 <h2 className="mb-6 text-3xl font-bold text-white">
                     Edit Profile
                 </h2>
-                 {/* Profile edit form */}
+                {/* Profile edit form */}
                 <form onSubmit={handleSubmit} className="space-y-5">
                     {/* Name input */}
                     <div>
@@ -87,7 +85,7 @@ export default function EditProfileModal({ profile, setProfile, onClose }) {
                             className="w-full rounded-xl border border-white/10 bg-[#1A3025] px-4 py-3 text-white outline-none focus:border-[#E4C08D]"
                         />
                     </div>
-                     {/* Avatar URL input */}
+                    {/* Avatar URL input */}
                     <div>
                         <label className="mb-2 block text-sm text-gray-300">
                             Avatar URL
@@ -101,9 +99,9 @@ export default function EditProfileModal({ profile, setProfile, onClose }) {
                             className="w-full rounded-xl border border-white/10 bg-[#1A3025] px-4 py-3 text-white outline-none focus:border-[#E4C08D]"
                         />
                     </div>
-                      {/* Action buttons */}
+                    {/* Action buttons */}
                     <div className="flex justify-end gap-4 pt-4">
-                         {/* Close modal without saving */}
+                        {/* Close modal without saving */}
                         <button
                             type="button"
                             onClick={onClose}
@@ -111,7 +109,7 @@ export default function EditProfileModal({ profile, setProfile, onClose }) {
                         >
                             Cancel
                         </button>
-                         {/* Save profile changes */}
+                        {/* Save profile changes */}
                         <button
                             type="submit"
                             disabled={loading}
