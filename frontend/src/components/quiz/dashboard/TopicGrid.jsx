@@ -10,42 +10,22 @@ import { ArrowRight, Trophy, Clock3 } from "lucide-react";
 // TODO (Backend)
 // Replace with GET /quiz/topics
 
-const topics = [
-    {
-        title: "Fossils",
-        description: "Discover how ancient life is preserved through millions of years.",
-        image: fossils,
-        progress: 24,
-        lessons: 12,
-        level: "Beginner",
-    },
-    {
-        title: "Dinosaurs",
-        description: "Meet the incredible giants that once ruled the Earth.",
-        image: dinosaur,
-        progress: 58,
-        lessons: 18,
-        level: "Intermediate",
-    },
-    {
-        title: "Extinction",
-        description: "Learn what caused Earth's greatest extinction events.",
-        image: volcano,
-        progress: 12,
-        lessons: 10,
-        level: "Beginner",
-    },
-    {
-        title: "Evolution",
-        description: "Understand how prehistoric life evolved over time.",
-        image: evolution,
-        progress: 75,
-        lessons: 15,
-        level: "Advanced",
-    },
-];
+const getLocalImage = (slug) => {
+    switch (slug) {
+        case "fossils":
+            return fossils;
+        case "dinosaurs":
+            return dinosaur;
+        case "extinction":
+            return volcano;
+        case "evolution":
+            return evolution;
+        default:
+            return dinosaur;
+    }
+};
 
-const TopicGrid = () => {
+const TopicGrid = ({ topics = [] }) => {
     return (
         <section className="mx-auto mt-10 max-w-7xl px-6">
 
@@ -72,11 +52,19 @@ const TopicGrid = () => {
 
                 {/* Left */}
                 <div className="grid gap-6 md:grid-cols-2">
-                    {topics.map((topic) => (
-                        <TopicCard
-                            key={topic.title}
-                            {...topic}/>
-                    ))}
+                    {topics.length === 0 ? (
+                        <div className="col-span-2 flex h-48 items-center justify-center rounded-3xl border border-dashed border-[#E9E2D4] bg-white text-gray-400">
+                            No topics available.
+                        </div>
+                    ) : (
+                        topics.map((topic) => (
+                            <TopicCard
+                                key={topic.slug}
+                                {...topic}
+                                image={topic.bannerImage || getLocalImage(topic.slug)}
+                            />
+                        ))
+                    )}
                 </div>
 
                 {/* Right */}

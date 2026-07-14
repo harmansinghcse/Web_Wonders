@@ -11,6 +11,8 @@ import CreateDinosaur from "./pages/createDinosaur";
 import Profile from "./pages/profile";
 import Timeline from "./pages/Timeline";
 import Quiz from "./pages/Quiz";
+import TopicDetails from "./pages/TopicDetails";
+import PlayQuiz from "./pages/PlayQuiz";
 import Professor from "./pages/Professor";
 
 function App() {
@@ -30,6 +32,8 @@ function App() {
                 <Route path="/timeline" element={<Timeline />} />
                 <Route path="/explorer" element={<Explore />} />
                 <Route path="/quiz" element={<Quiz />} />
+                <Route path="/quiz/:slug" element={<TopicDetails />} />
+                <Route path="/quiz/:slug/play" element={<PlayQuiz />} />
                 <Route path="/professor" element={<Professor />} />
             </Routes>
         </BrowserRouter>

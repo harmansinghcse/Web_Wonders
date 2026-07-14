@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 // TODO (Backend)
 // Props will come from:
@@ -11,10 +12,12 @@ const TopicCard = ({
     progress,
     lessons,
     level,
+    slug,
 }) => {
     return (
-        <div
-            className="group overflow-hidden rounded-[28px] border border-[#E9E2D4] bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+        <Link
+            to={`/quiz/${slug}`}
+            className="group block overflow-hidden rounded-[28px] border border-[#E9E2D4] bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl text-left">
             {/* Image */}
             <div className="overflow-hidden bg-[#EDF3E7]">
                 <img src={image || "/quiz-assets/topic-placeholder.png"} alt={title} className="h-44 w-full object-cover transition-transform duration-500 group-hover:scale-105"/>
@@ -82,7 +85,7 @@ const TopicCard = ({
                     </button>
                 </div>
             </div>
-        </div>
+        </Link>
     );
 };
 
