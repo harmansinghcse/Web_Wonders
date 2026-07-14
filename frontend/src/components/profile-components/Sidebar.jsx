@@ -6,6 +6,7 @@ import {
     LogOut,
     Settings,
     X,
+    ShieldAlert,
 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
@@ -43,7 +44,21 @@ const links = [
 
 export default function Sidebar({ isOpen = false, onClose = () => {} }) {
     const navigate = useNavigate();
-    const { logout } = useAuth();
+    const { user, logout } = useAuth();
+    const isAdmin = user?.role === "admin";
+
+    const sidebarLinks = [
+        ...links,
+        ...(isAdmin
+            ? [
+                  {
+                      name: "Moderation",
+                      icon: ShieldAlert,
+                      path: "/admin/submissions",
+                  },
+              ]
+            : []),
+    ];
 
     const handleLogout = async () => {
         console.log("Logout clicked");
@@ -92,7 +107,7 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
 
                 {/* Navigation */}
                 <nav className="flex-1 space-y-2 overflow-y-auto p-6">
-                    {links.map((link) => {
+                    {sidebarLinks.map((link) => {
                         const Icon = link.icon;
 
                         return (

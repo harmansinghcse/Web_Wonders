@@ -12,16 +12,27 @@ import EditProfileModal from "../components/profile-components/EditProfileModal"
 
 export default function Profile() {
     const [profile, setProfile] = useState(null);
+    const [submissions, setSubmissions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     useEffect(() => {
-        const fetchProfile = async () => {
+        const fetchProfileData = async () => {
             try {
-                const data = await getProfile();
+                const [profileRes, subRes] = await Promise.all([
+                    getProfile(),
+                    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/dinosaur/my-submissions`, {
+                        credentials: "include",
+                    }),
+                ]);
 
-                setProfile(data.profile);
+                setProfile(profileRes.profile);
+
+                const subData = await subRes.json();
+                if (subRes.ok && subData.success) {
+                    setSubmissions(subData.data);
+                }
             } catch (error) {
                 console.error(error);
             } finally {
@@ -29,7 +40,7 @@ export default function Profile() {
             }
         };
 
-        fetchProfile();
+        fetchProfileData();
     }, []);
 
     if (loading) {
@@ -118,13 +129,13 @@ export default function Profile() {
 
                     <ContributionSection
                         contributions={{
-                            submitted: 0,
-                            approved: 0,
-                            pending: 0,
+                            submitted: submissions.length,
+                            approved: submissions.filter((s) => s.status === "approved").length,
+                            pending: submissions.filter((s) => s.status === "pending").length,
                         }}
                     />
 
-                    <ContributionTable contributions={[]} />
+                    <ContributionTable contributions={submissions} />
                 </div>
             </main>
         </div>

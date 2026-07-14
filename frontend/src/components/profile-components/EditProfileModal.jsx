@@ -37,7 +37,7 @@ export default function EditProfileModal({ profile, setProfile, onClose }) {
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
             <div className="w-full max-w-lg rounded-3xl bg-[#12251C] p-8 shadow-2xl">
                 <h2 className="mb-6 text-3xl font-bold text-white">
                     Edit Profile

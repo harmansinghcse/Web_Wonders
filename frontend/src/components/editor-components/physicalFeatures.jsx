@@ -1,59 +1,31 @@
-export default function PhysicalFeatures({
-    physicalFeatures,
-    setDinosaur,
-    setFiles,
-}) {
+import { useEditor } from "../../context/EditorContext";
+
+export default function PhysicalFeatures() {
+    const { dinosaur, updateDinosaur, updateFile } = useEditor();
+    const physicalFeatures = dinosaur.physicalFeatures;
+
     const handleChange = (index, field, value) => {
         const updatedFeatures = [...physicalFeatures.features];
-
         updatedFeatures[index] = {
             ...updatedFeatures[index],
             [field]: value,
         };
-
-        setDinosaur((prev) => ({
-            ...prev,
-            physicalFeatures: {
-                ...prev.physicalFeatures,
-                features: updatedFeatures,
-            },
-        }));
+        updateDinosaur("physicalFeatures.features", updatedFeatures);
     };
 
     const handleImageUpload = (index, e) => {
         const file = e.target.files[0];
-
         if (!file) return;
 
-        // Store the real file
-        setFiles((prev) => {
-            const updatedImages = [...prev.featureImages];
-            updatedImages[index] = file;
+        updateFile("featureImages", file, index);
 
-            return {
-                ...prev,
-                featureImages: updatedImages,
-            };
-        });
-
-        // Create preview
         const preview = URL.createObjectURL(file);
-
-        // Update preview in dinosaur state
         const updatedFeatures = [...physicalFeatures.features];
-
         updatedFeatures[index] = {
             ...updatedFeatures[index],
             image: preview,
         };
-
-        setDinosaur((prev) => ({
-            ...prev,
-            physicalFeatures: {
-                ...prev.physicalFeatures,
-                features: updatedFeatures,
-            },
-        }));
+        updateDinosaur("physicalFeatures.features", updatedFeatures);
     };
 
     return (

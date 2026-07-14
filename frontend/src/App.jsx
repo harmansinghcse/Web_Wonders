@@ -14,6 +14,7 @@ import Quiz from "./pages/Quiz";
 import TopicDetails from "./pages/TopicDetails";
 import PlayQuiz from "./pages/PlayQuiz";
 import Professor from "./pages/Professor";
+import AdminSubmissions from "./pages/AdminSubmissions";
 
 function App() {
     return (
@@ -25,6 +26,7 @@ function App() {
                 <Route path="/signup" element={<Signup />} />
 
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/admin/submissions" element={<AdminSubmissions />} />
 
                 {/* Dynamic dinosaur page */}
                 <Route path="/dinosaur/:slug" element={<DinosaurPage />} />
