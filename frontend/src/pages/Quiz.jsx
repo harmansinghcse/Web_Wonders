@@ -1,4 +1,7 @@
 import Navbar from "../components/home_components/hero/Navbar";
+import DashboardHero from "../components/quiz/dashboard/DashboardHero";
+import StatsCards from "../components/quiz/dashboard/StatsCards";
+import TopicGrid from "../components/quiz/dashboard/TopicGrid";
 
 const Quiz = () => {
     return (
@@ -6,7 +9,9 @@ const Quiz = () => {
             <Navbar/>
 
             <main className="min-h-screen bg-[#F8F5EF] pt-24">
-                 {/* Dashboard Components will go here */}
+                <DashboardHero/>
+                <StatsCards/>
+                <TopicGrid/>
             </main>
         </>
     );
