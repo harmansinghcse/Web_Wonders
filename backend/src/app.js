@@ -9,6 +9,7 @@ const userRoutes = require("./routes/userRoutes");
 const errorHandler = require("./middleware/errorMiddleware");
 const profileRoutes = require("./routes/profile.routes");
 const rossRoutes = require("./routes/rossRoutes");
+const quizRoutes = require("./routes/quizRoutes");
 
 // allowed origins
 const allowedOrigins = [
@@ -18,12 +19,14 @@ const allowedOrigins = [
 
 app.use(express.json());
 
+app.use(cookieParser());
 app.use(
     cors({
         origin(origin, callback) {
             if (
                 !origin ||
                 allowedOrigins.includes(origin) ||
+                origin.startsWith("http://localhost:") ||
                 origin.endsWith(".vercel.app")
             ) {
                 callback(null, true);
@@ -34,7 +37,7 @@ app.use(
         credentials: true,
     }),
 );
-app.use(cookieParser());
+app.use("/api/quiz", quizRoutes);
 app.set("query parser", "extended");
 app.use("/api/dinosaur", dinosaurRoutes);
 app.use("/api/users", userRoutes);

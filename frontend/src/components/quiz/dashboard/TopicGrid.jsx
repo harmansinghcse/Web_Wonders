@@ -10,49 +10,24 @@ import { ArrowRight, Trophy, Clock3 } from "lucide-react";
 // TODO (Backend)
 // Replace with GET /quiz/topics
 
-const topics = [
-    {
-        slug: "fossils",
-        title: "Fossils",
-        description: "Discover how ancient life is preserved through millions of years.",
-        image: fossils,
-        progress: 24,
-        lessons: 12,
-        level: "Beginner",
-    },
-    {
-        slug: "dinosaurs",
-        title: "Dinosaurs",
-        description: "Meet the incredible giants that once ruled the Earth.",
-        image: dinosaur,
-        progress: 58,
-        lessons: 18,
-        level: "Intermediate",
-    },
-    {
-        slug: "extinction",
-        title: "Extinction",
-        description: "Learn what caused Earth's greatest extinction events.",
-        image: volcano,
-        progress: 12,
-        lessons: 10,
-        level: "Beginner",
-    },
-    {
-        slug: "evolution",
-        title: "Evolution",
-        description: "Understand how prehistoric life evolved over time.",
-        image: evolution,
-        progress: 75,
-        lessons: 15,
-        level: "Advanced",
-    },
-];
+const getLocalImage = (slug) => {
+    switch (slug) {
+        case "fossils":
+            return fossils;
+        case "dinosaurs":
+            return dinosaur;
+        case "extinction":
+            return volcano;
+        case "evolution":
+            return evolution;
+        default:
+            return dinosaur;
+    }
+};
 
-const TopicGrid = () => {
+const TopicGrid = ({ topics = [] }) => {
     return (
         <section className="mx-auto mt-10 max-w-7xl px-6">
-
             {/* Heading */}
             <div className="mb-6 flex items-center justify-between">
                 <div>
@@ -73,14 +48,24 @@ const TopicGrid = () => {
 
             {/* Grid */}
             <div className="grid gap-6 lg:grid-cols-[3fr_1.2fr]">
-
                 {/* Left */}
                 <div className="grid gap-6 md:grid-cols-2">
-                    {topics.map((topic) => (
-                        <TopicCard
-                            key={topic.title}
-                            {...topic}/>
-                    ))}
+                    {topics.length === 0 ? (
+                        <div className="col-span-2 flex h-48 items-center justify-center rounded-3xl border border-dashed border-[#E9E2D4] bg-white text-gray-400">
+                            No topics available.
+                        </div>
+                    ) : (
+                        topics.map((topic) => (
+                            <TopicCard
+                                key={topic.slug}
+                                {...topic}
+                                image={
+                                    topic.bannerImage ||
+                                    getLocalImage(topic.slug)
+                                }
+                            />
+                        ))
+                    )}
                 </div>
 
                 {/* Right */}
@@ -99,15 +84,12 @@ const TopicGrid = () => {
 
                     <div className="mt-8 space-y-4">
                         <div className="flex items-center gap-3">
-                            <Clock3 size={20} className="text-[#47613F]"/>
+                            <Clock3 size={20} className="text-[#47613F]" />
                             <span>5 Questions</span>
                         </div>
 
                         <div className="flex items-center gap-3">
-                            <Trophy
-                                size={20}
-                                className="text-[#47613F]"
-                            />
+                            <Trophy size={20} className="text-[#47613F]" />
                             <span>Reward +50 DNA</span>
                         </div>
                     </div>
