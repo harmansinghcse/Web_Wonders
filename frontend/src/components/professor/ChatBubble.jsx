@@ -1,11 +1,22 @@
+/**
+ * --------------------------------------------
+ * Component: ChatBubble
+ * Purpose:
+ * Displays an individual chat message in the
+ * conversation. It supports both user and
+ * assistant messages, along with a typing
+ * animation and message timestamp.
+ * --------------------------------------------
+ */
 const ChatBubble = ({
     role = "assistant",
     message,
     time,
     isTyping = false,
 }) => {
+    // Determines whether the message belongs to the user
     const isUser = role === "user";
-
+  // Formats the message timestamp or uses the current time if unavailable
     const formattedTime =
         time ??
         new Date().toLocaleTimeString([], {
@@ -14,11 +25,12 @@ const ChatBubble = ({
         });
 
     return (
+         // Chat bubble container
         <div
             className={`flex gap-4 ${
                 isUser ? "justify-end items-end" : "justify-start items-start"
             }`}
-        >
+        > {/* Assistant avatar */}
             {!isUser && (
                 <img
                     src="/ross-avatar.png"
@@ -26,14 +38,14 @@ const ChatBubble = ({
                     className="h-16 w-16 shrink-0 rounded-full border-2 border-[#B8D768] object-cover shadow-md"
                 />
             )}
-
+            {/* Message bubble */}
             <div
                 className={`relative max-w-[75%] border px-8 py-6 shadow-sm ${
                     isUser
                         ? "rounded-[28px] rounded-tr-lg border-[#D2DEAA] bg-[#DDE8B8]"
                         : "rounded-[28px] rounded-tl-lg border-[#ECE8D9] bg-white"
                 }`}
-            >
+            >{/* Display typing animation or message text */}
                 {isTyping ? (
                     <div className="flex gap-2 py-2">
                         <span className="h-2 w-2 animate-bounce rounded-full bg-gray-400"></span>
@@ -45,10 +57,11 @@ const ChatBubble = ({
                         {message}
                     </p>
                 )}
-
+                {/* Message timestamp and delivery status */}
                 <div className="mt-5 flex items-center justify-end gap-2 text-xs text-gray-400">
+                     {/* Time when the message was sent */}
                     <span>{formattedTime}</span>
-
+                    {/* Read indicator for user messages */}
                     {isUser && (
                         <span className="font-semibold text-[#6C8E4E]">✓✓</span>
                     )}
