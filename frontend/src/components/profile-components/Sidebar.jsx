@@ -12,7 +12,18 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 import { NavLink } from "react-router-dom";
+/**
+ * --------------------------------------------
+ * Component: Sidebar
+ * Purpose:
+ * Displays the application's navigation menu,
+ * including links to different pages and a
+ * logout option. It also supports responsive
+ * behavior for mobile devices.
+ * --------------------------------------------
+ */
 
+// Navigation links displayed in the sidebar
 const links = [
     {
         name: "Home",
@@ -44,7 +55,7 @@ const links = [
 export default function Sidebar({ isOpen = false, onClose = () => {} }) {
     const navigate = useNavigate();
     const { logout } = useAuth();
-
+    // Handles user logout and redirects to the home page
     const handleLogout = async () => {
         console.log("Logout clicked");
 
@@ -64,7 +75,7 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
                     className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
                 />
             )}
-
+            {/* Sidebar container */}
             <aside
                 className={`fixed inset-y-0 left-0 z-50 flex h-screen w-72 flex-col border-r border-white/10 bg-[#0B1A13] transition-transform duration-300 lg:sticky lg:top-0 lg:translate-x-0 ${
                     isOpen ? "translate-x-0" : "-translate-x-full"
