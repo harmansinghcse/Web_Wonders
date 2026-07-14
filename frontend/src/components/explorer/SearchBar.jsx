@@ -31,7 +31,7 @@ export default function SearchBar({
                     focus:ring-[#47613F]/15
                 "
             />
-
+            {/*search button */}
             <button
                 type="button"
                 className="
