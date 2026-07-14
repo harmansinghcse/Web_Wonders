@@ -1,27 +1,17 @@
 import { useState } from "react";
-import Navbar from "../components/home_components/hero/Navbar";
-import ProfessorHeader from "../components/professor/ProfessorHeader";
-import ChatArea from "../components/professor/ChatArea";
-import ChatInput from "../components/professor/ChatInput";
-import PromptChips from "../components/professor/PromptChips";
-import FloatingButton from "../components/professor/FloatingButton";
-import { chatWithRoss } from "../services/rossService"; // adjust path
+import ProfessorHeader from "./ProfessorHeader";
+import ChatArea from "./ChatArea";
+import PromptChips from "./PromptChips";
+import ChatInput from "./ChatInput";
+import FloatingButton from "./FloatingButton";
+import professorMessages from "../../data/professorMessages";
+import { chatWithRoss } from "../../services/rossService";
 
 const timeNow = () =>
     new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
-const initialMessages = [
-    {
-        id: 1,
-        type: "assistant",
-        message:
-            "Hey there! I'm Professor Ross 🦖 Ask me anything about dinosaurs, fossils, or extinction events!",
-        time: timeNow(),
-    },
-];
-
-const Professor = () => {
-    const [messages, setMessages] = useState(initialMessages);
+const ProfessorChat = () => {
+    const [messages, setMessages] = useState(professorMessages);
     const [loading, setLoading] = useState(false);
 
     const handleSend = async (text) => {
@@ -62,17 +52,14 @@ const Professor = () => {
     };
 
     return (
-        <>
-            <Navbar />
-            <main className="min-h-screen bg-[#F7F6F1] pt-24">
-                <ProfessorHeader />
-                <ChatArea messages={messages} loading={loading} />
-                <PromptChips onSelect={handleSend} />
-                <ChatInput onSend={handleSend} loading={loading} />
-                <FloatingButton />
-            </main>
-        </>
+        <div>
+            <ProfessorHeader />
+            <ChatArea messages={messages} loading={loading} />
+            <PromptChips onSelect={handleSend} />
+            <ChatInput onSend={handleSend} loading={loading} />
+            <FloatingButton />
+        </div>
     );
 };
 
-export default Professor;
+export default ProfessorChat;

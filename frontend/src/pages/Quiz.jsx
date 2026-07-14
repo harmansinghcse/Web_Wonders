@@ -1,15 +1,15 @@
-const quiz_bg = "./quiz-bg.png";
 import Navbar from "../components/home_components/hero/Navbar";
 
-export default function Quiz() {
+const Quiz = () => {
     return (
-        <div className="relative min-h-screen overflow-hidden bg-white lg:h-screen">
-            <Navbar />
-            <img
-                src={quiz_bg}
-                alt="Quiz Background"
-                className="absolute inset-0 h-full w-full object-cover object-[80%_top] sm:object-top"
-            />
-        </div>
+        <>
+            <Navbar/>
+
+            <main className="min-h-screen bg-[#F8F5EF] pt-24">
+                 {/* Dashboard Components will go here */}
+            </main>
+        </>
     );
-}
+};
+
+export default Quiz;
