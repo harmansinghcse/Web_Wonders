@@ -15,6 +15,7 @@ export default function SearchBar({
     placeholder = "Search dinosaurs...",
 }) {
     return (
+
         <div className="relative mx-auto w-full max-w-5xl">
             {/*searchbar at home page */}
             <input
