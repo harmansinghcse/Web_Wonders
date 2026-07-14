@@ -1,6 +1,7 @@
 export default function EditorWelcome({ showWelcome, setShowWelcome }) {
     return (
         <>
+            {/*Create your own dino section */}
             {showWelcome && (
                 <div className="fixed inset-0 z-999 flex items-center justify-center bg-black/60 backdrop-blur-sm">
                     <div className="mx-6 w-full max-w-xl rounded-2xl border border-[#C6A87C]/30 bg-[#1B1B1B] p-8 shadow-2xl">

@@ -17,6 +17,7 @@ export default function BasicInfo({ dinosaur, setDinosaur }) {
     };
 
     return (
+        //Basic info of dino
         <EditableSection title="Basic Information">
             <section className="border-b border-gray-200 bg-white py-12">
                 <div className="mx-auto max-w-7xl px-6">

@@ -15,36 +15,42 @@ export default function QuickFacts({ stats, setDinosaur }) {
     };
 
     const quickFacts = [
-        {
+        //length
+        {   
             key: "length",
             icon: <Ruler size={32} strokeWidth={1.5} />,
             title: "LENGTH",
             value: stats.length,
         },
+        //weight
         {
             key: "weight",
             icon: <Weight size={32} strokeWidth={1.5} />,
             title: "WEIGHT",
             value: stats.weight,
         },
+        //diet
         {
             key: "diet",
             icon: <Leaf size={32} strokeWidth={1.5} />,
             title: "DIET",
             value: stats.diet,
         },
+        //period
         {
             key: "period",
             icon: <CalendarDays size={32} strokeWidth={1.5} />,
             title: "PERIOD",
             value: stats.period,
         },
+        //location
         {
             key: "location",
             icon: <Globe size={32} strokeWidth={1.5} />,
             title: "LOCATION",
             value: stats.location,
         },
+        //speed
         {
             key: "speed",
             icon: <Gauge size={32} strokeWidth={1.5} />,
@@ -65,7 +71,7 @@ export default function QuickFacts({ stats, setDinosaur }) {
                         </h3>
                     </div>
 
-                    {/* Stats */}
+                    {/* Stat */}
                     <div className="grid grow grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
                         {quickFacts.map((fact, index) => (
                             <div

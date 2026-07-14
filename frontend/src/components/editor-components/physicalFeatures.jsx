@@ -57,6 +57,7 @@ export default function PhysicalFeatures({
     };
 
     return (
+        //physical features 
         <div className="bg-white py-20">
             <div className="mx-auto max-w-7xl px-6">
                 <h2 className="mb-14 text-5xl font-bold tracking-wide text-[#222] uppercase">

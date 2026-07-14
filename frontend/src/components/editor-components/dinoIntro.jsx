@@ -15,6 +15,7 @@ export default function DinoIntro({ hero, setDinosaur }) {
 
     return (
         <EditableSection title="Hero">
+            {/*Her osection of dino info*/}
             <div className="relative z-10 mx-auto mt-24 flex w-full max-w-7xl grow flex-col justify-center px-8 md:px-16">
                 <div className="max-w-2xl">
                     <EditableText

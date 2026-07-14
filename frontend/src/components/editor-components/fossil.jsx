@@ -67,6 +67,7 @@ export default function Fossil({ about, fossil, setDinosaur, setFiles }) {
     };
 
     return (
+        //foccile record
         <EditableSection title="Fossil Record">
             <div className="bg-white py-20">
                 <div className="mx-auto max-w-7xl px-6 lg:px-12">
