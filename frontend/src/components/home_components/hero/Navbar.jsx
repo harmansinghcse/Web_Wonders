@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Menu, Search, X, Bell } from "lucide-react";
 import UserMenu from "../UserMenu";
 import SearchBar from "../../search/SearchBar";
-import { Home, Compass, Clock3, PlusSquare, CircleHelp } from "lucide-react";
+import { Home, Compass, Clock3, PlusSquare, CircleHelp, GraduationCap} from "lucide-react";
 import NavbarLink from "./NavbarLinks";
 
 function Navbar() {
@@ -50,6 +50,13 @@ function Navbar() {
             label: "Create Dinosaur",
             desc: "Contribute a new species",
         },
+
+        {
+            to: "/professor",
+            icon: GraduationCap,
+            label: "Meet Professor Ross",
+            desc: "Learn from the expert",
+        }
     ];
 
     return (
@@ -139,6 +146,10 @@ function Navbar() {
 
                             <NavbarLink to="/quiz" icon={CircleHelp}>
                                 Quiz
+                            </NavbarLink>
+
+                            <NavbarLink to="/professor" icon={GraduationCap}>
+                                Meet Professor Ross
                             </NavbarLink>
                         </div>
 
