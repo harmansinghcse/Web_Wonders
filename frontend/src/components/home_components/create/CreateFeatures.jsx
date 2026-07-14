@@ -16,6 +16,7 @@ export default function CreateFeatures() {
                     className="group flex items-center gap-3 rounded-2xl border border-transparent px-2 py-1.5 transition-all duration-300 hover:border-[#36593D]/15 hover:bg-white/60 sm:flex-col sm:items-start sm:gap-2 sm:px-3 sm:py-2"
                 >
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#36593D]/10 transition-all duration-300 group-hover:scale-110 group-hover:bg-[#36593D]">
+                        {* create icon *}
                         <Icon
                             size={18}
                             className="text-[#36593D] transition-colors duration-300 group-hover:text-white"
