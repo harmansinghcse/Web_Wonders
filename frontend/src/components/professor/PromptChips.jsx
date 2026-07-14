@@ -1,3 +1,14 @@
+/**
+ * --------------------------------------------
+ * Component: PromptChips
+ * Purpose:
+ * Displays a collection of predefined prompt
+ * buttons that help users quickly start a
+ * conversation with Professor Ross.
+ * --------------------------------------------
+ */
+
+// Predefined prompts displayed as quick action buttons
 const prompts = [
     "🦖 Fun Facts",
     "🦴 Fossils",
@@ -8,7 +19,9 @@ const prompts = [
 
 const PromptChips = ({ onSelect }) => {
     return (
+        // Prompt chips container
         <div className="mx-auto mt-4 mb-16 flex w-[95%] max-w-5xl flex-wrap gap-3">
+            {/* Render all predefined prompt buttons */}
             {prompts.map((prompt) => (
                 <button
                     key={prompt}
