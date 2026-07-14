@@ -63,7 +63,7 @@ const DinoPage = () => {
                         <img
                             src={dinosaur.images.heroBackground}
                             alt={dinosaur.name}
-                            className="h-full w-full object-top opacity-90 sm:object-bottom-right ob"
+                            className="h-full w-full object-cover object-right sm:object-center opacity-90"
                         />
                         {/* Gradients to darken edges for text readability */}
                         <div className="absolute inset-0 bg-linear-to-r from-black/90 via-black/40 to-transparent"></div>

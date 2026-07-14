@@ -39,7 +39,7 @@ const card = {
 
 export default function DietFact({ diet }) {
     return (
-        <section className="grid grid-cols-1 border-t border-[#D8D2C5] bg-white px-14 py-12 md:grid-cols-2">
+        <section className="grid grid-cols-1 border-t border-[#D8D2C5] bg-white px-6 md:px-14 py-12 md:grid-cols-2">
             {/* Left */}
             <motion.div
                 variants={left}
@@ -91,7 +91,7 @@ export default function DietFact({ diet }) {
                 viewport={{ once: true, amount: 0.3 }}
                 className="p-8 md:p-12"
             >
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {diet.facts.map((fact) => (
                         <motion.div
                             key={fact.title}

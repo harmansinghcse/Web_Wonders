@@ -42,7 +42,7 @@ export default function DinoIntro({ hero }) {
 
                 <motion.h1
                     variants={item}
-                    className="mb-2 text-5xl font-bold leading-[1.1] tracking-tight text-white md:text-[5.5rem]"
+                    className="mb-2 text-4xl sm:text-5xl md:text-7xl lg:text-[5.5rem] font-bold leading-[1.1] tracking-tight text-white"
                 >
                     {hero.title}
                     <br />
