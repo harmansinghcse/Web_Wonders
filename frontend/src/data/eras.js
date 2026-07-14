@@ -3,35 +3,30 @@ export const eras = [
         id: "triassic",
         name: "Triassic",
         tagline: "Dawn of Dinosaurs",
-        description: "The first dinosaurs appeared...",
+        description: "The first dinosaurs appeared during the Triassic period, rising from the ashes of Earth's greatest extinction event. The supercontinent Pangaea began to break apart, creating new climates and ecosystems that allowed early dinosaurs and mammals to emerge.",
         start: "252 Ma",
         end: "201 Ma",
-
-        background: "trissiac-bg.png",
-        dinosaur: "trissiac-dino.png",
+        background: "/triassic-bg.webp",
+        dinosaur: "/triassic-dino.webp",
     },
-
     {
         id: "jurassic",
         name: "Jurassic",
         tagline: "Age of Giants",
-        description: "Dense forests covered the Earth...",
+        description: "Dense, lush conifer forests covered the Earth during the Jurassic period. Warm, humid climates allowed giant sauropods like Brachiosaurus and ferocious predators like Allosaurus to dominate the land, while pterosaurs ruled the skies.",
         start: "201 Ma",
         end: "145 Ma",
-
-        background: "jurassic-bg.png",
-        dinosaur: "jurassic-dino.png",
+        background: "/jurassic-bg.webp",
+        dinosaur: "/jurassic-dino.webp",
     },
-
     {
         id: "cretaceous",
         name: "Cretaceous",
         tagline: "The Final Kingdom",
-        description: "Flowering plants spread...",
+        description: "Flowering plants spread and dinosaurs reached their evolutionary peak during the Cretaceous period. Giant herbivores like Triceratops fed on new plant life, while the legendary Tyrannosaurus Rex ruled as the ultimate apex predator before the asteroid impact.",
         start: "145 Ma",
         end: "66 Ma",
-
-        background: "Cretaceous-bg.png",
-        dinosaur: "trex-dino.png",
+        background: "/cretaceous-bg.webp",
+        dinosaur: "/trex-dino.webp",
     },
 ];
