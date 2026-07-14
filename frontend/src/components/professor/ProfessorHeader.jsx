@@ -1,3 +1,13 @@
+/**
+ * --------------------------------------------
+ * Component: ProfessorHeader
+ * Purpose:
+ * Displays the header section of the
+ * Professor Ross chat page, including
+ * the avatar, introduction, and online
+ * status of the AI assistant.
+ * --------------------------------------------
+ */
 const ProfessorHeader = () => {
   return (
     <section className="relative mx-auto mt-6 w-[95%] max-w-7xl overflow-hidden rounded-[28px] bg-gradient-to-r from-[#23412F] via-[#2E543B] to-[#3A6445] shadow-xl">
