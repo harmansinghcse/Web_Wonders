@@ -7,13 +7,7 @@ import TopicFooterCTA from "../components/quiz/topic/TopicFooterCTA";
 
 // TODO (Backend)
 //
-// This page should read the topic slug from the URL.
-//
-// Example:
-//
-// /quiz/topic/fossils
-//
-// Later:
+// Read slug using:
 //
 // const { slug } = useParams();
 //
@@ -21,7 +15,15 @@ import TopicFooterCTA from "../components/quiz/topic/TopicFooterCTA";
 //
 // GET /api/quiz/topics/:slug
 //
-// Then pass the response to all child components.
+// Examples:
+// /quiz/topic/fossils
+// /quiz/topic/dinosaurs
+// /quiz/topic/evolution
+//
+// Pass the response to:
+// <TopicHero />
+// <DifficultyGrid />
+// <ProfessorTip />
 
 const QuizTopic = () => {
     return (
