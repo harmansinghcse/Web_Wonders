@@ -1,7 +1,4 @@
-import { useState } from "react";
 import AnswerOption from "./AnswerOption";
-
-import fossilImage from "../../../assets/quiz-assets/topic-fossils.png";
 
 // TODO (Backend)
 //
@@ -15,21 +12,12 @@ import fossilImage from "../../../assets/quiz-assets/topic-fossils.png";
 //   options
 // }
 
-const QuestionCard = () => {
-    const [selectedOption, setSelectedOption] = useState(null);
-
-    const question = {
-        id: 1,
-        text: "Which fossil type preserves insects trapped inside tree resin?",
-        image: fossilImage,
-        options: [
-            "Amber Fossil",
-            "Trace Fossil",
-            "Cast Fossil",
-            "Mold Fossil",
-        ],
-    };
-
+const QuestionCard = ({
+    question,
+    selectedOption,
+    onSelect,
+}) => {
+    
     return (
         <section className="mx-auto mt-8 max-w-5xl px-6">
             <div className="rounded-[30px] border border-[#E7DDC8] bg-white p-8 shadow-sm">
@@ -55,7 +43,7 @@ const QuestionCard = () => {
                             index={index}
                             text={option}
                             selected={selectedOption === index}
-                            onClick={() => setSelectedOption(index)}
+                            onClick={() => onSelect(index)}
                         />
 
                     ))}

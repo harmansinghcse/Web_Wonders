@@ -3,11 +3,13 @@ import { useState } from "react";
 
 // TODO (Backend)
 //
-// Replace the static hint with:
+// Hint comes from:
 //
 // question.hint
+//
+// Passed from QuizPlay.jsx
 
-const HintCard = () => {
+const HintCard = ({ hint }) => {
     const [showHint, setShowHint] = useState(false);
 
     return (
@@ -44,7 +46,7 @@ const HintCard = () => {
 
                     <div className="mt-6 rounded-2xl bg-[#F4F8EF] p-5">
                         <p className="leading-7 text-[#47613F]">
-                            💡 Think about fossils that preserve organisms inside tree resin.
+                            💡 {hint}
                         </p>
                     </div>
                 )}
