@@ -7,6 +7,7 @@ export default function SearchBar({
 }) {
     return (
         <div className="relative mx-auto w-full max-w-5xl">
+            {/*input field at search area */}
             <input
                 type="text"
                 value={value}
