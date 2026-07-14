@@ -7,16 +7,18 @@ const ProfessorHeader = () => {
 
       <div className="relative flex items-center gap-6 px-10 py-8">
         {/* Avatar */}
-        <img src="/ross-avatar.png" alt="Professor Rex" className="h-24 w-24 rounded-full border-4 border-[#B8D768] object-cover shadow-lg"/>
+        <img src="/ross-avatar.png" alt="Professor Rex" className="h-24 w-24 rounded-full border-4 border-[#B8D768] object-cover shadow-lg transition duration-300 hover:scale-105"/>
 
         {/* Content */}
         <div>
           <h1 className="text-5xl font-bold text-white">
-            Professor Rex
+            Professor Ross
           </h1>
 
-          <p className="mt-1 text-2xl italic text-[#B8D768]">
-            Your AI Paleontologist
+          <p className="mt-3 max-w-xl text-sm leading-6 text-[#DCE7D5]">
+            Explore the prehistoric world with your AI paleontologist.
+            Ask questions about dinosaurs, fossils, extinction events,
+            evolution and ancient ecosystems.
           </p>
 
           <div className="mt-3 flex items-center gap-3">
