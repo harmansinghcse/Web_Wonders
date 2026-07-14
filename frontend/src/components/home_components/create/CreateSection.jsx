@@ -10,7 +10,7 @@ export default function CreateSection() {
 
     return (
         <section className="relative overflow-hidden bg-[#EFEAE0] px-6 py-20 sm:px-8 lg:px-12">
-            {/* Back-ground */}
+            {/* Background */}
             <img
                 src={createBg}
                 alt=""
