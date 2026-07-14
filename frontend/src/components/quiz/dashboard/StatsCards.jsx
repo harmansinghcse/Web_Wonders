@@ -3,29 +3,29 @@ import { Flame, Dna, Target, BookOpen } from "lucide-react";
 // TODO (Backend)
 // Replace these values with GET /quiz/dashboard response
 
-const StatsCards = () => {
+const StatsCards = ({ user }) => {
     const stats = [
         {
             icon: <Flame className="text-orange-500" size={28} />,
-            value: "12",
+            value: user?.streak ?? 0,
             label: "Day Streak",
             bg: "bg-orange-100",
         },
         {
             icon: <Dna className="text-[#47613F]" size={28} />,
-            value: "1250",
+            value: user?.dnaPoints ?? 0,
             label: "DNA Points",
             bg: "bg-green-100",
         },
         {
             icon: <Target className="text-red-500" size={28} />,
-            value: "82%",
+            value: user?.accuracy !== undefined ? `${user.accuracy}%` : "0%",
             label: "Accuracy",
             bg: "bg-red-100",
         },
         {
             icon: <BookOpen className="text-blue-500" size={28} />,
-            value: "87",
+            value: user?.questionsSolved ?? 0,
             label: "Questions Solved",
             bg: "bg-blue-100",
         },

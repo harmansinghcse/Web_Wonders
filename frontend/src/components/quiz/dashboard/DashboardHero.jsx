@@ -4,11 +4,9 @@ import professorAvatar from "../../../assets/quiz-assets/ross-avatar.png";
 // Replace dashboardData prop with API response from:
 // GET /quiz/dashboard
 
-const DashboardHero = () => {
-    const user = {
-        name: "Explorer",
-        dnaPoints: 1250,
-    };
+const DashboardHero = ({ user }) => {
+    const name = user?.name || "Explorer";
+    const dnaPoints = user?.dnaPoints ?? 0;
 
     return (
         <section className="mx-auto max-w-7xl px-6 pt-8">
@@ -27,7 +25,7 @@ const DashboardHero = () => {
                             </p>
 
                             <h1 className="mt-1 text-5xl font-bold text-[#222]">
-                                {user.name}
+                                {name}
                             </h1>
                         </div>
 
@@ -37,7 +35,7 @@ const DashboardHero = () => {
                             </p>
 
                             <h2 className="text-3xl font-bold text-[#2F5A3F]">
-                                {user.dnaPoints}
+                                {dnaPoints}
                             </h2>
                         </div>
                     </div>
