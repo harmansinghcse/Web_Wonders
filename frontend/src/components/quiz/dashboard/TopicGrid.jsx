@@ -12,6 +12,7 @@ import { ArrowRight, Trophy, Clock3 } from "lucide-react";
 
 const topics = [
     {
+        slug: "fossils",
         title: "Fossils",
         description: "Discover how ancient life is preserved through millions of years.",
         image: fossils,
@@ -20,6 +21,7 @@ const topics = [
         level: "Beginner",
     },
     {
+        slug: "dinosaurs",
         title: "Dinosaurs",
         description: "Meet the incredible giants that once ruled the Earth.",
         image: dinosaur,
@@ -28,6 +30,7 @@ const topics = [
         level: "Intermediate",
     },
     {
+        slug: "extinction",
         title: "Extinction",
         description: "Learn what caused Earth's greatest extinction events.",
         image: volcano,
@@ -36,6 +39,7 @@ const topics = [
         level: "Beginner",
     },
     {
+        slug: "evolution",
         title: "Evolution",
         description: "Understand how prehistoric life evolved over time.",
         image: evolution,

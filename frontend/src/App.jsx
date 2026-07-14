@@ -12,6 +12,7 @@ import Profile from "./pages/profile";
 import Timeline from "./pages/Timeline";
 import Quiz from "./pages/Quiz";
 import Professor from "./pages/Professor";
+import QuizTopic from "./pages/QuizTopic";
 
 function App() {
     return (
@@ -31,6 +32,8 @@ function App() {
                 <Route path="/explorer" element={<Explore />} />
                 <Route path="/quiz" element={<Quiz />} />
                 <Route path="/professor" element={<Professor />} />
+
+                <Route path="/quiz/topic/:slug" element={<QuizTopic />}/>
             </Routes>
         </BrowserRouter>
     );
