@@ -1,5 +1,13 @@
 import { ChevronDown, Leaf } from "lucide-react";
-
+/**
+ * --------------------------------------------
+ * Component: FilterDropdown
+ * Purpose:
+ * A reusable dropdown component used in the
+ * Explorer page for selecting filter options
+ * such as Era, Diet, Location, and Sort.
+ * --------------------------------------------
+ */
 export default function FilterDropdown({
     label,
     icon: Icon = Leaf,
@@ -8,8 +16,9 @@ export default function FilterDropdown({
     options = [],
 }) {
     return (
+        // Dropdown container
         <div className="relative w-56">
-            {/* Left Icon */}
+            {/* Filter icon displayed on the left */}
             <Icon
                 size={18}
                 className="pointer-events-none absolute left-4 top-1/2 z-10 -translate-y-1/2 text-[#47613F]"

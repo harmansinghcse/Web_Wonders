@@ -8,6 +8,7 @@ const dinosaurRoutes = require("./routes/dinosaurRoutes");
 const userRoutes = require("./routes/userRoutes");
 const errorHandler = require("./middleware/errorMiddleware");
 const profileRoutes = require("./routes/profile.routes");
+const rossRoutes = require("./routes/rossRoutes");
 
 // allowed origins
 const allowedOrigins = [
@@ -38,6 +39,7 @@ app.set("query parser", "extended");
 app.use("/api/dinosaur", dinosaurRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/profile", profileRoutes);
+app.use("/api/ai", rossRoutes);
 app.use(errorHandler);
 
 app.get("/", (req, res) => {
