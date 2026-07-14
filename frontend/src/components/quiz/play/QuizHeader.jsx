@@ -13,12 +13,12 @@ import { useNavigate } from "react-router-dom";
 //    totalQuestions
 // }
 
-const QuizHeader = () => {
+const QuizHeader = ({
+    topic,
+    currentQuestion,
+    totalQuestions,
+}) => {
     const navigate = useNavigate();
-
-    const topic = "Fossils";
-    const currentQuestion = 4;
-    const totalQuestions = 20;
 
     const progress = (currentQuestion / totalQuestions) * 100;
 
