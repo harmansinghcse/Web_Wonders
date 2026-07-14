@@ -5,7 +5,7 @@ import ResultsHeader from "../components/explorer/ResultHeader";
 import DinosaurList from "../components/explorer/DinosaurList";
 import Pagination from "../components/explorer/Pagination";
 import { motion } from "framer-motion";
-import Navbar from "../components/home_components/hero/navbar";
+import Navbar from "../components/home_components/hero/Navbar";
 
 import { useDebounce } from "use-debounce";
 
