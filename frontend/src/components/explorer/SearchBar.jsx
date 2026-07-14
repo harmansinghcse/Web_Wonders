@@ -1,5 +1,14 @@
 import { Search } from "lucide-react";
-
+/**
+ * --------------------------------------------
+ * Component: SearchBar
+ * Purpose:
+ * Provides a search input that allows users
+ * to search dinosaurs by name. It receives
+ * the current search value and updates it
+ * through props.
+ * --------------------------------------------
+ */
 export default function SearchBar({
     value,
     onChange,
@@ -7,6 +16,7 @@ export default function SearchBar({
 }) {
     return (
         <div className="relative mx-auto w-full max-w-5xl">
+            {/*searchbar at home page */}
             <input
                 type="text"
                 value={value}
@@ -31,7 +41,7 @@ export default function SearchBar({
                     focus:ring-[#47613F]/15
                 "
             />
-
+            {/* Search icon button */}
             <button
                 type="button"
                 className="

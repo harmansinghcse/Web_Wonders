@@ -1,7 +1,17 @@
 import { SearchX } from "lucide-react";
+/**
+ * --------------------------------------------
+ * Component: EmptyState
+ * Purpose:
+ * Displays a friendly message when no
+ * dinosaurs match the user's search
+ * or selected filter criteria.
+ * --------------------------------------------
+ */
 
 export default function EmptyState() {
     return (
+        // Empty state container
         <div className="rounded-3xl border border-dashed border-[#D8D2C5] bg-white py-24 text-center shadow-sm">
             <SearchX size={60} className="mx-auto text-[#47613F]" />
 

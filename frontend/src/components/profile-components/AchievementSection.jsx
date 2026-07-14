@@ -1,7 +1,16 @@
 import AchievementItem from "./AchievementItem";
-
+/**
+ * --------------------------------------------
+ * Component: AchievementSection
+ * Purpose:
+ * Displays the user's achievements on the
+ * profile page. If no achievements are
+ * available, an empty state message is shown.
+ * --------------------------------------------
+ */
 export default function AchievementSection({ achievements = [] }) {
     return (
+        // Achievement section
         <section>
             <h2 className="mb-6 text-2xl font-bold">Achievements</h2>
 
@@ -12,6 +21,7 @@ export default function AchievementSection({ achievements = [] }) {
                     </p>
                 </div>
             ) : (
+                /* Display all unlocked achievements */
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
                     {achievements.map((achievement) => (
                         <AchievementItem

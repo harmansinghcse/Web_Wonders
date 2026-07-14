@@ -2,6 +2,16 @@ import { ChevronRight, MapPin, Calendar, Beef } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
+/**
+ * --------------------------------------------
+ * Component: DinosaurCard
+ * Purpose:
+ * Displays a single dinosaur card with its
+ * image, basic information, statistics,
+ * and a link to the detailed page.
+ * --------------------------------------------
+ */
+
 export default function DinosaurCard({ dinosaur }) {
     return (
         <motion.div
