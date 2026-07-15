@@ -55,6 +55,7 @@ function Navbar() {
     return (
         <>
             <div className={menuOpen ? "hidden lg:block" : "block"}>
+
                 <header className="absolute top-6 left-1/2 z-50 w-full -translate-x-1/2 px-6">
                     <nav className="mx-auto mt-6 flex h-18 w-[97%] max-w-400 items-center justify-between rounded-[28px] border border-[#E5DED1] bg-[#FCFBF7]/90 px-8 shadow-[0_12px_35px_rgba(0,0,0,0.08)] backdrop-blur-md transition-all duration-300">
                         <div className="flex items-center">
@@ -144,13 +145,14 @@ function Navbar() {
 
                         {/* Right-Section (Desktop) */}
                         <div className="hidden items-center gap-3 lg:flex">
+                            {/* search field */}
                             <SearchBar
                                 value={query}
                                 onChange={setQuery}
                                 placeholder="Search dinosaurs, fossils..."
                                 className="w-64 xl:w-72"
                             />
-
+                            {/* Bell icon */}
                             <button
                                 className="relative rounded-full p-2.5 text-[#36593D] transition hover:bg-[#36593D]/10"
                                 aria-label="Notifications"
@@ -165,7 +167,7 @@ function Navbar() {
                 </header>
             </div>
 
-            {/* Full-Screen Mobile Menu Overlay */}
+            {/* FullScreen Mobile Menu Overlay */}
             {menuOpen && (
                 <div className="fixed inset-0 z-50 flex flex-col bg-[#0E1A11] lg:hidden">
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#1E3326_0%,transparent_60%)]" />
@@ -231,7 +233,7 @@ function Navbar() {
                             )}
 
                             <div className="my-4 border-t border-white/10" />
-
+                            {/* Login / logout */}
                             <div className="rounded-3xl border border-white/10 bg-linear-to-br from-[#36593D]/20 to-black/20 p-5 backdrop-blur-md">
                                 <div className="mb-4 flex items-center justify-between">
                                     <h3 className="text-lg font-semibold text-white">
