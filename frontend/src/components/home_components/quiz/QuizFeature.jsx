@@ -1,54 +1,54 @@
+import { motion } from "framer-motion";
+
 export default function QuizFeature({
     icon,
     title,
     subtitle,
 }) {
-
     return (
-
-        <div className="flex flex-col items-start">
-
+        <motion.div
+            whileHover={{ y: -4 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            className="flex items-center gap-4 p-4 rounded-xl bg-white/75 border border-white/90 shadow-[0_8px_30px_rgba(73,106,61,0.02)] hover:bg-white hover:border-[#496A3D]/25 hover:shadow-[0_15px_35px_rgba(73,106,61,0.05)] transition-all duration-300 w-full"
+        >
             <div
                 className="
-                mb-8
                 flex
-                h-[68px]
-                w-[68px]
+                h-[48px]
+                w-[48px]
+                shrink-0
                 items-center
                 justify-center
-                rounded-full
+                rounded-xl
                 bg-[#EDF4E7]
                 "
             >
-
                 {icon}
-
             </div>
 
-            <h4
-                className="
-                text-xl
-                font-semibold
-                text-[#202020]
-                "
-            >
-                {title}
-            </h4>
+            <div>
+                <h4
+                    className="
+                    text-base
+                    font-bold
+                    text-[#1A2416]
+                    "
+                >
+                    {title}
+                </h4>
 
-            <p
-                className="
-                mt-2
-                max-w-[220px]
-                text-[15px]
-                leading-7
-                text-[#666]
-                "
-            >
-                {subtitle}
-            </p>
-
-        </div>
-
+                <p
+                    className="
+                    mt-0.5
+                    text-[12px]
+                    leading-5
+                    text-[#3D4E37]
+                    font-medium
+                    "
+                >
+                    {subtitle}
+                </p>
+            </div>
+        </motion.div>
     );
-
 }

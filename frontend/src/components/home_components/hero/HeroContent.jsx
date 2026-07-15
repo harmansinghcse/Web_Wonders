@@ -26,7 +26,7 @@ export default function HeroContent() {
                 </h2>
             </div>
             {/* Description */}
-            <p className="mt-8 max-w-lg text-lg leading-8 text-[#5D5D5D]">
+            <p className="mt-8 max-w-lg text-lg leading-8 text-[#222D1F] font-medium opacity-95">
                 Discover prehistoric giants, uncover ancient fossils, and
                 journey through more than{" "}
                 <span className="font-semibold text-[#36593D]">

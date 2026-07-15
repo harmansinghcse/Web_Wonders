@@ -22,7 +22,7 @@ export default function CreateFeatures() {
                             className="text-[#36593D] transition-colors duration-300 group-hover:text-white"
                         />
                     </div>
-                    <p className="text-xs font-medium text-[#4F5E50] sm:text-sm">
+                    <p className="text-xs font-semibold text-[#243325] sm:text-sm">
                         {label}
                     </p>
                 </div>

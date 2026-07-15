@@ -1,36 +1,51 @@
+import { motion } from "framer-motion";
 import { Dna } from "lucide-react";
 
 export default function DNAStatsCard() {
     return (
-        <div
+        <motion.div
+            animate={{
+                y: [4, -4, 4],
+                x: [-2, 2, -2]
+            }}
+            transition={{
+                duration: 9.5,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 0.5
+            }}
+            whileHover={{ scale: 1.03, y: -2 }}
             className="
             absolute
             right-2
             top-4
-            sm:right-0
-            sm:top-12
+            sm:right-4
+            sm:top-8
             z-30
             flex
             items-center
-            gap-3
-            sm:gap-5
-            rounded-2xl
-            sm:rounded-3xl
-            bg-white
-            px-4
-            py-3
-            sm:px-7
-            sm:py-5
-            shadow-[0_18px_40px_rgba(0,0,0,0.12)]
+            gap-2
+            sm:gap-3
+            rounded-xl
+            sm:rounded-2xl
+            bg-white/80
+            backdrop-blur-md
+            border
+            border-white/60
+            px-3
+            py-2
+            sm:px-4
+            sm:py-3
+            shadow-[0_15px_35px_rgba(0,0,0,0.06)]
             "
         >
             <div
                 className="
                 flex
-                h-10
-                w-10
-                sm:h-14
-                sm:w-14
+                h-8
+                w-8
+                sm:h-10
+                sm:w-10
                 items-center
                 justify-center
                 rounded-full
@@ -38,19 +53,19 @@ export default function DNAStatsCard() {
                 "
             >
                 <Dna
-                    className="text-[#496A3D] h-5 w-5 sm:h-7 sm:w-7"
+                    className="text-[#496A3D] h-4 w-4 sm:h-5 sm:w-5"
                 />
             </div>
 
             <div>
-                <p className="text-[10px] sm:text-sm uppercase tracking-wide text-gray-500">
+                <p className="text-[8px] sm:text-[10px] font-bold uppercase tracking-widest text-[#3D4E37] opacity-80">
                     DNA POINTS
                 </p>
 
-                <h3 className="text-2xl sm:text-5xl font-bold text-[#496A3D]">
+                <h3 className="text-lg sm:text-2xl font-extrabold text-[#496A3D] leading-tight">
                     1,250
                 </h3>
             </div>
-        </div>
+        </motion.div>
     );
 }
