@@ -33,7 +33,7 @@ export default function DietFact() {
                     <h2 className="text-4xl font-bold uppercase tracking-wide text-[#2B241C]">
                         Diet
                     </h2>
-
+                    {/*description of diet */}
                     <EditableTextarea
                         value={diet.description}
                         placeholder="Describe the dinosaur's diet..."
@@ -41,7 +41,7 @@ export default function DietFact() {
                         onChange={handleDescriptionChange}
                         className="mt-6 w-full text-lg leading-8 text-[#4B4B4B]"
                     />
-
+                    {/*list of diet*/}
                     <div className="mt-8">
                         <h3 className="mb-4 text-xl font-semibold text-[#2B241C]">
                             Favorite Food

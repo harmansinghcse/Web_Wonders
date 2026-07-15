@@ -8,6 +8,7 @@ export default function HeroButtons() {
 
     return (
         <div className="flex flex-wrap items-center gap-4 pt-2">
+            {/* button at Home page */}
             <button
                 onClick={scrollToNext}
                 className="inline-flex items-center gap-2 rounded-full bg-[#005611] px-6 py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#2A4530]"

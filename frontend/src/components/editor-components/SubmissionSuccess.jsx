@@ -8,7 +8,7 @@ export default function SubmissionSuccess({ open }) {
         <div className="fixed inset-0 z-999 flex items-center justify-center bg-black/60 backdrop-blur-sm">
             <div className="w-full max-w-lg rounded-2xl bg-white p-10 text-center shadow-2xl">
                 <CheckCircle2 size={70} className="mx-auto text-green-600" />
-
+                {/* Submit created Dino */}
                 <h2 className="mt-6 text-3xl font-bold">Dinosaur Submitted!</h2>
 
                 <p className="mt-4 text-gray-600">
