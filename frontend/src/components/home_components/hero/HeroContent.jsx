@@ -3,6 +3,11 @@ import HeroButtons from "./HeroButtons";
 
 export default function HeroContent() {
     return (
+        <div className="max-w-2xl space-y-6 sm:space-y-8">
+            {/* Home page content */}
+            <div className="flex items-center gap-4">
+                <div className="h-px w-12 bg-[#8A867E]" />
+                <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[#6A675E] sm:text-xs sm:tracking-[0.35em]">
         <div className="max-w-2xl">
             {/* Label */}
             <div className="mb-6 flex items-center gap-4">
@@ -24,6 +29,11 @@ export default function HeroContent() {
                     Age of Dinosaurs
                 </h2>
             </div>
+            {/* discription */}
+            <p className="max-w-md text-base leading-7 text-[#5D5D5D] sm:text-lg sm:leading-8">
+                Discover prehistoric giants, uncover ancient fossils, and travel
+                through over{" "}
+                <span className="font-semibold text-[#36593D]">
 
             {/* Description */}
             <p className="mt-8 max-w-lg text-lg leading-8 font-bold text-[#ffffff]">
