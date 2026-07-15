@@ -5,7 +5,7 @@ const heroImage = "/jurrasic-home-bg.png";
 
 export default function Hero() {
     return (
-        <section className="relative min-h-screen overflow-hidden bg-white lg:h-screen">
+        <section className="relative min-h-screen bg-white lg:min-h-screen">
             {/* Background */}
             <img
                 src={heroImage}
