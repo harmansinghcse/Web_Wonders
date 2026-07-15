@@ -11,9 +11,9 @@ export default function HeroButtons() {
             {/* button at Home page */}
             <button
                 onClick={scrollToNext}
-                className="inline-flex items-center gap-2 rounded-full bg-[#36593D] px-6 py-3 text-sm font-medium text-white shadow-md transition hover:bg-[#2A4530]"
+                className="inline-flex items-center gap-2 rounded-full bg-[#005611] px-6 py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#2A4530]"
             >
-                <span>↓</span>
+                <span className="font-extrabold">↓</span>
                 Scroll to explore
             </button>
         </div>

@@ -24,19 +24,20 @@ export default function CreateSection() {
             <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 items-center gap-16 lg:grid-cols-2">
                 <div>
                     <div className="mb-6 flex items-center gap-4">
-                        <div className="h-px w-12 bg-[#8A867E]" />
-                        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#6A675E]">
+                        <div className="h-px w-12 bg-[#2f2f2f]" />
+                        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#000000]">
                             Unleash Your Creativity
                         </p>
+                        <div className="h-px w-12 bg-[#2f2f2f]" />
                     </div>
 
-                    <h2 className="font-display text-4xl leading-[1.05] text-[#1F1F1F] sm:text-5xl lg:text-6xl">
+                    <h2 className="font-display text-4xl leading-[1.05] text-[#000000] font-bold sm:text-5xl lg:text-6xl">
                         Create Your
                         <br />
-                        <span className="text-[#36593D]">Own Dinosaur</span>
+                        <span className="text-[#006c16]">Own Dinosaur</span>
                     </h2>
 
-                    <p className="mt-6 max-w-md text-base leading-7 text-[#5D5D5D] sm:text-lg sm:leading-8">
+                    <p className="mt-6 max-w-md text-base font-medium leading-7 text-[#2b2b2b] sm:text-lg sm:leading-8">
                         Design your very own prehistoric creature. Choose its
                         era, diet, habitat, abilities and more.
                     </p>
@@ -45,12 +46,12 @@ export default function CreateSection() {
 
                     <button
                         onClick={() => navigate("/create")}
-                        className="group mt-10 inline-flex items-center gap-2 rounded-full bg-[#36593D] px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#2A4530] sm:px-8 sm:py-4 sm:text-base"
+                        className="group mt-10 inline-flex items-center gap-2 rounded-full bg-[#006815] px-6 py-3 text-sm font-bold text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[#2A4530] sm:px-8 sm:py-4 sm:text-base"
                     >
                         Start Creating
                         <ArrowRight
                             size={18}
-                            className="transition group-hover:translate-x-1"
+                            className="transition group-hover:translate-x-1 font-bold"
                         />
                     </button>
                 </div>

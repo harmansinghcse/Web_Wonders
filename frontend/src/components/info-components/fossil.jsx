@@ -91,7 +91,7 @@ export default function Fossil({ about, fossil }) {
                                 transition={{
                                     duration: 0.5,
                                 }}
-                                className="h-130 w-full object-cover"
+                                className="h-80 sm:h-96 md:h-130 w-full object-cover"
                             />
 
                             <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/10 to-transparent" />
@@ -103,14 +103,14 @@ export default function Fossil({ about, fossil }) {
                                 transition={{
                                     delay: 0.4,
                                 }}
-                                className="absolute bottom-8 left-8 flex items-center gap-4"
+                                className="absolute bottom-4 left-4 sm:bottom-8 sm:left-8 flex items-center gap-3 sm:gap-4"
                             >
-                                <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-[#C79A4A] bg-black/50 text-3xl text-[#C79A4A]">
+                                <div className="flex h-10 w-10 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-full border-2 border-[#C79A4A] bg-black/50 text-xl sm:text-3xl text-[#C79A4A]">
                                     🦴
                                 </div>
 
                                 <div>
-                                    <h3 className="text-3xl font-bold uppercase tracking-wide text-white">
+                                    <h3 className="text-lg sm:text-3xl font-bold uppercase tracking-wide text-white">
                                         Fossil Record
                                     </h3>
 

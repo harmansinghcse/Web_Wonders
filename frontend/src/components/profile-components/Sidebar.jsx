@@ -6,13 +6,25 @@ import {
     LogOut,
     Settings,
     X,
+    ShieldAlert,
 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 
 import { NavLink } from "react-router-dom";
+/**
+ * --------------------------------------------
+ * Component: Sidebar
+ * Purpose:
+ * Displays the application's navigation menu,
+ * including links to different pages and a
+ * logout option. It also supports responsive
+ * behavior for mobile devices.
+ * --------------------------------------------
+ */
 
+// Navigation links displayed in the sidebar
 const links = [
     {
         name: "Home",
@@ -43,8 +55,21 @@ const links = [
 
 export default function Sidebar({ isOpen = false, onClose = () => {} }) {
     const navigate = useNavigate();
-    const { logout } = useAuth();
+    const { user, logout } = useAuth();
+    const isAdmin = user?.role === "admin";
 
+    const sidebarLinks = [
+        ...links,
+        ...(isAdmin
+            ? [
+                  {
+                      name: "Moderation",
+                      icon: ShieldAlert,
+                      path: "/admin/submissions",
+                  },
+              ]
+            : []),
+    ];
     const handleLogout = async () => {
         console.log("Logout clicked");
 
@@ -64,7 +89,7 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
                     className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
                 />
             )}
-
+            {/* Sidebar container */}
             <aside
                 className={`fixed inset-y-0 left-0 z-50 flex h-screen w-72 flex-col border-r border-white/10 bg-[#0B1A13] transition-transform duration-300 lg:sticky lg:top-0 lg:translate-x-0 ${
                     isOpen ? "translate-x-0" : "-translate-x-full"
@@ -92,7 +117,7 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
 
                 {/* Navigation */}
                 <nav className="flex-1 space-y-2 overflow-y-auto p-6">
-                    {links.map((link) => {
+                    {sidebarLinks.map((link) => {
                         const Icon = link.icon;
 
                         return (

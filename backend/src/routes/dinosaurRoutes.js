@@ -9,30 +9,49 @@ const {
     updateDinosaur,
     deleteDinosaur,
     searchDinosaurs,
+    submitDinosaur,
+    getMySubmissions,
+    getPendingSubmissions,
+    getSubmissionById,
+    reviewSubmission,
 } = require("../controllers/dinosaurController");
 
 const router = express.Router();
 
 router.get("/", getAllDinosaurs);
 router.get("/search", searchDinosaurs);
-router.get("/:slug", getDinosaurBySlug);
+
+// Submissions & Reviews (Must be before /:slug)
+router.get("/my-submissions", protect, getMySubmissions);
+router.get("/submissions", protect, authorize("admin"), getPendingSubmissions);
+router.get("/submissions/:id", protect, authorize("admin"), getSubmissionById);
+router.put("/submissions/:id/review", protect, authorize("admin"), reviewSubmission);
+
 router.post(
-    "/",
+    "/submit",
     protect,
-    (req, res, next) => {
-        next();
-    },
     upload.fields([
         { name: "heroBackground", maxCount: 1 },
         { name: "fossilImage", maxCount: 1 },
         { name: "featureImages", maxCount: 4 },
     ]),
-    (req, res, next) => {
-        next();
-    },
+    submitDinosaur,
+);
+
+router.get("/:slug", getDinosaurBySlug);
+
+router.post(
+    "/",
+    protect,
+    authorize("admin"),
+    upload.fields([
+        { name: "heroBackground", maxCount: 1 },
+        { name: "fossilImage", maxCount: 1 },
+        { name: "featureImages", maxCount: 4 },
+    ]),
     createDinosaur,
 );
-router.put("/:slug", updateDinosaur);
-router.delete("/:slug", deleteDinosaur);
+router.put("/:slug", protect, authorize("admin"), updateDinosaur);
+router.delete("/:slug", protect, authorize("admin"), deleteDinosaur);
 
 module.exports = router;

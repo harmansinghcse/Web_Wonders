@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Menu, Search, X, Bell } from "lucide-react";
 import UserMenu from "../UserMenu";
 import SearchBar from "../../search/SearchBar";
-import { Home, Compass, Clock3, PlusSquare, CircleHelp } from "lucide-react";
+import { Home, Compass, Clock3, PlusSquare, CircleHelp, GraduationCap} from "lucide-react";
 import NavbarLink from "./NavbarLinks";
 
 function Navbar() {
@@ -12,7 +12,7 @@ function Navbar() {
     const [searchOpen, setSearchOpen] = useState(false);
     const [query, setQuery] = useState("");
 
-    // Lock background scroll when mobile menu or search overlay is open
+    {/* implement mobile menu with overlay*/}
     useEffect(() => {
         if (menuOpen || searchOpen) {
             document.body.style.overflow = "hidden";
@@ -50,14 +50,24 @@ function Navbar() {
             label: "Create Dinosaur",
             desc: "Contribute a new species",
         },
+
+        {
+            to: "/professor",
+            icon: GraduationCap,
+            label: "Meet Professor Ross",
+            desc: "Learn from the expert",
+        }
     ];
 
     return (
-        <>
+        <>    
+            {/*optimized navbar component structure*/}
             <div className={menuOpen ? "hidden lg:block" : "block"}>
 
                 <header className="absolute top-6 left-1/2 z-50 w-full -translate-x-1/2 px-6">
                     <nav className="mx-auto mt-6 flex h-18 w-[97%] max-w-400 items-center justify-between rounded-[28px] border border-[#E5DED1] bg-[#FCFBF7]/90 px-8 shadow-[0_12px_35px_rgba(0,0,0,0.08)] backdrop-blur-md transition-all duration-300">
+                <header className="absolute top-4 left-1/2 z-50 w-full -translate-x-1/2 px-6">
+                    <nav className="mx-auto flex h-18 w-[97%] max-w-400 items-center justify-between rounded-[28px] border border-[#e3d7c2] bg-[#ffffff]/95 px-8 shadow-[0_12px_35px_rgba(0,0,0,0.08)] backdrop-blur-md transition-all duration-300">
                         <div className="flex items-center">
                             <Link to="/">
                                 <img
@@ -141,8 +151,13 @@ function Navbar() {
                             <NavbarLink to="/quiz" icon={CircleHelp}>
                                 Quiz
                             </NavbarLink>
+
+                            <NavbarLink to="/professor" icon={GraduationCap}>
+                                Meet Professor Ross
+                            </NavbarLink>
                         </div>
 
+                        {/*integrate dinosaur search functionality*/}
                         {/* Right-Section (Desktop) */}
                         <div className="hidden items-center gap-3 lg:flex">
                             {/* search field */}

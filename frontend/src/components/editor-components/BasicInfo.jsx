@@ -1,19 +1,20 @@
+import { useEditor } from "../../context/EditorContext";
 import EditableSection from "./generic/EditableSection";
 import EditableText from "./generic/EditableText";
 
-export default function BasicInfo({ dinosaur, setDinosaur }) {
+export default function BasicInfo() {
+    const { dinosaur, updateDinosaur } = useEditor();
+
     const handleChange = (field, value) => {
-        setDinosaur((prev) => ({
-            ...prev,
-            [field]: value,
-            ...(field === "name" && {
-                slug: value
-                    .toLowerCase()
-                    .trim()
-                    .replace(/[^a-z0-9\s-]/g, "")
-                    .replace(/\s+/g, "-"),
-            }),
-        }));
+        updateDinosaur(field, value);
+        if (field === "name") {
+            const slug = value
+                .toLowerCase()
+                .trim()
+                .replace(/[^a-z0-9\s-]/g, "")
+                .replace(/\s+/g, "-");
+            updateDinosaur("slug", slug);
+        }
     };
 
     return (

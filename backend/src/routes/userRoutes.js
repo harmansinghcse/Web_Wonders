@@ -5,6 +5,7 @@ const {
     verifyOTP,
     getCurrentUser,
     logoutUser,
+    googleLogin,
 } = require("../controllers/userController");
 
 const { protect, authorize } = require("../middleware/authMiddleware");
@@ -15,6 +16,7 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/verify-otp", verifyOTP);
 router.get("/me", protect, getCurrentUser);
+router.post("/google", googleLogin);
 router.post("/logout", logoutUser);
 
 module.exports = router;

@@ -2,6 +2,7 @@ const User = require("../models/User");
 const PendingUser = require("../models/PendingUser");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { OAuth2Client } = require("google-auth-library");
 
 const { generateOTP, getOTPExpiry } = require("../utils/otp");
 
@@ -143,6 +144,13 @@ const loginUser = async (req, res) => {
             });
         }
 
+        if (!user.password) {
+            return res.status(400).json({
+                success: false,
+                message: "This account was registered using Google. Please log in with Google.",
+            });
+        }
+
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
@@ -236,10 +244,103 @@ const getCurrentUser = async (req, res) => {
     }
 };
 
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+const googleLogin = async (req, res) => {
+    try {
+        const { token: googleToken } = req.body;
+
+        if (!googleToken) {
+            return res.status(400).json({
+                success: false,
+                message: "Google token is required.",
+            });
+        }
+
+        // Verify the Google ID token
+        const ticket = await googleClient.verifyIdToken({
+            idToken: googleToken,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+
+        const payload = ticket.getPayload();
+
+        if (!payload.email_verified) {
+            return res.status(401).json({
+                success: false,
+                message: "Google email is not verified.",
+            });
+        }
+
+        const googleUser = {
+            googleId: payload.sub,
+            email: payload.email,
+            name: payload.name,
+            avatar: payload.picture,
+            emailVerified: payload.email_verified,
+        };
+
+        console.log(googleUser);
+
+        let user = await User.findOne({
+            email: payload.email,
+        });
+
+        if (!user) {
+            user = await User.create({
+                name: payload.name,
+                email: payload.email,
+                avatar: payload.picture,
+                provider: "google",
+                googleId: payload.sub,
+            });
+        }
+
+        const token = jwt.sign(
+            {
+                id: user._id,
+                role: user.role,
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn: "7d",
+            },
+        );
+
+        return res
+            .cookie("token", token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite:
+                    process.env.NODE_ENV === "production" ? "None" : "Lax",
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+            })
+            .status(200)
+            .json({
+                success: true,
+                message: "Login Successful",
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    role: user.role,
+                },
+            });
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
 module.exports = {
     registerUser,
     loginUser,
     verifyOTP,
     getCurrentUser,
     logoutUser,
+    googleLogin,
 };

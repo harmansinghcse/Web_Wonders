@@ -1,46 +1,29 @@
+import { useEditor } from "../../context/EditorContext";
 import EditableSection from "./generic/EditableSection";
 import EditableText from "./generic/EditableText";
 import EditableTextarea from "./generic/EditableTextarea";
 
-export default function DietFact({ diet, setDinosaur }) {
+export default function DietFact() {
+    const { dinosaur, updateDinosaur } = useEditor();
+    const diet = dinosaur.diet;
+
     const handleDescriptionChange = (value) => {
-        setDinosaur((prev) => ({
-            ...prev,
-            diet: {
-                ...prev.diet,
-                description: value,
-            },
-        }));
+        updateDinosaur("diet.description", value);
     };
 
     const handleFoodChange = (index, value) => {
         const updatedFood = [...diet.favoriteFood];
         updatedFood[index] = value;
-
-        setDinosaur((prev) => ({
-            ...prev,
-            diet: {
-                ...prev.diet,
-                favoriteFood: updatedFood,
-            },
-        }));
+        updateDinosaur("diet.favoriteFood", updatedFood);
     };
 
     const handleFactChange = (index, field, value) => {
         const updatedFacts = [...diet.facts];
-
         updatedFacts[index] = {
             ...updatedFacts[index],
             [field]: value,
         };
-
-        setDinosaur((prev) => ({
-            ...prev,
-            diet: {
-                ...prev.diet,
-                facts: updatedFacts,
-            },
-        }));
+        updateDinosaur("diet.facts", updatedFacts);
     };
 
     return (

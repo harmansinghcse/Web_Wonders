@@ -1,16 +1,14 @@
+import { useEditor } from "../../context/EditorContext";
 import EditableSection from "./generic/EditableSection";
 import EditableText from "./generic/EditableText";
 import EditableTextarea from "./generic/EditableTextarea";
 
-export default function DinoIntro({ hero, setDinosaur }) {
+export default function DinoIntro() {
+    const { dinosaur, updateDinosaur } = useEditor();
+    const hero = dinosaur.hero;
+
     const handleChange = (field, value) => {
-        setDinosaur((prev) => ({
-            ...prev,
-            hero: {
-                ...prev.hero,
-                [field]: value,
-            },
-        }));
+        updateDinosaur(`hero.${field}`, value);
     };
 
     return (

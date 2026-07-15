@@ -2,10 +2,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import toast from "react-hot-toast";
 const API_URL = import.meta.env.VITE_BACKEND_URL;
+import { GoogleLogin } from "@react-oauth/google";
+import { useAuth } from "../context/AuthContext"; // adjust path to match your project
 
 // make the signup animations better later
 
 function Signup() {
+    const { checkAuth } = useAuth();
+
     const [name, setname] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -233,12 +237,40 @@ function Signup() {
                                 <div className="h-px flex-1 bg-gray-400"></div>
                             </div>
 
-                            <button
-                                disabled={isSigningUp || isVerifying}
-                                className="h-12 w-full rounded-2xl bg-[#6b7368]/50 disabled:opacity-60 disabled:cursor-not-allowed text-lg font-bold text-[#e4e4e4] lg:w-60"
-                            >
-                                Continue with Google
-                            </button>
+                            <GoogleLogin
+                                onSuccess={async (credentialResponse) => {
+                                    try {
+                                        const response = await fetch(
+                                            `${API_URL}/api/users/google`,
+                                            {
+                                                method: "POST",
+                                                credentials: "include",
+                                                headers: {
+                                                    "Content-Type":
+                                                        "application/json",
+                                                },
+                                                body: JSON.stringify({
+                                                    token: credentialResponse.credential,
+                                                }),
+                                            },
+                                        );
+
+                                        const data = await response.json();
+
+                                        if (!response.ok) {
+                                            toast.error(data.message);
+                                            return;
+                                        }
+
+                                        await checkAuth(); // now correctly pulls from context
+                                        toast.success("Login Successful");
+                                        navigate("/");
+                                    } catch (error) {
+                                        console.error(error);
+                                        toast.error("Something went wrong.");
+                                    }
+                                }}
+                            />
 
                             <Link
                                 to="/login"

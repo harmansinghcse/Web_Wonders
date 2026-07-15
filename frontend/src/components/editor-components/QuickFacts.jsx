@@ -1,17 +1,14 @@
 import { Ruler, Weight, Leaf, CalendarDays, Globe, Gauge } from "lucide-react";
-
+import { useEditor } from "../../context/EditorContext";
 import EditableSection from "./generic/EditableSection";
 import EditableText from "./generic/EditableText";
 
-export default function QuickFacts({ stats, setDinosaur }) {
+export default function QuickFacts() {
+    const { dinosaur, updateDinosaur } = useEditor();
+    const stats = dinosaur.stats;
+
     const handleChange = (field, value) => {
-        setDinosaur((prev) => ({
-            ...prev,
-            stats: {
-                ...prev.stats,
-                [field]: value,
-            },
-        }));
+        updateDinosaur(`stats.${field}`, value);
     };
 
     const quickFacts = [

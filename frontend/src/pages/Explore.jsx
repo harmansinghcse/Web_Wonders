@@ -71,7 +71,7 @@ export default function Explorer() {
 
     return (
         <>
-            <header className="absolute top-6 left-1/2 z-999 w-full -translate-x-1/2 mb-10">
+            <header className="absolute top-6 left-1/2 z-50 w-full -translate-x-1/2 mb-10">
                 <Navbar />
             </header>
             <div className="pt-10">

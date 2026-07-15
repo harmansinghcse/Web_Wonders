@@ -1,42 +1,27 @@
+import { useEditor } from "../../context/EditorContext";
 import EditableSection from "./generic/EditableSection";
 import EditableText from "./generic/EditableText";
 
-export default function TimelineStrat({ timeline, hunting, setDinosaur }) {
+export default function TimelineStrat() {
+    const { dinosaur, updateDinosaur } = useEditor();
+    const timeline = dinosaur.timeline;
+    const hunting = dinosaur.hunting;
+
     const handleTimelineChange = (field, value) => {
-        setDinosaur((prev) => ({
-            ...prev,
-            timeline: {
-                ...prev.timeline,
-                [field]: value,
-            },
-        }));
+        updateDinosaur(`timeline.${field}`, value);
     };
 
     const handleHuntingChange = (field, value) => {
-        setDinosaur((prev) => ({
-            ...prev,
-            hunting: {
-                ...prev.hunting,
-                [field]: value,
-            },
-        }));
+        updateDinosaur(`hunting.${field}`, value);
     };
 
     const handleTraitChange = (index, field, value) => {
         const updatedTraits = [...hunting.traits];
-
         updatedTraits[index] = {
             ...updatedTraits[index],
             [field]: value,
         };
-
-        setDinosaur((prev) => ({
-            ...prev,
-            hunting: {
-                ...prev.hunting,
-                traits: updatedTraits,
-            },
-        }));
+        updateDinosaur("hunting.traits", updatedTraits);
     };
 
     return (

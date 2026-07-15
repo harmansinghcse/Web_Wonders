@@ -1,6 +1,15 @@
 import SearchBar from "./SearchBar";
 import FilterBar from "./FilterBar";
 
+/**
+ * --------------------------------------------
+ * Component: ExplorerHero
+ * Purpose:
+ * Displays the hero section of the Explorer
+ * page, including the heading, description,
+ * search bar, and filter options.
+ * --------------------------------------------
+ */
 export default function ExplorerHero({
     search,
     setSearch,
@@ -9,6 +18,7 @@ export default function ExplorerHero({
     setPage,
 }) {
     return (
+        // Explorer Hero Section with background image
         <section className="relative bg-[url('/explorer-bg.jpg')] bg-cover bg-center bg-fixed">
             {/* Overlay */}
             <div className="absolute inset-0 bg-black/70" />
