@@ -20,12 +20,12 @@ export default function Hero() {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,#FFFFFF_0%,transparent_45%)] opacity-55" />
 
             {/* Content */}
-            <div className="relative z-10 flex min-h-screen flex-col lg:h-full">
+            <div className="relative z-10 flex min-h-screen flex-col lg:min-h-screen">
                 {/* Navbar */}
                 <Navbar />
 
                 {/* Hero Content */}
-                <div className="relative mx-auto flex w-full max-w-7xl flex-1 items-center px-6 pt-32 pb-10 sm:px-8 sm:pt-40 lg:px-12 lg:pt-30">
+                <div className="relative mx-auto flex w-full max-w-7xl flex-1 items-center px-6 pt-24 pb-8 sm:px-8 sm:pt-32 lg:px-12 lg:pt-28 lg:pb-12">
                     <div className="flex-1">
                         <HeroContent />
                     </div>

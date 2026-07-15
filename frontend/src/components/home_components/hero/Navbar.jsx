@@ -65,13 +65,13 @@ function Navbar() {
             <div className={menuOpen ? "hidden lg:block" : "block"}>
 
                 <header className="absolute top-4 left-1/2 z-50 w-full -translate-x-1/2 px-6">
-                    <nav className="mx-auto flex h-18 w-[97%] max-w-400 items-center justify-between rounded-[28px] border border-[#e3d7c2] bg-[#ffffff]/95 px-8 shadow-[0_12px_35px_rgba(0,0,0,0.08)] backdrop-blur-md transition-all duration-300">
+                    <nav className="mx-auto flex h-18 w-[97%] max-w-420 items-center justify-between rounded-[28px] border border-[#e3d7c2] bg-[#ffffff]/95 px-4 xl:px-8 shadow-[0_12px_35px_rgba(0,0,0,0.08)] backdrop-blur-md transition-all duration-300">
                         <div className="flex items-center">
                             <Link to="/">
                                 <img
                                     src={logo}
                                     alt="Jurassic Explorer"
-                                    className="h-12 w-auto object-contain transition duration-300 hover:scale-105"
+                                    className="h-10 xl:h-12 w-auto object-contain transition duration-300 hover:scale-105"
                                 />
                             </Link>
                         </div>
@@ -129,7 +129,7 @@ function Navbar() {
                         </div>
 
                         {/* Mid-Section (Desktop) */}
-                        <div className="hidden items-center gap-2 xl:gap-3 lg:flex">
+                        <div className="hidden items-center gap-1.5 xl:gap-3 lg:flex">
                             <NavbarLink to="/" icon={Home}>
                                 Home
                             </NavbarLink>
@@ -153,9 +153,9 @@ function Navbar() {
                             <Link
                                 to="/professor"
                                 className="
-                                    group flex items-center gap-2
+                                    group flex items-center gap-1.5 xl:gap-2
                                     rounded-full
-                                    px-5 py-3
+                                    px-3 xl:px-5 py-2 xl:py-3
                                     bg-gradient-to-r
                                     from-[#184D30]
                                     via-[#1F5C38]
@@ -166,15 +166,18 @@ function Navbar() {
                                     transition-all duration-300
                                     hover:scale-105
                                     hover:shadow-[0_0_30px_rgba(34,197,94,0.35)]
+                                    text-xs xl:text-sm
+                                    whitespace-nowrap
+                                    shrink-0
                                 "
                             >
                                 {/* AI Status Indicator */}
-                                <span className="relative flex h-2.5 w-2.5">
+                                <span className="relative flex h-2 w-2 xl:h-2.5 xl:w-2.5">
                                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-300 opacity-75"></span>
-                                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-200"></span>
+                                    <span className="relative inline-flex h-2 w-2 xl:h-2.5 xl:w-2.5 rounded-full bg-green-200"></span>
                                 </span>
 
-                                <Brain size={18} className="transition-transform duration-300 group-hover:rotate-6" />
+                                <Brain size={16} className="xl:h-4.5 xl:w-4.5 transition-transform duration-300 group-hover:rotate-6" />
 
                                 <span className="font-medium">
                                     Ask Professor Ross
@@ -185,8 +188,8 @@ function Navbar() {
                                         rounded-full
                                         bg-white/15
                                         border border-white/20
-                                        px-2 py-0.5
-                                        text-[10px]
+                                        px-1.5 xl:px-2 py-0.5
+                                        text-[9px] xl:text-[10px]
                                         font-bold
                                         tracking-wider
                                     "
@@ -198,24 +201,26 @@ function Navbar() {
 
                         {/*integrate dinosaur search functionality*/}
                         {/* Right-Section (Desktop) */}
-                        <div className="hidden items-center gap-3 lg:flex">
+                        <div className="hidden items-center gap-2 lg:flex">
                             {/* search field */}
                             <SearchBar
                                 value={query}
                                 onChange={setQuery}
                                 placeholder="Search dinosaurs, fossils..."
-                                className="w-64 xl:w-72"
+                                className="w-44 xl:w-72 focus-within:w-60 transition-all duration-300"
                             />
                             {/* Bell icon */}
                             <button
-                                className="relative rounded-full p-2.5 text-[#36593D] transition hover:bg-[#36593D]/10"
+                                className="relative rounded-full p-2 text-[#36593D] transition hover:bg-[#36593D]/10 shrink-0"
                                 aria-label="Notifications"
                             >
-                                <Bell size={20} />
+                                <Bell size={18} />
                                 <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[#B5462F]" />
                             </button>
 
-                            <UserMenu />
+                            <div className="shrink-0">
+                                <UserMenu />
+                            </div>
                         </div>
                     </nav>
                 </header>
