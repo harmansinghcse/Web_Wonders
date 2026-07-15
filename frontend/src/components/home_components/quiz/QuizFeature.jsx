@@ -38,7 +38,7 @@ export default function QuizFeature({
             <p
                 className="
                 mt-2
-                max-w-[140px]
+                max-w-[220px]
                 text-[15px]
                 leading-7
                 text-[#666]

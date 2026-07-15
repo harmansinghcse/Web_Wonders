@@ -14,8 +14,9 @@ export default function QuizFeatures() {
         <div
             className="
             grid
-            grid-cols-4
-            gap-8
+            grid-cols-2
+            gap-6
+            sm:gap-8
             "
         >
 
