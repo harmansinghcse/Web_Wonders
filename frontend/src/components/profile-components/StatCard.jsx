@@ -10,11 +10,11 @@
 export default function StatCard({ title, value }) {
     return (
         // Individual statistic card
-        <div className="rounded-2xl border border-white/10 bg-[#12251C] p-6 shadow-lg">
+        <div className="rounded-2xl border border-[#D8D2C5] bg-white p-6 shadow-xs hover:shadow-md transition duration-200">
         {/* Statistic title */}
-            <p className="text-sm text-gray-400">{title}</p>
+            <p className="text-sm font-semibold text-slate-500">{title}</p>
             {/* Statistic value */}
-            <h2 className="mt-2 text-3xl font-bold text-[#E4C08D]">{value}</h2>
+            <h2 className="mt-2 text-3xl font-black text-[#005611]">{value}</h2>
         </div>
     );
 }

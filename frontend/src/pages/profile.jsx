@@ -45,11 +45,11 @@ export default function Profile() {
 
     if (loading) {
         return (
-            <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#0B1A13]">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#1E3326_0%,transparent_60%)]" />
+            <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#F7F5EF]">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#E2EFE0_0%,transparent_60%)]" />
                 <div className="relative z-10 flex flex-col items-center gap-4">
-                    <div className="h-12 w-12 animate-spin rounded-full border-2 border-white/10 border-t-[#4E7C56]" />
-                    <p className="text-sm font-medium tracking-wide text-white/60">
+                    <div className="h-12 w-12 animate-spin rounded-full border-2 border-[#005611]/10 border-t-[#005611]" />
+                    <p className="text-sm font-semibold tracking-wide text-[#2E4A37]">
                         Loading your profile...
                     </p>
                 </div>
@@ -59,13 +59,13 @@ export default function Profile() {
 
     if (!profile) {
         return (
-            <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#0B1A13] px-6">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#1E3326_0%,transparent_60%)]" />
-                <div className="relative z-10 max-w-sm rounded-3xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur-md">
-                    <p className="text-lg font-semibold text-white">
+            <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#F7F5EF] px-6">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#E2EFE0_0%,transparent_60%)]" />
+                <div className="relative z-10 max-w-sm rounded-3xl border border-[#D8D2C5] bg-white p-8 text-center shadow-lg">
+                    <p className="text-lg font-bold text-slate-800">
                         Session expired
                     </p>
-                    <p className="mt-2 text-sm text-white/50">
+                    <p className="mt-2 text-sm text-slate-500">
                         Please login again to view your profile.
                     </p>
                 </div>
@@ -74,10 +74,10 @@ export default function Profile() {
     }
 
     return (
-        <div className="relative flex min-h-screen bg-[#0B1A13] text-white">
-            {/* Cinematic ambient background */}
-            <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_left,#1E3326_0%,transparent_55%)]" />
-            <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_bottom_right,#16261D_0%,transparent_50%)]" />
+        <div className="relative flex min-h-screen bg-[#F7F5EF] text-slate-800">
+            {/* Cinematic ambient background - soft green gradients */}
+            <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_left,#E2EFE0_0%,transparent_55%)] opacity-70" />
+            <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_bottom_right,#EBF5EA_0%,transparent_50%)] opacity-70" />
 
             <Sidebar
                 isOpen={isSidebarOpen}
@@ -86,10 +86,10 @@ export default function Profile() {
 
             <main className="relative z-10 flex-1 overflow-y-auto">
                 {/* Mobile top bar to open sidebar */}
-                <div className="flex items-center justify-between border-b border-white/5 px-4 py-4 lg:hidden">
+                <div className="flex items-center justify-between border-b border-[#D8D2C5]/50 bg-white/80 backdrop-blur-md px-4 py-4 lg:hidden">
                     <button
                         onClick={() => setIsSidebarOpen(true)}
-                        className="rounded-full border border-white/10 p-2 transition hover:bg-white/5"
+                        className="rounded-full border border-slate-200 p-2 text-slate-700 transition hover:bg-slate-100"
                         aria-label="Open menu"
                     >
                         <svg
@@ -103,7 +103,7 @@ export default function Profile() {
                             <path d="M3 6h18M3 12h18M3 18h18" />
                         </svg>
                     </button>
-                    <span className="text-sm font-semibold text-white/80">
+                    <span className="text-sm font-bold text-slate-800">
                         My Profile
                     </span>
                     <div className="w-9" />
@@ -125,7 +125,10 @@ export default function Profile() {
 
                     <OverviewCards profile={profile} />
 
-                    <AchievementSection profile={profile} />
+                    <AchievementSection
+                        profile={profile}
+                        submissionsCount={submissions.length}
+                    />
 
                     <ContributionSection
                         contributions={{

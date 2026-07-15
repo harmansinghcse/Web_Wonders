@@ -50,16 +50,16 @@ export default function EditProfileModal({ profile, setProfile, onClose }) {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-            <div className="w-full max-w-lg rounded-3xl bg-[#12251C] p-8 shadow-2xl">
+            <div className="w-full max-w-lg rounded-3xl bg-white border border-[#D8D2C5] p-8 shadow-2xl">
                 {/* Modal heading */}
-                <h2 className="mb-6 text-3xl font-bold text-white">
+                <h2 className="mb-6 text-3xl font-black text-slate-800">
                     Edit Profile
                 </h2>
                 {/* Profile edit form */}
                 <form onSubmit={handleSubmit} className="space-y-5">
                     {/* Name input */}
                     <div>
-                        <label className="mb-2 block text-sm text-gray-300">
+                        <label className="mb-2 block text-sm font-bold text-slate-700">
                             Name
                         </label>
 
@@ -68,12 +68,12 @@ export default function EditProfileModal({ profile, setProfile, onClose }) {
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
-                            className="w-full rounded-xl border border-white/10 bg-[#1A3025] px-4 py-3 text-white outline-none focus:border-[#E4C08D]"
+                            className="w-full rounded-xl border border-[#D8D2C5] bg-slate-50 px-4 py-3 text-slate-800 outline-none focus:border-[#005611] focus:ring-1 focus:ring-[#005611] focus:bg-white transition duration-150"
                         />
                     </div>
                     {/* Bio input */}
                     <div>
-                        <label className="mb-2 block text-sm text-gray-300">
+                        <label className="mb-2 block text-sm font-bold text-slate-700">
                             Bio
                         </label>
 
@@ -82,12 +82,12 @@ export default function EditProfileModal({ profile, setProfile, onClose }) {
                             rows="4"
                             value={formData.bio}
                             onChange={handleChange}
-                            className="w-full rounded-xl border border-white/10 bg-[#1A3025] px-4 py-3 text-white outline-none focus:border-[#E4C08D]"
+                            className="w-full rounded-xl border border-[#D8D2C5] bg-slate-50 px-4 py-3 text-slate-800 outline-none focus:border-[#005611] focus:ring-1 focus:ring-[#005611] focus:bg-white transition duration-150"
                         />
                     </div>
                     {/* Avatar URL input */}
                     <div>
-                        <label className="mb-2 block text-sm text-gray-300">
+                        <label className="mb-2 block text-sm font-bold text-slate-700">
                             Avatar URL
                         </label>
 
@@ -96,7 +96,7 @@ export default function EditProfileModal({ profile, setProfile, onClose }) {
                             name="avatar"
                             value={formData.avatar}
                             onChange={handleChange}
-                            className="w-full rounded-xl border border-white/10 bg-[#1A3025] px-4 py-3 text-white outline-none focus:border-[#E4C08D]"
+                            className="w-full rounded-xl border border-[#D8D2C5] bg-slate-50 px-4 py-3 text-slate-800 outline-none focus:border-[#005611] focus:ring-1 focus:ring-[#005611] focus:bg-white transition duration-150"
                         />
                     </div>
                     {/* Action buttons */}
@@ -105,7 +105,7 @@ export default function EditProfileModal({ profile, setProfile, onClose }) {
                         <button
                             type="button"
                             onClick={onClose}
-                            className="rounded-xl border border-white/10 px-6 py-3 text-white transition hover:bg-white/10"
+                            className="rounded-xl border border-slate-300 px-6 py-3 text-slate-700 font-semibold transition hover:bg-slate-50"
                         >
                             Cancel
                         </button>
@@ -113,7 +113,7 @@ export default function EditProfileModal({ profile, setProfile, onClose }) {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="rounded-xl bg-[#E4C08D] px-6 py-3 font-semibold text-black transition hover:brightness-110 disabled:opacity-50"
+                            className="rounded-xl bg-[#005611] px-6 py-3 font-bold text-white transition duration-150 hover:bg-[#00400C] disabled:opacity-50 shadow-md shadow-[#005611]/15"
                         >
                             {loading ? "Saving..." : "Save Changes"}
                         </button>

@@ -10,35 +10,35 @@
  */
 export default function ContributionTable({ contributions = [] }) {
     const statusLabels = {
-        approved: { label: "Approved", className: "bg-green-600/20 text-green-400 border border-green-500/20" },
-        pending: { label: "Pending", className: "bg-yellow-600/20 text-yellow-400 border border-yellow-500/20" },
-        rejected: { label: "Rejected", className: "bg-red-600/20 text-red-400 border border-red-500/20" },
+        approved: { label: "Approved", className: "bg-emerald-50 text-[#005611] border border-emerald-200" },
+        pending: { label: "Pending", className: "bg-amber-50 text-amber-700 border border-amber-200" },
+        rejected: { label: "Rejected", className: "bg-rose-50 text-rose-700 border border-rose-200" },
     };
 
     return (
          // Recent contributions section
         <section>
             {/* Section heading */}
-            <h2 className="mb-6 text-2xl font-bold">Recent Contributions</h2>
+            <h2 className="mb-6 text-2xl font-bold text-slate-800">Recent Contributions</h2>
              {/* Table container */}
-            <div className="overflow-hidden rounded-2xl bg-[#12251C] border border-white/10">
+            <div className="overflow-hidden rounded-2xl bg-white border border-[#D8D2C5] shadow-xs">
                 <table className="w-full">
                     {/* Table header */}
-                    <thead className="border-b border-white/10 bg-black/20">
+                    <thead className="border-b border-[#D8D2C5] bg-[#F7F5EF]">
                         <tr>
-                            <th className="p-4 text-left text-sm font-semibold text-gray-300">Dinosaur</th>
-                            <th className="p-4 text-left text-sm font-semibold text-gray-300">Date</th>
-                            <th className="p-4 text-left text-sm font-semibold text-gray-300">Status</th>
+                            <th className="p-4 text-left text-sm font-bold text-slate-700">Dinosaur</th>
+                            <th className="p-4 text-left text-sm font-bold text-slate-700">Date</th>
+                            <th className="p-4 text-left text-sm font-bold text-slate-700">Status</th>
                         </tr>
                     </thead>
 
-                    <tbody className="divide-y divide-white/5">
+                    <tbody className="divide-y divide-[#D8D2C5]/30">
                         {/* Display message when no contributions are available */}
                         {contributions.length === 0 ? (
                             <tr>
                                 <td
                                     colSpan={3}
-                                    className="p-6 text-center text-gray-400 text-sm"
+                                    className="p-6 text-center text-slate-500 text-sm font-medium"
                                 >
                                     No contributions yet.
                                 </td>
@@ -48,7 +48,7 @@ export default function ContributionTable({ contributions = [] }) {
                             contributions.map((item) => {
                                 const statusInfo = statusLabels[item.status] || {
                                     label: item.status,
-                                    className: "bg-gray-600/20 text-gray-400 border border-gray-500/20",
+                                    className: "bg-slate-50 text-slate-600 border border-slate-200",
                                 };
                                 const dinoName = item.dinosaurData?.name || item.name || "Unnamed Dino";
                                 const dinoThumb = item.dinosaurData?.images?.heroBackground || "";
@@ -56,7 +56,7 @@ export default function ContributionTable({ contributions = [] }) {
                                 return (
                                     <tr
                                         key={item._id}
-                                        className="transition hover:bg-white/5"
+                                        className="transition hover:bg-slate-50/50"
                                     >
                                         {/* Dinosaur name & Thumbnail */}
                                         <td className="p-4">
@@ -65,18 +65,18 @@ export default function ContributionTable({ contributions = [] }) {
                                                     <img
                                                         src={dinoThumb}
                                                         alt={dinoName}
-                                                        className="h-10 w-10 shrink-0 rounded-full object-cover border border-white/10"
+                                                        className="h-10 w-10 shrink-0 rounded-full object-cover border border-[#D8D2C5]"
                                                     />
                                                 ) : (
-                                                    <div className="h-10 w-10 shrink-0 rounded-full bg-neutral-900 border border-white/10 flex items-center justify-center text-xs">
+                                                    <div className="h-10 w-10 shrink-0 rounded-full bg-slate-100 border border-[#D8D2C5] flex items-center justify-center text-xs">
                                                         🦖
                                                     </div>
                                                 )}
                                                 <div>
-                                                    <span className="font-semibold text-white text-sm block">
+                                                    <span className="font-bold text-slate-800 text-sm block">
                                                         {dinoName}
                                                     </span>
-                                                    <span className="text-[11px] text-gray-400 italic">
+                                                    <span className="text-[11px] text-slate-500 font-semibold italic">
                                                         {item.dinosaurData?.scientificName}
                                                     </span>
                                                 </div>
@@ -84,7 +84,7 @@ export default function ContributionTable({ contributions = [] }) {
                                         </td>
                                         
                                         {/* Contribution date */}
-                                        <td className="p-4 text-sm text-gray-300">
+                                        <td className="p-4 text-sm text-slate-600 font-semibold">
                                             {new Date(
                                                 item.date || item.createdAt,
                                             ).toLocaleDateString(undefined, {
@@ -103,7 +103,7 @@ export default function ContributionTable({ contributions = [] }) {
                                                     {statusInfo.label}
                                                 </span>
                                                 {item.status === "rejected" && item.feedback && (
-                                                    <span className="text-[11px] text-red-400/90 leading-normal max-w-xs block">
+                                                    <span className="text-[11px] text-rose-600 font-medium leading-normal max-w-xs block">
                                                         <strong>Feedback:</strong> "{item.feedback}"
                                                     </span>
                                                 )}

@@ -30,7 +30,7 @@ export default function OverviewCards({ profile }) {
         // Overview section
         <section>
             {/* Section heading */}
-            <h2 className="mb-6 text-2xl font-bold">Overview</h2>
+            <h2 className="mb-6 text-2xl font-bold text-slate-800">Overview</h2>
              {/* Grid displaying all overview statistic cards */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {stats.map((stat) => (
