@@ -27,7 +27,7 @@ const ChatBubble = ({
     return (
          // Chat bubble container
         <div
-            className={`flex gap-4 ${
+            className={`flex gap-2 sm:gap-4 ${
                 isUser ? "justify-end items-end" : "justify-start items-start"
             }`}
         > {/* Assistant avatar */}
@@ -35,30 +35,30 @@ const ChatBubble = ({
                 <img
                     src="/ross-avatar.png"
                     alt="Professor Ross"
-                    className="h-16 w-16 shrink-0 rounded-full border-2 border-[#B8D768] object-cover shadow-md"
+                    className="h-10 w-10 sm:h-12 sm:w-12 md:h-14 md:w-14 shrink-0 rounded-full border-2 border-[#B8D768] object-cover shadow-md transition duration-300"
                 />
             )}
             {/* Message bubble */}
             <div
-                className={`relative max-w-[75%] border px-8 py-6 shadow-sm ${
+                className={`relative max-w-[88%] sm:max-w-[80%] md:max-w-[75%] border px-4 py-3 sm:px-6 sm:py-4 md:px-8 md:py-6 shadow-sm ${
                     isUser
-                        ? "rounded-[28px] rounded-tr-lg border-[#D2DEAA] bg-[#DDE8B8]"
-                        : "rounded-[28px] rounded-tl-lg border-[#ECE8D9] bg-white"
+                        ? "rounded-[22px] rounded-tr-md md:rounded-[28px] md:rounded-tr-lg border-[#D2DEAA] bg-[#DDE8B8]"
+                        : "rounded-[22px] rounded-tl-md md:rounded-[28px] md:rounded-tl-lg border-[#ECE8D9] bg-white"
                 }`}
             >{/* Display typing animation or message text */}
                 {isTyping ? (
-                    <div className="flex gap-2 py-2">
+                    <div className="flex gap-1.5 py-1 sm:py-2">
                         <span className="h-2 w-2 animate-bounce rounded-full bg-gray-400"></span>
                         <span className="h-2 w-2 animate-bounce rounded-full bg-gray-400 [animation-delay:150ms]"></span>
                         <span className="h-2 w-2 animate-bounce rounded-full bg-gray-400 [animation-delay:300ms]"></span>
                     </div>
                 ) : (
-                    <p className="whitespace-pre-wrap wrap-break-words text-[20px] leading-9 text-gray-800">
+                    <p className="whitespace-pre-wrap break-words text-[15px] sm:text-lg md:text-[20px] leading-relaxed sm:leading-8 md:leading-9 text-gray-800 font-normal">
                         {message}
                     </p>
                 )}
                 {/* Message timestamp and delivery status */}
-                <div className="mt-5 flex items-center justify-end gap-2 text-xs text-gray-400">
+                <div className="mt-2 sm:mt-4 md:mt-5 flex items-center justify-end gap-1.5 text-[10px] sm:text-xs text-gray-400">
                      {/* Time when the message was sent */}
                     <span>{formattedTime}</span>
                     {/* Read indicator for user messages */}

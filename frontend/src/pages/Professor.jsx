@@ -1,10 +1,8 @@
 import { useState } from "react";
 import Navbar from "../components/home_components/hero/Navbar";
-import ProfessorHeader from "../components/professor/ProfessorHeader";
 import ChatArea from "../components/professor/ChatArea";
 import ChatInput from "../components/professor/ChatInput";
 import PromptChips from "../components/professor/PromptChips";
-import FloatingButton from "../components/professor/FloatingButton";
 import { chatWithRoss } from "../services/rossService"; // adjust path
 
 const timeNow = () =>
@@ -64,12 +62,13 @@ const Professor = () => {
     return (
         <>
             <Navbar />
-            <main className="min-h-screen bg-[#F7F6F1] pt-24">
-                <ProfessorHeader />
+            <main className="h-screen max-h-[100dvh] bg-[#F7F6F1] pt-24 pb-4 flex flex-col overflow-hidden">
                 <ChatArea messages={messages} loading={loading} />
-                <PromptChips onSelect={handleSend} />
-                <ChatInput onSend={handleSend} loading={loading} />
-                <FloatingButton />
+                
+                <div className="w-full max-w-5xl mx-auto px-4 md:px-0 shrink-0">
+                    <PromptChips onSelect={handleSend} />
+                    <ChatInput onSend={handleSend} loading={loading} />
+                </div>
             </main>
         </>
     );

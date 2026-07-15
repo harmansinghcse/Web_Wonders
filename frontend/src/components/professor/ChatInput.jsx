@@ -27,12 +27,12 @@ const ChatInput = ({ onSend, loading }) => {
 
     return (
         // Chat input container
-        <div className="mx-auto mt-12 w-[95%] max-w-5xl" mb-5>
+        <div className="mx-auto w-full max-w-5xl px-4 md:px-0 mb-4 sm:mb-6">
             {/* Input box */}
-            <div className="rounded-3xl border border-[#E8E1CF] bg-white p-4 shadow-md">
-                <div className="flex items-center gap-4">
+            <div className="rounded-[22px] sm:rounded-[28px] border border-[#E8E1CF] bg-white p-2.5 sm:p-4 shadow-md focus-within:ring-2 focus-within:ring-[#6C8E4E]/30 focus-within:border-[#6C8E4E] transition-all duration-300">
+                <div className="flex items-center gap-3 sm:gap-4">
                      {/* Attachment icon */}
-                    <Paperclip className="text-gray-400" size={22} />
+                    <Paperclip className="text-gray-400 hover:text-gray-600 cursor-pointer transition shrink-0" size={20} />
                     {/* User message input */}
                     <input
                         value={message}
@@ -40,14 +40,15 @@ const ChatInput = ({ onSend, loading }) => {
                         onKeyDown={(e) => e.key === "Enter" && handleSend()}
                         type="text"
                         placeholder="Ask Professor Ross..."
-                        className="flex-1 bg-transparent text-lg outline-none placeholder:text-gray-400"
+                        className="flex-1 bg-transparent text-sm sm:text-base md:text-lg outline-none placeholder:text-gray-400 text-gray-800"
                     />
                     <button
                         onClick={handleSend}
                         disabled={loading}
-                        className="rounded-2xl bg-[#6C8E4E] p-3 text-white transition hover:bg-[#5D7E42] disabled:opacity-50"
+                        className="rounded-xl sm:rounded-2xl bg-[#6C8E4E] p-2.5 sm:p-3 text-white transition-all duration-200 hover:bg-[#5D7E42] hover:scale-105 active:scale-95 disabled:opacity-50 disabled:scale-100 disabled:hover:bg-[#6C8E4E] cursor-pointer shrink-0"
                     >
-                        <SendHorizontal size={22} />
+                        <SendHorizontal size={18} className="sm:hidden" />
+                        <SendHorizontal size={22} className="hidden sm:block" />
                     </button>
                 </div>
             </div>

@@ -1,9 +1,7 @@
 import { useState } from "react";
-import ProfessorHeader from "./ProfessorHeader";
 import ChatArea from "./ChatArea";
 import PromptChips from "./PromptChips";
 import ChatInput from "./ChatInput";
-import FloatingButton from "./FloatingButton";
 import professorMessages from "../../data/professorMessages";
 import { chatWithRoss } from "../../services/rossService";
 /**
@@ -73,17 +71,13 @@ const ProfessorChat = () => {
 
     return (
         // Main Professor Ross chat interface
-        <div>
-              {/* Chat page header */}
-            <ProfessorHeader />
-
-              {/* Conversation area */}
+        <div className="h-full flex flex-col overflow-hidden">
             <ChatArea messages={messages} loading={loading} />
 
-             {/* Suggested prompt buttons */}
-            <PromptChips onSelect={handleSend} />
-            <ChatInput onSend={handleSend} loading={loading} />
-            <FloatingButton />
+            <div className="w-full shrink-0">
+                <PromptChips onSelect={handleSend} />
+                <ChatInput onSend={handleSend} loading={loading} />
+            </div>
         </div>
     );
 };
