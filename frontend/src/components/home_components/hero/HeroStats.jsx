@@ -13,7 +13,7 @@ export default function HeroStats() {
             {stats.map(({ icon: Icon, value, label }) => (
                 <div
                     key={label}
-                    className="flex items-center gap-3 rounded-xl border border-[#000000] bg-white px-4 py-3 shadow-sm backdrop-blur-sm"
+                    className="flex items-center gap-2.5 sm:gap-3 rounded-xl border border-[#000000] bg-white px-3 py-2 sm:px-4 sm:py-2.5 shadow-sm backdrop-blur-sm"
                 >
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#36593D]/10">
                         <Icon className="h-4 w-4 text-[#006113]" />

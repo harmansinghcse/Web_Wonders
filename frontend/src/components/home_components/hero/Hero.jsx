@@ -25,7 +25,7 @@ export default function Hero() {
                 <Navbar />
 
                 {/* Hero Content */}
-                <div className="relative mx-auto flex w-full max-w-7xl flex-1 items-center px-6 pt-24 pb-8 sm:px-8 sm:pt-32 lg:px-12 lg:pt-28 lg:pb-12">
+                <div className="relative mx-auto flex w-full max-w-7xl flex-1 items-center px-6 pt-24 pb-8 sm:px-8 sm:pt-32 lg:px-12 lg:pt-24 lg:pb-8">
                     <div className="flex-1">
                         <HeroContent />
                     </div>
