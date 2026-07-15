@@ -11,6 +11,8 @@ function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const [query, setQuery] = useState("");
+
+    // implement mobile menu with overlay
     useEffect(() => {
         if (menuOpen || searchOpen) {
             document.body.style.overflow = "hidden";
@@ -61,6 +63,7 @@ function Navbar() {
         <>    
             {/*optimized navbar component structure*/}
             <div className={menuOpen ? "hidden lg:block" : "block"}>
+
                 <header className="absolute top-4 left-1/2 z-50 w-full -translate-x-1/2 px-6">
                     <nav className="mx-auto flex h-18 w-[97%] max-w-400 items-center justify-between rounded-[28px] border border-[#e3d7c2] bg-[#ffffff]/95 px-8 shadow-[0_12px_35px_rgba(0,0,0,0.08)] backdrop-blur-md transition-all duration-300">
                         <div className="flex items-center">

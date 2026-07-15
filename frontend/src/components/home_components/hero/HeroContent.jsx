@@ -25,7 +25,6 @@ export default function HeroContent() {
                     Age of Dinosaurs
                 </h2>
             </div>
-
             {/* Description */}
             <p className="mt-8 max-w-lg text-lg leading-8 text-[#5D5D5D]">
                 Discover prehistoric giants, uncover ancient fossils, and
