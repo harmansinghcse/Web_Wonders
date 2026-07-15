@@ -1,4 +1,5 @@
 import { ArrowRight, Users } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function QuizButton() {
     return (
@@ -6,38 +7,35 @@ export default function QuizButton() {
 
             {/* Start Quiz Button */}
 
-            <button
+            <Link
+                to="/quiz"
                 className="
-                group
-                flex
-                h-[72px]
-                w-[260px]
-                items-center
-                justify-between
-                rounded-3xl
-                bg-[#496A3D]
-                px-8
-                text-xl
-                font-semibold
-                text-white
-                shadow-[0_18px_40px_rgba(73,106,61,0.25)]
-                transition-all
-                duration-300
-                hover:-translate-y-1
-                hover:bg-[#3E5D33]
-            "
+                    group
+                    flex
+                    h-[72px]
+                    w-[260px]
+                    items-center
+                    justify-between
+                    rounded-3xl
+                    bg-[#496A3D]
+                    px-8
+                    text-xl
+                    font-semibold
+                    text-white
+                    shadow-[0_18px_40px_rgba(73,106,61,0.25)]
+                    transition-all
+                    duration-300
+                    hover:-translate-y-1
+                    hover:bg-[#3E5D33]
+                "
             >
                 <span>Start Quiz</span>
 
                 <ArrowRight
                     size={26}
-                    className="
-                    transition-transform
-                    duration-300
-                    group-hover:translate-x-1
-                "
+                    className="transition-transform duration-300 group-hover:translate-x-1"
                 />
-            </button>
+            </Link>
 
             {/* Explorer Count */}
 
