@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Menu, Search, X, Bell } from "lucide-react";
 import UserMenu from "../UserMenu";
 import SearchBar from "../../search/SearchBar";
-import { Home, Compass, Clock3, PlusSquare, CircleHelp, GraduationCap} from "lucide-react";
+import { Home, Compass, Clock3, PlusSquare, CircleHelp, Brain} from "lucide-react";
 import NavbarLink from "./NavbarLinks";
 
 function Navbar() {
@@ -53,8 +53,8 @@ function Navbar() {
 
         {
             to: "/professor",
-            icon: GraduationCap,
-            label: "Meet Professor Ross",
+            icon: Brain,
+            label: "Ask Professor Ross",
             desc: "Learn from the expert",
         }
     ];
@@ -150,9 +150,50 @@ function Navbar() {
                                 Quiz
                             </NavbarLink>
 
-                            <NavbarLink to="/professor" icon={GraduationCap}>
-                                Meet Professor Ross
-                            </NavbarLink>
+                            <Link
+                                to="/professor"
+                                className="
+                                    group flex items-center gap-2
+                                    rounded-full
+                                    px-5 py-3
+                                    bg-gradient-to-r
+                                    from-[#184D30]
+                                    via-[#1F5C38]
+                                    to-[#2F7D4D]
+                                    bg-[length:200%_200%]
+                                    text-white
+                                    shadow-[0_0_18px_rgba(34,197,94,0.18)]
+                                    transition-all duration-300
+                                    hover:scale-105
+                                    hover:shadow-[0_0_30px_rgba(34,197,94,0.35)]
+                                "
+                            >
+                                {/* AI Status Indicator */}
+                                <span className="relative flex h-2.5 w-2.5">
+                                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-300 opacity-75"></span>
+                                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-200"></span>
+                                </span>
+
+                                <Brain size={18} className="transition-transform duration-300 group-hover:rotate-6" />
+
+                                <span className="font-medium">
+                                    Ask Professor Ross
+                                </span>
+
+                                <span
+                                    className="
+                                        rounded-full
+                                        bg-white/15
+                                        border border-white/20
+                                        px-2 py-0.5
+                                        text-[10px]
+                                        font-bold
+                                        tracking-wider
+                                    "
+                                >
+                                    AI
+                                </span>
+                            </Link>
                         </div>
 
                         {/*integrate dinosaur search functionality*/}
@@ -223,16 +264,45 @@ function Navbar() {
                                         key={to}
                                         to={to}
                                         onClick={() => setMenuOpen(false)}
-                                        className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-white/5 px-5 py-4 transition hover:border-[#36593D]/40 hover:bg-[#36593D]/15"
+                                        className={`group flex items-center gap-4 rounded-2xl px-5 py-4 transition
+                                        ${
+                                            label === "Ask Professor Ross"
+                                                ? "border border-[#52B788]/30 bg-gradient-to-r from-[#1F5C38]/40 to-[#2F7D4D]/20 shadow-[0_0_20px_rgba(34,197,94,0.15)]"
+                                                : "border border-white/5 bg-white/5 hover:border-[#36593D]/40 hover:bg-[#36593D]/15"
+                                        }`}
                                     >
-                                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#36593D]/20 text-[#8FBA97] transition group-hover:bg-[#36593D] group-hover:text-white">
-                                            <Icon size={20} />
+                                        <div
+                                            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition
+                                            ${
+                                                label === "Ask Professor Ross"
+                                                    ? "bg-[#36593D] text-white shadow-[0_0_15px_rgba(34,197,94,0.4)]"
+                                                    : "bg-[#36593D]/20 text-[#8FBA97] group-hover:bg-[#36593D] group-hover:text-white"
+                                            }`}
+                                        >                                            <Icon size={20} />
                                         </div>
 
                                         <div className="flex-1">
-                                            <p className="text-lg font-semibold text-white">
-                                                {label}
-                                            </p>
+                                            {label === "Ask Professor Ross" && (
+                                                <div className="mb-1 flex items-center gap-2 text-xs text-green-300">
+                                                    <span className="relative flex h-2 w-2">
+                                                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+                                                        <span className="relative inline-flex h-2 w-2 rounded-full bg-green-300"></span>
+                                                    </span>
+                                                    Online
+                                                </div>
+                                            )}
+                                            <div className="flex items-center gap-2">
+                                                <p className="text-lg font-semibold text-white">
+                                                    {label}
+                                                </p>
+
+                                                {label === "Ask Professor Ross" && (
+                                                    <span className="rounded-full bg-green-400/20 px-2 py-0.5 text-[10px] font-bold tracking-wider text-green-300">
+                                                        AI
+                                                    </span>
+                                                )}
+                                            </div>
+
                                             <p className="mt-0.5 text-sm font-normal text-[#B7C4B9]">
                                                 {desc}
                                             </p>
