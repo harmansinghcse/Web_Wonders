@@ -11,7 +11,6 @@ function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const [query, setQuery] = useState("");
-
     useEffect(() => {
         if (menuOpen || searchOpen) {
             document.body.style.overflow = "hidden";
