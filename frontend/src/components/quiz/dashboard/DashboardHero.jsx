@@ -47,7 +47,7 @@ const DashboardHero = ({ user }) => {
 
                                 <div>
                                     <h3 className="text-xl font-bold text-[#2F5A3F]">
-                                        Professor Rex
+                                        Professor Ross
                                     </h3>
 
                                     <p className="mt-1 text-gray-700 leading-relaxed text-sm sm:text-base">
