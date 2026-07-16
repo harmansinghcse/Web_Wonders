@@ -17,7 +17,7 @@ export default function ProgressCard() {
             whileHover={{ scale: 1.02, y: -2 }}
             className="
             absolute
-            bottom-4
+            bottom-2
             left-1/2
             -translate-x-1/2
             sm:bottom-4
@@ -25,7 +25,7 @@ export default function ProgressCard() {
             sm:translate-x-0
             z-30
             w-[92%]
-            max-w-[280px]
+            max-w-[240px]
             sm:max-w-[320px]
             rounded-xl
             sm:rounded-2xl
@@ -33,21 +33,22 @@ export default function ProgressCard() {
             backdrop-blur-md
             border
             border-white/60
-            p-4
+            p-3
+            sm:p-4
             shadow-[0_15px_35px_rgba(0,0,0,0.06)]
             "
         >
-            <div className="mb-2 sm:mb-3 flex items-center justify-between">
-                <span className="text-xs sm:text-sm font-bold text-[#1E251C]">
+            <div className="mb-1.5 sm:mb-3 flex items-center justify-between">
+                <span className="text-[10px] sm:text-sm font-bold text-[#1E251C]">
                     Your Progress
                 </span>
 
                 <Leaf
-                    className="text-[#496A3D] h-3.5 w-3.5 sm:h-4 sm:w-4"
+                    className="text-[#496A3D] h-3 w-3 sm:h-4 sm:w-4"
                 />
             </div>
 
-            <div className="h-2 sm:h-2.5 overflow-hidden rounded-full bg-[#E7E2D5]">
+            <div className="h-1.5 sm:h-2.5 overflow-hidden rounded-full bg-[#E7E2D5]">
                 <motion.div
                     initial={{ width: 0 }}
                     whileInView={{ width: "68%" }}
@@ -63,8 +64,8 @@ export default function ProgressCard() {
                 />
             </div>
 
-            <div className="mt-1.5 flex justify-end">
-                <span className="text-[10px] sm:text-xs font-extrabold text-[#496A3D]">
+            <div className="mt-1 flex justify-end">
+                <span className="text-[9px] sm:text-xs font-extrabold text-[#496A3D]">
                     68% Completed
                 </span>
             </div>

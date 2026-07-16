@@ -5,7 +5,7 @@ import ProgressCard from "./ProgressCard";
 
 export default function QuizVisual() {
     return (
-        <div className="relative flex h-[300px] sm:h-[400px] lg:h-[480px] w-full items-center justify-center">
+        <div className="relative flex h-[280px] sm:h-[400px] lg:h-[480px] w-full items-center justify-center">
             {/* Background Circle */}
             <motion.div
                 animate={{
@@ -18,10 +18,12 @@ export default function QuizVisual() {
                 }}
                 className="
                 absolute
-                h-[220px]
-                w-[220px]
-                sm:h-[340px]
-                sm:w-[340px]
+                h-[180px]
+                w-[180px]
+                sm:h-[300px]
+                sm:w-[300px]
+                lg:h-[340px]
+                lg:w-[340px]
                 rounded-full
                 bg-gradient-to-br
                 from-[#EAF3E4]
@@ -46,8 +48,8 @@ export default function QuizVisual() {
                 className="
                 relative
                 z-20
-                w-[260px]
-                sm:w-[380px]
+                w-[200px]
+                sm:w-[340px]
                 lg:w-[440px]
                 object-contain
                 drop-shadow-[0_15px_40px_rgba(73,106,61,0.15)]

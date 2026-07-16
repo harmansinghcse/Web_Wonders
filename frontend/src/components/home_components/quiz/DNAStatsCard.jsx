@@ -18,13 +18,13 @@ export default function DNAStatsCard() {
             className="
             absolute
             right-2
-            top-4
+            top-2
             sm:right-4
             sm:top-8
             z-30
             flex
             items-center
-            gap-2
+            gap-1.5
             sm:gap-3
             rounded-xl
             sm:rounded-2xl
@@ -32,8 +32,8 @@ export default function DNAStatsCard() {
             backdrop-blur-md
             border
             border-white/60
-            px-3
-            py-2
+            px-2.5
+            py-1.5
             sm:px-4
             sm:py-3
             shadow-[0_15px_35px_rgba(0,0,0,0.06)]
@@ -42,8 +42,8 @@ export default function DNAStatsCard() {
             <div
                 className="
                 flex
-                h-8
-                w-8
+                h-7
+                w-7
                 sm:h-10
                 sm:w-10
                 items-center
@@ -53,16 +53,16 @@ export default function DNAStatsCard() {
                 "
             >
                 <Dna
-                    className="text-[#496A3D] h-4 w-4 sm:h-5 sm:w-5"
+                    className="text-[#496A3D] h-3.5 w-3.5 sm:h-5 sm:w-5"
                 />
             </div>
 
             <div>
-                <p className="text-[8px] sm:text-[10px] font-bold uppercase tracking-widest text-[#3D4E37] opacity-80">
+                <p className="text-[7px] sm:text-[10px] font-bold uppercase tracking-widest text-[#3D4E37] opacity-80">
                     DNA POINTS
                 </p>
 
-                <h3 className="text-lg sm:text-2xl font-extrabold text-[#496A3D] leading-tight">
+                <h3 className="text-sm sm:text-2xl font-extrabold text-[#496A3D] leading-tight">
                     1,250
                 </h3>
             </div>
