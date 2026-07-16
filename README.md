@@ -1,4 +1,4 @@
-# 🦖 Jurassic Website
+# 🦖 Jurassic Explorer
 
 An interactive full-stack web application that lets users explore the fascinating world of dinosaurs. Discover prehistoric creatures, learn interesting facts, take quizzes, and enjoy a modern Jurassic-themed experience.
 
@@ -6,14 +6,35 @@ An interactive full-stack web application that lets users explore the fascinatin
 
 ## ✨ Features
 
-- 🦕 Explore different dinosaur species
-- 📖 Detailed dinosaur information
-- 🦴 Fossil and prehistoric life gallery
-- 🧠 Interactive dinosaur quiz
-- 👤 User Login & Signup
-- 🏆 Quiz score tracking
-- 📱 Responsive and modern UI
-- 🌿 Jurassic-themed design
+### 🦕 Dinosaur Explorer
+- Browse dinosaur species
+- Search dinosaurs by name
+- Filter dinosaur records
+
+### 📖 Dinosaur Information
+- Detailed species pages
+- Physical characteristics
+- Habitat information
+- Geological period details
+
+### 🧠 Interactive Quiz
+- Jurassic-themed quiz challenges
+- Score tracking
+- Performance monitoring
+
+### 👤 User System
+- Login & Signup
+- Personal profile page
+- Achievement tracking
+
+### 🦖 Dinosaur Management
+- Create new dinosaur entries
+- Store and manage dinosaur records
+
+### 🎨 Modern UI
+- Responsive design
+- Jurassic-inspired theme
+- Mobile-friendly interface
 
 ---
 
@@ -39,12 +60,14 @@ jurassic-website/
 - HTML5
 - CSS3
 - JavaScript
-- Tailwind CSS (Planned)
+- Tailwind CSS
 
 ### Backend
 
 - Node.js
 - Express.js
+- Authentication System
+- MongoDB
 
 ---
 
@@ -96,28 +119,40 @@ http://localhost:5000
 - 🏠 Home
 - 🔍 Explore Dinosaurs
 - 🦖 Dinosaur Details
-- 🦴 Fossils
 - 🧠 Quiz
 - 👤 Profile
 - ⚙️ Settings
-- 📞 Contact
 
 ---
 
 ## 🎯 Future Improvements
 
-- Dinosaur search and filtering
-- Leaderboard
-- Favorite dinosaurs
-- Dark/Light mode
-- AI-powered dinosaur assistant
-- Admin dashboard
+- 🏆 Global Leaderboard
+- 🤖 AI Dinosaur Assistant
+- 🗺️ Interactive Dinosaur Games
+- 🌙 Dark/Light Mode
+- ❤️ Favorite Dinosaurs
+- 📊 Quiz Analytics
+- 👨‍💼 Admin Dashboard
 
 ---
 
+## 🌐 Live Demo
+
+🚀 Visit Jurassic Explorer:
+https://web-wonders-coral.vercel.app/
+
+---
+
+
 ## 👩‍💻 Developed By
 
-**Web Wonders Team**
+**Team Bit By Bit**
+
+- Harman Singh
+- Mehar Surati
+- Meshvi Gajjar
+- Het Savani
 
 A full-stack educational website built to make learning about dinosaurs fun, interactive, and engaging.
 

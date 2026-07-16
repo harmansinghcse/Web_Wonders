@@ -43,11 +43,11 @@ const DashboardHero = ({ user }) => {
 
                         <div className="mt-8 max-w-lg rounded-3xl bg-white/90 p-5 shadow-lg backdrop-blur">
                             <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left gap-4">
-                                <img src={professorAvatar} alt="Professor Rex" className="h-20 w-20 shrink-0 rounded-full border-4 border-[#C7D78A]"/>
+                                <img src={professorAvatar} alt="Professor Rex" className="h-24 w-24 -mt-1 shrink-0 rounded-full border-4 border-[#C7D78A] shadow-md"/>
 
                                 <div>
                                     <h3 className="text-xl font-bold text-[#2F5A3F]">
-                                        Professor Rex
+                                        Professor Ross
                                     </h3>
 
                                     <p className="mt-1 text-gray-700 leading-relaxed text-sm sm:text-base">
