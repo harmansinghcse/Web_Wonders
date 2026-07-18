@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import MarkerPopup from "./MarkerPopup";
@@ -85,6 +85,13 @@ const DinosaurMarker = ({ dinosaur, activeDinosaurId, setActiveDinosaurId }) => 
         }
     }, [isActive, coordinates, map]);
 
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 640);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
     // Fetch optimized 300px avatar image for the marker badge
     const markerAvatar = getOptimizedImageUrl(image, 300);
 
@@ -104,7 +111,11 @@ const DinosaurMarker = ({ dinosaur, activeDinosaurId, setActiveDinosaurId }) => 
                 }
             }}
         >
-            <Popup className="dino-leaflet-popup" maxWidth={300} minWidth={270}>
+            <Popup 
+                className="dino-leaflet-popup" 
+                maxWidth={isMobile ? 240 : 300} 
+                minWidth={isMobile ? 220 : 270}
+            >
                 <MarkerPopup dinosaur={dinosaur} />
             </Popup>
         </Marker>

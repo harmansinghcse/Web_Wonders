@@ -1,7 +1,16 @@
+import { useState, useEffect } from "react";
 import { X, MapPin, Calendar, Sparkles, Globe, Trees, Building2, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
 
 const FossilSitePanel = ({ dinosaur, locationData, loadingLocation, onClose }) => {
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+    useEffect(() => {
+        const handleResize = () => setIsMobile(window.innerWidth < 768);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
     if (!dinosaur) return null;
 
     const { name } = dinosaur;
@@ -20,19 +29,27 @@ const FossilSitePanel = ({ dinosaur, locationData, loadingLocation, onClose }) =
 
     const showLocalContext = environment || (nearbyCity && nearbyCity !== "Unknown" && nearbyCity !== "") || geoFact;
 
+    // Animation variants: vertical fade/slide for inline mobile, horizontal slide for desktop panel
+    const panelVariants = {
+        initial: isMobile ? { y: 15, opacity: 0 } : { x: 340, opacity: 0 },
+        animate: isMobile ? { y: 0, opacity: 1 } : { x: 0, opacity: 1 },
+        exit: isMobile ? { y: 15, opacity: 0 } : { x: 340, opacity: 0 }
+    };
+
     return (
         <motion.div
-            initial={{ x: 340, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            exit={{ x: 340, opacity: 0 }}
+            variants={panelVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
             transition={{ type: "spring", damping: 28, stiffness: 220 }}
-            className="pointer-events-auto z-20 flex w-76 sm:w-92 shrink-0 flex-col border-l border-[#C9A14A]/15 bg-[#211D18] shadow-2xl backdrop-blur-md"
+            className="pointer-events-auto z-10 flex w-full md:w-92 h-auto md:h-full shrink-0 flex-col border border-[#C9A14A]/15 md:border-t-0 md:border-b-0 md:border-r-0 md:border-l bg-[#211D18] shadow-2xl rounded-3xl md:rounded-none"
         >
             {/* Header with Close */}
-            <div className="flex h-20 items-center justify-between border-b border-[#C9A14A]/10 px-5 shrink-0">
+            <div className="flex h-16 md:h-20 items-center justify-between border-b border-[#C9A14A]/10 px-5 shrink-0">
                 <div className="flex items-center gap-2.5">
                     <BookOpen className="text-[#C9A14A]" size={20} />
-                    <h2 className="font-serif text-lg font-black text-[#F5F2EA] tracking-tight">
+                    <h2 className="font-serif text-base md:text-lg font-black text-[#F5F2EA] tracking-tight">
                         Excavation Report
                     </h2>
                 </div>
@@ -47,7 +64,7 @@ const FossilSitePanel = ({ dinosaur, locationData, loadingLocation, onClose }) =
 
             {/* Shimmer/Skeleton Loading State */}
             {loadingLocation ? (
-                <div className="flex-1 p-5 space-y-6 animate-pulse bg-[#211D18]">
+                <div className="flex-1 p-5 space-y-6 animate-pulse bg-[#211D18] rounded-b-3xl md:rounded-b-none">
                     <div>
                         <div className="h-3 w-20 bg-[#2B2621] rounded-md" />
                         <div className="h-7 w-48 bg-[#2B2621] rounded-md mt-2" />
@@ -83,13 +100,13 @@ const FossilSitePanel = ({ dinosaur, locationData, loadingLocation, onClose }) =
                 </div>
             ) : (
                 /* Main Geological Site Narrative Content */
-                <div className="flex-1 overflow-y-auto p-5 space-y-6 scrollbar-thin scrollbar-thumb-stone-850 scrollbar-track-transparent">
+                <div className="flex-1 overflow-y-auto p-5 space-y-6 scrollbar-thin scrollbar-thumb-stone-850 scrollbar-track-transparent rounded-b-3xl md:rounded-b-none">
                     {/* Species Reference */}
                     <div>
                         <span className="text-[9px] uppercase font-bold tracking-widest text-[#8BAA83] block">
                             Fossil Site for
                         </span>
-                        <h3 className="font-serif text-2xl font-black text-[#F5F2EA] leading-tight mt-0.5">
+                        <h3 className="font-serif text-xl md:text-2xl font-black text-[#F5F2EA] leading-tight mt-0.5">
                             {name}
                         </h3>
                     </div>
@@ -105,7 +122,7 @@ const FossilSitePanel = ({ dinosaur, locationData, loadingLocation, onClose }) =
                                         <span className="block text-[9px] uppercase font-bold tracking-widest text-[#9A9489]">
                                             Geological Stratum
                                         </span>
-                                        <h4 className="font-serif text-base font-black text-[#F5F2EA] leading-tight mt-1">
+                                        <h4 className="font-serif text-sm md:text-base font-black text-[#F5F2EA] leading-tight mt-1">
                                             {formation}
                                         </h4>
                                         {(region || country) && (
@@ -127,7 +144,7 @@ const FossilSitePanel = ({ dinosaur, locationData, loadingLocation, onClose }) =
                                     <span className="block text-[9px] uppercase font-bold tracking-widest text-[#9A9489]">
                                         Epoch
                                     </span>
-                                    <span className="font-serif text-sm font-bold text-[#C9A14A] leading-tight mt-1 block">
+                                    <span className="font-serif text-xs md:text-sm font-bold text-[#C9A14A] leading-tight mt-1 block">
                                         {period}
                                     </span>
                                 </div>
@@ -140,7 +157,7 @@ const FossilSitePanel = ({ dinosaur, locationData, loadingLocation, onClose }) =
                                     <span className="block text-[9px] uppercase font-bold tracking-widest text-[#9A9489]">
                                         Findings Count
                                     </span>
-                                    <span className="font-serif text-sm font-bold text-[#C9A14A] leading-tight mt-1 block">
+                                    <span className="font-serif text-xs md:text-sm font-bold text-[#C9A14A] leading-tight mt-1 block">
                                         {count > 1 ? `${count}+ Specimens` : "1 Specimen"}
                                     </span>
                                 </div>

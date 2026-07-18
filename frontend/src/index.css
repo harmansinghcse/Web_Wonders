@@ -9,3 +9,24 @@
   scrollbar-width: none;
 }
 
+
+/* Leaflet Custom Popup Overrides */
+.dino-leaflet-popup .leaflet-popup-content-wrapper {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.dino-leaflet-popup .leaflet-popup-content {
+  margin: 0 !important;
+  width: auto !important;
+}
+
+.dino-leaflet-popup .leaflet-popup-tip-container {
+  display: none !important; /* hide default white arrow tip */
+}
+
+.dino-leaflet-popup .leaflet-popup-close-button {
+  display: none !important; /* hide default leaflet close button */
+}

@@ -28,6 +28,7 @@ export default function ExploreMap() {
     // Sidebar & Selection states
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [activeDinosaurId, setActiveDinosaurId] = useState(null);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
     // Map bounds trigger counter
     const [fitBoundsTrigger, setFitBoundsTrigger] = useState(0);
@@ -35,6 +36,7 @@ export default function ExploreMap() {
     // Screen resize listener for sidebar default state
     useEffect(() => {
         const handleResize = () => {
+            setIsMobile(window.innerWidth < 768);
             if (window.innerWidth < 1024) {
                 setIsSidebarOpen(false);
             } else {
@@ -295,7 +297,7 @@ export default function ExploreMap() {
                         />
 
                         {/* Map & Sidebar Wrapper */}
-                        <div className="flex-grow relative h-[500px] md:h-[600px] flex rounded-3xl overflow-hidden border border-[#C9A14A]/15 bg-[#171613]">
+                        <div className="flex-grow relative h-[380px] md:h-[600px] flex rounded-3xl overflow-hidden border border-[#C9A14A]/15 bg-[#171613]">
                             {/* Collapsible Sidebar */}
                             <div className="absolute inset-y-0 left-0 z-10 flex">
                                 <DinosaurSidebar
@@ -342,20 +344,36 @@ export default function ExploreMap() {
                                 )}
                             </div>
 
-                            {/* Collapsible Fossil Site Panel on the Right side */}
-                            <div className="absolute inset-y-0 right-0 z-10 flex pointer-events-none">
-                                <AnimatePresence>
-                                    {activeDinosaur && (
-                                        <FossilSitePanel
-                                            dinosaur={activeDinosaur}
-                                            locationData={locationData}
-                                            loadingLocation={loadingLocation}
-                                            onClose={() => setActiveDinosaurId(null)}
-                                        />
-                                    )}
-                                </AnimatePresence>
-                            </div>
+                            {/* Desktop Collapsible Fossil Site Panel on the Right side */}
+                            {!isMobile && (
+                                <div className="absolute inset-y-0 right-0 z-10 flex pointer-events-none">
+                                    <AnimatePresence>
+                                        {activeDinosaur && (
+                                            <FossilSitePanel
+                                                dinosaur={activeDinosaur}
+                                                locationData={locationData}
+                                                loadingLocation={loadingLocation}
+                                                onClose={() => setActiveDinosaurId(null)}
+                                            />
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            )}
                         </div>
+
+                        {/* Mobile Collapsible Fossil Site Panel (Underneath the Map Component) */}
+                        {isMobile && activeDinosaur && (
+                            <AnimatePresence>
+                                <div className="w-full mt-4">
+                                    <FossilSitePanel
+                                        dinosaur={activeDinosaur}
+                                        locationData={locationData}
+                                        loadingLocation={loadingLocation}
+                                        onClose={() => setActiveDinosaurId(null)}
+                                    />
+                                </div>
+                            </AnimatePresence>
+                        )}
                     </div>
                 )}
 

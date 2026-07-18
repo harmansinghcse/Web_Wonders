@@ -40,7 +40,7 @@ const MarkerPopup = ({ dinosaur }) => {
             initial={{ opacity: 0, scale: 0.95, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="w-64 sm:w-72 overflow-hidden rounded-[20px] bg-[#2B2621]/95 shadow-[0_15px_40px_rgba(0,0,0,0.4)] border border-[#C9A14A]/20 font-sans backdrop-blur-md"
+            className="w-[220px] sm:w-72 overflow-hidden rounded-[20px] bg-[#2B2621]/95 shadow-[0_15px_40px_rgba(0,0,0,0.4)] border border-[#C9A14A]/20 font-sans backdrop-blur-md"
         >
             {/* Dinosaur Image */}
             <div className="relative aspect-[16/9.5] w-full overflow-hidden bg-[#171613]">
