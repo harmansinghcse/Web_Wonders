@@ -19,6 +19,7 @@ const QuizTopic = lazy(() => import("./pages/QuizTopic"));
 const QuizPlay = lazy(() => import("./pages/QuizPlay"));
 const QuizResult = lazy(() => import("./pages/QuizResult"));
 const AdminSubmissions = lazy(() => import("./pages/AdminSubmissions"));
+const ExploreMap = lazy(() => import("./pages/ExploreMap"));
 
 const LoadingFallback = () => (
     <div className="flex h-screen w-screen flex-col items-center justify-center bg-[#F7F6F1]">
@@ -41,6 +42,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/explore" element={<Explore />} />
+                    <Route path="/map" element={<ExploreMap />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
 

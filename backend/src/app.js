@@ -10,6 +10,7 @@ const errorHandler = require("./middleware/errorMiddleware");
 const profileRoutes = require("./routes/profile.routes");
 const rossRoutes = require("./routes/rossRoutes");
 const quizRoutes = require("./routes/quizRoutes");
+const mapRoutes = require("./routes/mapRoutes");
 
 // allowed origins
 const allowedOrigins = [
@@ -43,6 +44,7 @@ app.use("/api/dinosaur", dinosaurRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/ai", rossRoutes);
+app.use("/api/map", mapRoutes);
 app.use(errorHandler);
 
 app.get("/", (req, res) => {
