@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Menu, Search, X, Bell } from "lucide-react";
 import UserMenu from "../UserMenu";
 import SearchBar from "../../search/SearchBar";
-import { Home, Compass, Clock3, PlusSquare, CircleHelp, GraduationCap} from "lucide-react";
+import { Home, Compass, Clock3, PlusSquare, CircleHelp, GraduationCap, Map } from "lucide-react";
 import NavbarLink from "./NavbarLinks";
 
 function Navbar() {
@@ -31,6 +31,12 @@ function Navbar() {
             icon: Compass,
             label: "Explore",
             desc: "Browse all dinosaurs",
+        },
+        {
+            to: "/map",
+            icon: Map,
+            label: "Explore Map",
+            desc: "Locate dinosaur fossils on the world map",
         },
         {
             to: "/timeline",
@@ -135,6 +141,10 @@ function Navbar() {
 
                             <NavbarLink to="/explorer" icon={Compass}>
                                 Explore
+                            </NavbarLink>
+
+                            <NavbarLink to="/map" icon={Map}>
+                                Map
                             </NavbarLink>
 
                             <NavbarLink to="/timeline" icon={Clock3}>

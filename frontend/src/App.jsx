@@ -15,6 +15,7 @@ import TopicDetails from "./pages/TopicDetails";
 import PlayQuiz from "./pages/PlayQuiz";
 import Professor from "./pages/Professor";
 import AdminSubmissions from "./pages/AdminSubmissions";
+import ExploreMap from "./pages/ExploreMap";
 
 function App() {
     return (
@@ -22,6 +23,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/explore" element={<Explore />} />
+                <Route path="/map" element={<ExploreMap />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
 
