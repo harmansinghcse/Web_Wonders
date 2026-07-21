@@ -1,451 +1,1189 @@
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+
 import Navbar from "../components/home_components/hero/Navbar";
+
 import DinosaurMap from "../components/map/DinosaurMap";
-import DinosaurSidebar from "../components/map/DinosaurSidebar";
-import FossilSitePanel from "../components/map/FossilSitePanel";
-import ControlPanel from "../components/map/ControlPanel";
+import ExploreErasPanel from "../components/map/ExploreErasPanel";
+import FeaturedDinosaurPanel from "../components/map/FeaturedDinosaurPanel";
+import MapSearchBar from "../components/map/MapSearchBar";
+import EraTimeline from "../components/map/EraTimeline";
+import TrendingDinosaurs from "../components/map/TrendingDinosaurs";
+import ProfessorRossFloating from "../components/map/ProfessorRossFloating";
+
 import { getMapMarkers } from "../services/mapService";
-import { getFossilSiteDetails } from "../services/locationService";
-import { AlertCircle, RefreshCw, Compass, Globe, MapPin, Calendar, Award, Sparkles, Footprints } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { getOptimizedImageUrl } from "../utils/imageHelper";
+
+import {
+    AlertCircle,
+    RefreshCw,
+    Leaf,
+    Beef,
+    Apple,
+    Landmark
+} from "lucide-react";
+
 
 export default function ExploreMap() {
+
+    /* =========================================================
+       MAP DATA
+    ========================================================= */
+
     const [markers, setMarkers] = useState([]);
+
     const [loading, setLoading] = useState(true);
+
     const [error, setError] = useState(null);
 
-    // Geocoded location details states
-    const [locationData, setLocationData] = useState(null);
-    const [loadingLocation, setLoadingLocation] = useState(false);
 
-    // Filter states
+    /* =========================================================
+       FILTER STATES
+    ========================================================= */
+
     const [searchQuery, setSearchQuery] = useState("");
+
     const [selectedEra, setSelectedEra] = useState("");
+
     const [selectedDiet, setSelectedDiet] = useState("");
+
     const [selectedCountry, setSelectedCountry] = useState("");
 
-    // Sidebar & Selection states
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const [activeDinosaurId, setActiveDinosaurId] = useState(null);
-    const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+    /* =========================================================
+       ACTIVE DINOSAUR
+    ========================================================= */
 
-    // Map bounds trigger counter
-    const [fitBoundsTrigger, setFitBoundsTrigger] = useState(0);
+    const [
+        activeDinosaurId,
+        setActiveDinosaurId
+    ] = useState(null);
 
-    // Screen resize listener for sidebar default state
-    useEffect(() => {
-        const handleResize = () => {
-            setIsMobile(window.innerWidth < 768);
-            if (window.innerWidth < 1024) {
-                setIsSidebarOpen(false);
-            } else {
-                setIsSidebarOpen(true);
-            }
-        };
-        handleResize();
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
 
-    // Fetch markers
+    /* =========================================================
+       MAP CAMERA
+    ========================================================= */
+
+    const [
+        fitBoundsTrigger,
+        setFitBoundsTrigger
+    ] = useState(0);
+
+
+    /* =========================================================
+       LOAD DINOSAUR MARKERS
+    ========================================================= */
+
     const loadMarkers = async () => {
+
         try {
+
             setLoading(true);
+
             setError(null);
-            const data = await getMapMarkers();
-            setMarkers(data || []);
+
+
+            const data =
+                await getMapMarkers();
+
+
+            setMarkers(
+                data || []
+            );
+
         } catch (err) {
-            console.error("Failed to load map markers:", err);
-            setError("Could not retrieve dinosaur locations. Please verify your connection.");
+
+            console.error(
+                "Failed to load dinosaur map:",
+                err
+            );
+
+
+            setError(
+                "Could not retrieve dinosaur locations. Please verify your connection."
+            );
+
         } finally {
+
             setLoading(false);
+
         }
+
     };
 
+
     useEffect(() => {
+
         loadMarkers();
+
     }, []);
 
-    // Resolve geocoded details asynchronously on marker selection
-    useEffect(() => {
-        if (!activeDinosaurId) {
-            setLocationData(null);
-            return;
-        }
 
-        const activeDino = markers.find((m) => m.id === activeDinosaurId);
-        if (!activeDino || !activeDino.coordinates) return;
+    /* =========================================================
+       FILTER OPTIONS
+    ========================================================= */
 
-        const fetchLocationDetails = async () => {
-            try {
-                setLoadingLocation(true);
-                const details = await getFossilSiteDetails(
-                    activeDino.coordinates[0],
-                    activeDino.coordinates[1],
-                    activeDino.formation
-                );
-                setLocationData(details);
-            } catch (err) {
-                console.error("Failed to geocode location:", err);
-                setLocationData(null);
-            } finally {
-                setLoadingLocation(false);
-            }
-        };
-
-        fetchLocationDetails();
-    }, [activeDinosaurId, markers]);
-
-    const handleClearFilters = () => {
-        setSearchQuery("");
-        setSelectedEra("");
-        setSelectedDiet("");
-        setSelectedCountry("");
-        setActiveDinosaurId(null);
-        setFitBoundsTrigger((prev) => prev + 1);
-    };
-
-    // Calculate filter boundaries
     const eras = useMemo(() => {
-        return [...new Set(markers.map((m) => m.period))].filter(Boolean).sort();
+
+        return [
+            ...new Set(
+                markers.map(
+                    (marker) =>
+                        marker.era ||
+                        marker.period
+                )
+            )
+        ]
+            .filter(Boolean)
+            .sort();
+
     }, [markers]);
+
 
     const diets = useMemo(() => {
-        return [...new Set(markers.map((m) => m.diet))].filter(Boolean).sort();
+
+    return [
+            ...new Set(
+                markers.map(
+                    (marker) =>
+                        marker.diet
+                )
+            )
+        ]
+            .filter(Boolean)
+            .sort();
+
     }, [markers]);
+
 
     const countries = useMemo(() => {
-        return [...new Set(markers.map((m) => m.country))].filter(Boolean).sort();
+
+        return [
+            ...new Set(
+                markers.map(
+                    (marker) =>
+                        marker.country
+                )
+            )
+        ]
+            .filter(Boolean)
+            .sort();
+
     }, [markers]);
 
-    // Client-side filtering
+
+    /* =========================================================
+       FILTER MAP MARKERS
+    ========================================================= */
+
     const filteredMarkers = useMemo(() => {
-        return markers.filter((marker) => {
-            const matchesSearch = marker.name.toLowerCase().includes(searchQuery.toLowerCase());
-            const matchesEra = !selectedEra || marker.period === selectedEra;
-            const matchesDiet = !selectedDiet || marker.diet === selectedDiet;
-            const matchesCountry = !selectedCountry || marker.country === selectedCountry;
-            
-            return matchesSearch && matchesEra && matchesDiet && matchesCountry;
-        });
-    }, [markers, searchQuery, selectedEra, selectedDiet, selectedCountry]);
 
-    // Locate a random dinosaur from currently filtered markers
-    const handleLocateRandom = () => {
-        if (filteredMarkers.length === 0) return;
-        const randomIndex = Math.floor(Math.random() * filteredMarkers.length);
-        const randomDino = filteredMarkers[randomIndex];
-        setActiveDinosaurId(randomDino.id);
+        const normalizedSearch =
+            searchQuery
+                .trim()
+                .toLowerCase();
+
+
+        return markers.filter(
+            (marker) => {
+
+                const markerName =
+                    (
+                        marker.name ||
+                        ""
+                    ).toLowerCase();
+
+
+                const matchesSearch =
+                    !normalizedSearch ||
+                    markerName.includes(
+                        normalizedSearch
+                    );
+
+
+                const markerEra =
+                    (
+                        marker.era ||
+                        marker.period ||
+                        ""
+                    ).toLowerCase();
+
+
+                const matchesEra =
+                    !selectedEra ||
+                    markerEra.includes(
+                        selectedEra.toLowerCase()
+                    );
+
+                const markerDiet =
+                    (
+                        marker.diet ||
+                        ""
+                    ).toLowerCase();
+
+
+                const matchesDiet =
+                    !selectedDiet ||
+                    markerDiet.includes(
+                        selectedDiet
+                            .toLowerCase()
+                            .replace("ous", "")
+                            .replace("ore", "")
+                    );
+
+
+                const matchesCountry =
+                    !selectedCountry ||
+                    marker.country === selectedCountry;
+
+
+                return (
+                    matchesSearch &&
+                    matchesEra &&
+                    matchesDiet &&
+                    matchesCountry
+                );
+
+            }
+        );
+
+        }, [
+            markers,
+            searchQuery,
+            selectedEra,
+            selectedDiet,
+            selectedCountry
+        ]);
+
+
+    /* =========================================================
+       ACTIVE DINOSAUR OBJECT
+    ========================================================= */
+
+    const activeDinosaur =
+        useMemo(() => {
+
+            return (
+                markers.find(
+                    (marker) =>
+                        marker.id ===
+                        activeDinosaurId
+                ) ||
+                null
+            );
+
+        }, [
+            markers,
+            activeDinosaurId
+        ]);
+
+
+    /* =========================================================
+       DEFAULT FEATURED DINOSAUR
+    ========================================================= */
+
+    const defaultFeaturedDinosaur =
+        useMemo(() => {
+
+            if (!markers.length) {
+
+                return null;
+
+            }
+
+
+            const preferredDinosaurs = [
+
+                "brachiosaurus",
+
+                "tyrannosaurus-rex",
+
+                "triceratops",
+
+                "stegosaurus"
+
+            ];
+
+
+            for (
+                const slug
+                of preferredDinosaurs
+            ) {
+
+                const dinosaur =
+                    markers.find(
+                        (marker) =>
+                            marker.slug === slug
+                    );
+
+
+                if (dinosaur) {
+
+                    return dinosaur;
+
+                }
+
+            }
+
+
+            return markers[0];
+
+        }, [markers]);
+
+
+    const featuredDinosaur =
+        activeDinosaur ||
+        defaultFeaturedDinosaur;
+
+
+    /* =========================================================
+       RESET FILTERS
+    ========================================================= */
+
+    const handleClearFilters = () => {
+
+        setSearchQuery("");
+
+        setSelectedEra("");
+
+        setSelectedDiet("");
+
+        setSelectedCountry("");
+
+        setActiveDinosaurId(null);
+
+
+        setFitBoundsTrigger(
+            (previous) =>
+                previous + 1
+        );
+
     };
 
-    // Reset manual fit bounds camera offset
-    const handleFitBounds = () => {
-        setFitBoundsTrigger((prev) => prev + 1);
+
+    /* =========================================================
+       SEARCH DINOSAUR DIRECTLY
+    ========================================================= */
+
+    const handleSearchDinosaur = (
+        query = searchQuery
+    ) => {
+
+        const normalizedQuery =
+            query
+                .trim()
+                .toLowerCase();
+
+
+        if (!normalizedQuery) {
+
+            return;
+
+        }
+
+
+        /*
+         * First try exact dinosaur name.
+         */
+
+        let dinosaur =
+            markers.find(
+                (marker) =>
+                    (
+                        marker.name ||
+                        ""
+                    ).toLowerCase() ===
+                    normalizedQuery
+            );
+
+
+        /*
+         * If exact dinosaur is not found,
+         * try partial matching.
+         */
+
+        if (!dinosaur) {
+
+            dinosaur =
+                markers.find(
+                    (marker) =>
+                        (
+                            marker.name ||
+                            ""
+                        )
+                            .toLowerCase()
+                            .includes(
+                                normalizedQuery
+                            )
+                );
+
+        }
+
+
+        if (!dinosaur) {
+
+            return;
+
+        }
+
+
+        /*
+         * Keep search field showing
+         * the selected dinosaur.
+         */
+
+        setSearchQuery(
+            dinosaur.name
+        );
+
+
+        /*
+         * DinosaurMarker already watches
+         * activeDinosaurId.
+
+         * Therefore setting this automatically
+         * triggers its existing map.flyTo()
+         * functionality.
+         */
+
+        setActiveDinosaurId(
+            dinosaur.id
+        );
+
     };
 
-    // Dynamic stats computation based on current matching specimens
-    const stats = {
-        total: filteredMarkers.length,
-        countries: new Set(filteredMarkers.map((m) => m.country)).size,
-        formations: new Set(filteredMarkers.map((m) => m.formation)).size,
-        eras: new Set(filteredMarkers.map((m) => m.period)).size
+
+    /* =========================================================
+       SELECT DINOSAUR
+       FROM TRENDING SECTION
+    ========================================================= */
+
+    const handleSelectDinosaur = (
+        dinosaur
+    ) => {
+
+        if (!dinosaur) {
+
+            return;
+
+        }
+
+
+        setActiveDinosaurId(
+            dinosaur.id
+        );
+
+
+        /*
+         * Move the visitor back
+         * toward the map.
+         */
+
+        document
+            .getElementById(
+                "interactive-map-section"
+            )
+            ?.scrollIntoView({
+
+                behavior: "smooth",
+
+                block: "center"
+
+            });
+
     };
 
-    // Find the currently selected dinosaur object for the details panel
-    const activeDinosaur = markers.find((m) => m.id === activeDinosaurId);
 
-    // Highlighting three dinosaur specimens for "Recent Discoveries" section
-    const recentDiscoveries = markers.filter(
-        (m) => ["tyrannosaurus-rex", "triceratops", "velociraptor", "brachiosaurus", "stegosaurus"].includes(m.slug)
-    ).slice(0, 3);
+    /* =========================================================
+       TRENDING / FAMOUS DINOSAURS
+    ========================================================= */
 
-    const handleFocusDiscovery = (id) => {
-        setActiveDinosaurId(id);
-        // Scroll smoothly up to the map viewport container
-        document.getElementById("interactive-map-section")?.scrollIntoView({
-            behavior: "smooth"
-        });
-    };
+    const trendingDinosaurs =
+        useMemo(() => {
 
-    return (
-        <div className="min-h-screen bg-[#171613] flex flex-col font-sans transition-colors duration-300">
-            {/* Header Navbar */}
-            <header className="relative z-50 w-full mb-6 pt-6 px-6">
-                <Navbar />
-            </header>
+            const famousSlugs = [
 
-            {/* Content Container */}
-            <main className="flex-1 flex flex-col px-6 pb-12 max-w-7xl mx-auto w-full gap-6 mt-20 lg:mt-24">
-                {/* Title Section */}
-                <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-                    <div>
-                        <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#8BAA83]">
-                            <Sparkles size={14} />
-                            <span>Interactive Museum Database</span>
-                        </div>
-                        <h1 className="font-serif text-3xl sm:text-5xl font-black text-[#F5F2EA] leading-tight tracking-tight mt-1">
-                            Geographical Excavation Map
-                        </h1>
-                        <p className="mt-1.5 text-sm text-[#D0C9BB] font-medium leading-relaxed max-w-2xl font-sans">
-                            Embark on a digital tour to locate where Earth's lost giants were unearthed. Filter by era, search specific specimens, and analyze fossil distribution patterns.
-                        </p>
+                "tyrannosaurus-rex",
+
+                "triceratops",
+
+                "velociraptor",
+
+                "stegosaurus",
+
+                "spinosaurus"
+
+            ];
+
+
+            const selected =
+                famousSlugs
+                    .map(
+                        (slug) =>
+                            markers.find(
+                                (marker) =>
+                                    marker.slug ===
+                                    slug
+                            )
+                    )
+                    .filter(Boolean);
+
+
+            /*
+             * Fill remaining cards if some
+             * famous dinosaurs don't exist
+             * in the current API response.
+             */
+
+            if (
+                selected.length < 5
+            ) {
+
+                const selectedIds =
+                    new Set(
+                        selected.map(
+                            (dinosaur) =>
+                                dinosaur.id
+                        )
+                    );
+
+
+                const fallback =
+                    markers
+                        .filter(
+                            (dinosaur) =>
+                                !selectedIds.has(
+                                    dinosaur.id
+                                )
+                        )
+                        .slice(
+                            0,
+                            5 -
+                                selected.length
+                        );
+
+
+                return [
+                    ...selected,
+                    ...fallback
+                ];
+
+            }
+
+
+            return selected;
+
+        }, [markers]);
+
+
+    /* =========================================================
+       MAP TITLE
+    ========================================================= */
+
+    const currentMapTitle =
+    selectedEra ||
+    "Explore Prehistoric Earth";
+
+
+    /* =========================================================
+       LOADING SCREEN
+    ========================================================= */
+
+    if (loading) {
+
+        return (
+
+            <div
+                className="
+                    min-h-screen
+                    bg-[#d8d3c4]
+                "
+            >
+
+                {/* =============================================
+                    EXISTING NAVBAR
+                    DO NOT CHANGE
+                ============================================= */}
+
+                <header
+                    className="
+                        relative
+                        z-50
+                        w-full
+                        px-6
+                        pt-6
+                    "
+                >
+
+                    <Navbar />
+
+                </header>
+
+
+                <main
+                    className="
+                        mt-20
+                        px-4
+                        pb-10
+                        sm:px-6
+                        lg:mt-24
+                    "
+                >
+
+                    <div
+                        className="
+                            mx-auto
+                            max-w-[1500px]
+                            animate-pulse
+                        "
+                    >
+
+                        <div
+                            className="
+                                h-[700px]
+                                rounded-[28px]
+                                border
+                                border-[#314c38]/15
+                                bg-[#e8e3d7]
+                            "
+                        />
+
                     </div>
-                </div>
 
-                {/* Statistics Cards Grid */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    {/* Stat Card 1 */}
-                    <div className="rounded-3xl border border-[#C9A14A]/15 bg-[#211D18] p-5 shadow-sm flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-[#2E4A37]/20 flex items-center justify-center text-[#8BAA83] border border-[#2E4A37]/35 shrink-0">
-                            <Footprints size={20} />
-                        </div>
-                        <div>
-                            <span className="block text-[9px] uppercase font-bold tracking-widest text-[#9A9489]">Specimens</span>
-                            <span className="font-serif text-2xl font-black text-[#C9A14A] leading-none block mt-0.5">
-                                {loading ? "..." : stats.total}
-                            </span>
-                        </div>
-                    </div>
-                    {/* Stat Card 2 */}
-                    <div className="rounded-3xl border border-[#C9A14A]/15 bg-[#211D18] p-5 shadow-sm flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-[#2E4A37]/20 flex items-center justify-center text-[#8BAA83] border border-[#2E4A37]/35 shrink-0">
-                            <Globe size={20} />
-                        </div>
-                        <div>
-                            <span className="block text-[9px] uppercase font-bold tracking-widest text-[#9A9489]">Countries</span>
-                            <span className="font-serif text-2xl font-black text-[#C9A14A] leading-none block mt-0.5">
-                                {loading ? "..." : stats.countries}
-                            </span>
-                        </div>
-                    </div>
-                    {/* Stat Card 3 */}
-                    <div className="rounded-3xl border border-[#C9A14A]/15 bg-[#211D18] p-5 shadow-sm flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-[#2E4A37]/20 flex items-center justify-center text-[#8BAA83] border border-[#2E4A37]/35 shrink-0">
-                            <MapPin size={20} />
-                        </div>
-                        <div>
-                            <span className="block text-[9px] uppercase font-bold tracking-widest text-[#9A9489]">Formations</span>
-                            <span className="font-serif text-2xl font-black text-[#C9A14A] leading-none block mt-0.5">
-                                {loading ? "..." : stats.formations}
-                            </span>
-                        </div>
-                    </div>
-                    {/* Stat Card 4 */}
-                    <div className="rounded-3xl border border-[#C9A14A]/15 bg-[#211D18] p-5 shadow-sm flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-[#2E4A37]/20 flex items-center justify-center text-[#8BAA83] border border-[#2E4A37]/35 shrink-0">
-                            <Calendar size={20} />
-                        </div>
-                        <div>
-                            <span className="block text-[9px] uppercase font-bold tracking-widest text-[#9A9489]">Geological Eras</span>
-                            <span className="font-serif text-2xl font-black text-[#C9A14A] leading-none block mt-0.5">
-                                {loading ? "..." : stats.eras}
-                            </span>
-                        </div>
-                    </div>
-                </div>
+                </main>
 
-                {/* Skeletons */}
-                {loading && (
-                    <div className="flex-1 flex flex-col gap-5 animate-pulse min-h-[500px]">
-                        <div className="h-28 rounded-3xl bg-[#211D18] border border-[#C9A14A]/10" />
-                        <div className="flex-grow rounded-3xl bg-[#211D18] border border-[#C9A14A]/10" />
-                    </div>
-                )}
+            </div>
 
-                {/* Error Banner */}
-                {!loading && error && (
-                    <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-[#211D18] rounded-3xl border border-red-950/40 max-w-lg mx-auto my-12 text-[#D0C9BB]">
-                        <AlertCircle className="text-red-500 mb-4 animate-bounce" size={48} />
-                        <h2 className="font-serif text-xl font-bold text-[#F5F2EA]">
-                            Failed to Load Map Context
+        );
+
+    }
+
+
+    /* =========================================================
+       ERROR SCREEN
+    ========================================================= */
+
+    if (error) {
+
+        return (
+
+            <div
+                className="
+                    min-h-screen
+                    bg-[#d8d3c4]
+                "
+            >
+
+                {/* EXISTING NAVBAR */}
+
+                <header
+                    className="
+                        relative
+                        z-50
+                        w-full
+                        px-6
+                        pt-6
+                    "
+                >
+
+                    <Navbar />
+
+                </header>
+
+
+                <main
+                    className="
+                        flex
+                        min-h-[70vh]
+                        items-center
+                        justify-center
+                        px-6
+                    "
+                >
+
+                    <div
+                        className="
+                            w-full
+                            max-w-md
+                            rounded-[28px]
+                            border
+                            border-[#31503b]/20
+                            bg-[#eee9df]
+                            p-8
+                            text-center
+                            shadow-xl
+                        "
+                    >
+
+                        <AlertCircle
+                            size={45}
+                            className="
+                                mx-auto
+                                text-[#a14c3a]
+                            "
+                        />
+
+
+                        <h2
+                            className="
+                                mt-4
+                                font-serif
+                                text-2xl
+                                font-black
+                                text-[#183524]
+                            "
+                        >
+                            Map unavailable
                         </h2>
-                        <p className="mt-2 text-sm text-[#9A9489]">
+
+
+                        <p
+                            className="
+                                mt-2
+                                text-sm
+                                leading-relaxed
+                                text-[#667064]
+                            "
+                        >
                             {error}
                         </p>
-                        <button
-                            onClick={loadMarkers}
-                            className="mt-6 flex items-center gap-2 rounded-full bg-gradient-to-r from-[#2E4A37] to-[#516858] text-white py-2.5 px-6 font-bold transition shadow-md border-none cursor-pointer hover:shadow-lg active:scale-95"
-                        >
-                            <RefreshCw size={16} />
-                            <span>Reload Excavation Data</span>
-                        </button>
-                    </div>
-                )}
 
-                {/* Interactive Map Layout */}
-                {!loading && !error && (
-                    <div id="interactive-map-section" className="flex-grow flex flex-col gap-5 min-h-0">
-                        {/* Control Panel */}
-                        <ControlPanel
+
+                        <button
+                            onClick={
+                                loadMarkers
+                            }
+                            className="
+                                mt-6
+                                inline-flex
+                                items-center
+                                gap-2
+                                rounded-xl
+                                bg-[#245b35]
+                                px-6
+                                py-3
+                                text-sm
+                                font-bold
+                                text-white
+                                shadow-lg
+                                transition
+                                hover:bg-[#1d4b2c]
+                                active:scale-95
+                            "
+                        >
+
+                            <RefreshCw
+                                size={16}
+                            />
+
+                            Reload Map
+
+                        </button>
+
+                    </div>
+
+                </main>
+
+            </div>
+
+        );
+
+    }
+
+
+    /* =========================================================
+       MAIN PAGE
+    ========================================================= */
+
+    return (
+
+        <div
+            className="
+                min-h-screen
+                bg-[#d6d1c3]
+                font-sans
+                text-[#193324]
+            "
+        >
+
+            {/* =================================================
+                EXISTING NAVBAR
+
+                IMPORTANT:
+                WE ARE NOT MODIFYING NAVBAR.
+            ================================================= */}
+
+            <header
+                className="
+                    relative
+                    z-50
+                    w-full
+                    px-6
+                    pt-6
+                "
+            >
+
+                <Navbar />
+
+            </header>
+
+
+            {/* =================================================
+                MAP PAGE CONTENT
+            ================================================= */}
+
+            <main
+                className="
+                    relative
+                    mt-20
+                    px-3
+                    pb-10
+                    sm:px-5
+                    lg:mt-24
+                    lg:px-6
+                "
+            >
+
+                {/* MAIN EXPLORER CARD */}
+
+                <div
+                    className="
+                        mx-auto
+                        max-w-[1500px]
+                        overflow-hidden
+                        rounded-[30px]
+                        border
+                        border-[#264d34]/20
+                        bg-[#e9e4d8]
+                        shadow-[0_25px_70px_rgba(22,45,30,0.20)]
+                    "
+                >
+
+
+                    {/* =========================================
+                        TOP MAP EXPLORER
+                    ========================================= */}
+
+                    <section
+                        id="interactive-map-section"
+                        className="
+                            grid
+                            min-h-[650px]
+                            grid-cols-1
+                            xl:grid-cols-[250px_minmax(0,1fr)_290px]
+                        "
+                    >
+
+
+                        {/* =====================================
+                            LEFT:
+                            EXPLORE ERAS / FILTERS
+                        ===================================== */}
+
+                        <ExploreErasPanel
+
                             searchQuery={searchQuery}
                             setSearchQuery={setSearchQuery}
+
                             selectedEra={selectedEra}
                             setSelectedEra={setSelectedEra}
+
                             selectedDiet={selectedDiet}
                             setSelectedDiet={setSelectedDiet}
+
                             selectedCountry={selectedCountry}
                             setSelectedCountry={setSelectedCountry}
+
                             eras={eras}
                             diets={diets}
                             countries={countries}
-                            visibleCount={filteredMarkers.length}
-                            totalCount={markers.length}
-                            onClearFilters={handleClearFilters}
-                            onLocateRandom={handleLocateRandom}
-                            onFitBounds={handleFitBounds}
+
+                            dinosaurs={markers}
+
+                            onSearch={handleSearchDinosaur}
+                            onReset={handleClearFilters}
+
                         />
 
-                        {/* Map & Sidebar Wrapper */}
-                        <div className="flex-grow relative h-[380px] md:h-[600px] flex rounded-3xl overflow-hidden border border-[#C9A14A]/15 bg-[#171613]">
-                            {/* Collapsible Sidebar */}
-                            <div className="absolute inset-y-0 left-0 z-10 flex">
-                                <DinosaurSidebar
-                                    dinosaurs={filteredMarkers}
-                                    activeDinosaurId={activeDinosaurId}
-                                    setActiveDinosaurId={setActiveDinosaurId}
-                                    isOpen={isSidebarOpen}
-                                    setIsOpen={setIsSidebarOpen}
-                                />
+
+                        {/* =====================================
+                            CENTER:
+                            INTERACTIVE LEAFLET MAP
+                        ===================================== */}
+
+                        <div
+                            className="
+                                relative
+                                min-h-[520px]
+                                overflow-hidden
+                                bg-[#506a52]
+                            "
+                        >
+
+
+                            {/* MAP TITLE */}
+
+                            <div
+                                className="
+                                    pointer-events-none
+                                    absolute
+                                    left-1/2
+                                    top-5
+                                    z-[400]
+                                    -translate-x-1/2
+                                    text-center
+                                "
+                            >
+
+                                <h1
+                                    className="
+                                        font-serif
+                                        text-2xl
+                                        font-black
+                                        uppercase
+                                        tracking-[0.04em]
+                                        text-[#173923]
+                                        drop-shadow-[0_1px_1px_rgba(255,255,255,0.7)]
+                                        sm:text-3xl
+                                    "
+                                >
+
+                                    {
+                                        currentMapTitle
+                                    }
+
+                                </h1>
+
                             </div>
 
-                            {/* Core Map Component */}
-                            <div className="flex-grow h-full w-full relative z-0">
-                                <DinosaurMap
-                                    dinosaurs={filteredMarkers}
-                                    activeDinosaurId={activeDinosaurId}
-                                    setActiveDinosaurId={setActiveDinosaurId}
-                                    fitBoundsTrigger={fitBoundsTrigger}
+
+                            {/* =================================
+                                EXISTING DINOSAUR MAP
+
+                                We keep its functionality.
+                            ================================= */}
+
+                            <DinosaurMap
+
+                                dinosaurs={
+                                    filteredMarkers
+                                }
+
+                                activeDinosaurId={
+                                    activeDinosaurId
+                                }
+
+                                setActiveDinosaurId={
+                                    setActiveDinosaurId
+                                }
+
+                                fitBoundsTrigger={
+                                    fitBoundsTrigger
+                                }
+
+                            />
+
+
+                            {/* =================================
+                                MAP LEGEND
+                            ================================= */}
+
+                            <div
+                                className="
+                                    absolute
+                                    bottom-5
+                                    left-1/2
+                                    z-[400]
+                                    flex
+                                    -translate-x-1/2
+                                    flex-wrap
+                                    items-center
+                                    justify-center
+                                    gap-2
+                                    rounded-2xl
+                                    border
+                                    border-[#334f3b]/15
+                                    bg-[#f2eee5]/95
+                                    px-4
+                                    py-2.5
+                                    shadow-xl
+                                    backdrop-blur-xl
+                                "
+                            >
+
+                                <LegendItem
+
+                                    icon={Leaf}
+
+                                    label="Herbivore"
+
+                                    color="text-[#3e7b48]"
+
                                 />
 
-                                {/* Empty Search Results Overlay */}
-                                {filteredMarkers.length === 0 && (
-                                    <div className="absolute inset-0 bg-[#171613]/70 backdrop-blur-[2px] z-10 flex items-center justify-center p-6 transition-all duration-300">
-                                        <div className="bg-[#211D18] border border-[#C9A14A]/15 p-8 rounded-3xl shadow-2xl max-w-sm text-center">
-                                            <div className="mx-auto w-16 h-16 bg-[#2E4A37]/20 flex items-center justify-center rounded-full text-[#8BAA83] mb-5">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-8 h-8">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 15.75l-2.489-2.489m0 0a3.375 3.375 0 10-4.773-4.773 3.375 3.375 0 004.774 4.774zM21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                            </div>
-                                            <h3 className="font-serif text-xl font-black text-[#F5F2EA]">
-                                                No Specimen Matches
-                                            </h3>
-                                            <p className="mt-2 text-xs text-[#D0C9BB] leading-normal font-sans">
-                                                We searched our cabinets but couldn't find matching fossils. Reset filters to continue exploring.
-                                            </p>
-                                            <button
-                                                onClick={handleClearFilters}
-                                                className="mt-5 w-full rounded-full bg-gradient-to-r from-[#2E4A37] to-[#516858] text-white py-2.5 px-4 text-xs font-bold transition shadow-md border-none cursor-pointer hover:shadow-lg active:scale-95"
-                                            >
-                                                Clear Active Filters
-                                            </button>
-                                        </div>
-                                    </div>
-                                )}
+
+                                <LegendItem
+
+                                    icon={Beef}
+
+                                    label="Carnivore"
+
+                                    color="text-[#b84c3c]"
+
+                                />
+
+
+                                <LegendItem
+
+                                    icon={Apple}
+
+                                    label="Omnivore"
+
+                                    color="text-[#3e76a8]"
+
+                                />
+
+
+                                <LegendItem
+
+                                    icon={Landmark}
+
+                                    label="Fossil Site"
+
+                                    color="text-[#947038]"
+
+                                />
+
                             </div>
 
-                            {/* Desktop Collapsible Fossil Site Panel on the Right side */}
-                            {!isMobile && (
-                                <div className="absolute inset-y-0 right-0 z-10 flex pointer-events-none">
-                                    <AnimatePresence>
-                                        {activeDinosaur && (
-                                            <FossilSitePanel
-                                                dinosaur={activeDinosaur}
-                                                locationData={locationData}
-                                                loadingLocation={loadingLocation}
-                                                onClose={() => setActiveDinosaurId(null)}
-                                            />
-                                        )}
-                                    </AnimatePresence>
-                                </div>
-                            )}
                         </div>
 
-                        {/* Mobile Collapsible Fossil Site Panel (Underneath the Map Component) */}
-                        {isMobile && activeDinosaur && (
-                            <AnimatePresence>
-                                <div className="w-full mt-4">
-                                    <FossilSitePanel
-                                        dinosaur={activeDinosaur}
-                                        locationData={locationData}
-                                        loadingLocation={loadingLocation}
-                                        onClose={() => setActiveDinosaurId(null)}
-                                    />
-                                </div>
-                            </AnimatePresence>
-                        )}
-                    </div>
-                )}
 
-                {/* Featured Discoveries (Recent Acquisitions) Section */}
-                {!loading && !error && markers.length > 0 && (
-                    <section className="mt-8 border-t border-[#C9A14A]/10 pt-8">
-                        <div className="flex items-center gap-2.5 mb-5">
-                            <Award className="text-[#C9A14A]" size={20} />
-                            <h2 className="font-serif text-2xl font-black text-[#F5F2EA] tracking-tight">
-                                Featured Museum Specimens
-                            </h2>
-                        </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            {recentDiscoveries.map((dino) => {
-                                // Request high-quality 800px image from Cloudinary to prevent pixelation
-                                const optimizedImg = getOptimizedImageUrl(dino.image, 800);
+                        {/* =====================================
+                            RIGHT:
+                            FEATURED DINOSAUR
+                        ===================================== */}
 
-                                return (
-                                    <div 
-                                        key={dino.id}
-                                        className="group overflow-hidden rounded-[20px] border border-[#C9A14A]/15 bg-[#211D18] shadow-lg hover:shadow-xl hover:border-[#C9A14A]/30 hover:-translate-y-0.5 transition-all duration-300 flex flex-col h-full"
-                                    >
-                                        {/* Specimen thumbnail card image */}
-                                        <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#171613] shrink-0 border-b border-[#C9A14A]/15">
-                                            {optimizedImg ? (
-                                                <img
-                                                    src={optimizedImg}
-                                                    alt={dino.name}
-                                                    loading="lazy"
-                                                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                                />
-                                            ) : (
-                                                <div className="flex h-full w-full items-center justify-center text-[#9A9489]">
-                                                    Fossil Photo
-                                                </div>
-                                            )}
-                                            {/* Tag banner */}
-                                            <div className="absolute right-3 top-3 bg-stone-950/80 border border-[#C9A14A]/30 px-3 py-1 rounded-lg text-[9px] font-bold text-[#C9A14A] uppercase tracking-widest backdrop-blur-xs">
-                                                {dino.period}
-                                            </div>
-                                        </div>
+                        <FeaturedDinosaurPanel
 
-                                        {/* Text card details */}
-                                        <div className="p-5 flex-grow flex flex-col justify-between">
-                                            <div>
-                                                <h3 className="font-serif text-lg font-black text-[#F5F2EA] leading-snug group-hover:text-[#C9A14A] transition-colors">
-                                                    {dino.name}
-                                                </h3>
-                                                <div className="mt-2.5 space-y-1.5 text-xs text-[#9A9489] leading-normal font-sans">
-                                                    <div className="flex items-center gap-1.5 font-medium">
-                                                        <MapPin size={12} className="text-[#C9A14A]" />
-                                                        <span>{dino.formation}, {dino.country}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
+                            dinosaur={
+                                featuredDinosaur
+                            }
 
-                                            <button
-                                                onClick={() => handleFocusDiscovery(dino.id)}
-                                                className="mt-5 w-full flex items-center justify-center gap-1.5 rounded-full border border-[#C9A14A]/40 bg-transparent hover:bg-[#C9A14A]/10 text-[#D0C9BB] py-2.5 text-xs font-bold transition-all duration-300 active:scale-95"
-                                            >
-                                                <Compass size={13} className="text-[#C9A14A]" />
-                                                <span>Locate Specimen</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
+                        />
+
                     </section>
-                )}
+
+
+                    {/* =========================================
+                        DIRECT DINOSAUR SEARCH
+                    ========================================= */}
+
+                    <MapSearchBar
+
+                        searchQuery={
+                            searchQuery
+                        }
+
+                        setSearchQuery={
+                            setSearchQuery
+                        }
+
+                        dinosaurs={
+                            markers
+                        }
+
+                        onSearch={
+                            handleSearchDinosaur
+                        }
+
+                    />
+
+
+                    {/* =========================================
+                        INTERACTIVE TIMELINE
+                    ========================================= */}
+
+                    <EraTimeline
+                        selectedEra={selectedEra}
+                        setSelectedEra={setSelectedEra}
+                    />
+
+
+                    {/* =========================================
+                        TRENDING DINOSAURS
+                    ========================================= */}
+
+                    <TrendingDinosaurs
+
+                        dinosaurs={
+                            trendingDinosaurs
+                        }
+
+                        activeDinosaurId={
+                            activeDinosaurId
+                        }
+
+                        onSelectDinosaur={
+                            handleSelectDinosaur
+                        }
+
+                    />
+
+                </div>
+
             </main>
+
+
+            {/* =================================================
+                FLOATING PROFESSOR ROSS
+
+                Your own image will be added later.
+            ================================================= */}
+
+            <ProfessorRossFloating />
+
         </div>
+
     );
+
+}
+
+
+/* =============================================================
+   MAP LEGEND ITEM
+============================================================= */
+
+function LegendItem({
+    icon: Icon,
+    label,
+    color
+}) {
+
+    return (
+
+        <div
+            className="
+                flex
+                items-center
+                gap-1.5
+                px-2
+                text-[11px]
+                font-bold
+                text-[#4f5a50]
+            "
+        >
+
+            <Icon
+                size={14}
+                className={
+                    color
+                }
+            />
+
+            <span>
+                {label}
+            </span>
+
+        </div>
+
+    );
+
 }
