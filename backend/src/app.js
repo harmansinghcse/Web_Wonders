@@ -11,6 +11,7 @@ const profileRoutes = require("./routes/profile.routes");
 const rossRoutes = require("./routes/rossRoutes");
 const quizRoutes = require("./routes/quizRoutes");
 const mapRoutes = require("./routes/mapRoutes");
+const acquisitionRoutes = require("./routes/acquisitionRoutes");
 
 // allowed origins
 const allowedOrigins = [
@@ -44,6 +45,7 @@ app.use("/api/dinosaur", dinosaurRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/ai", rossRoutes);
+app.use("/api/acquisition", acquisitionRoutes);
 app.use("/api/map", mapRoutes);
 app.use(errorHandler);
 

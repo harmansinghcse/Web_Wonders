@@ -30,3 +30,20 @@
 .dino-leaflet-popup .leaflet-popup-close-button {
   display: none !important; /* hide default leaflet close button */
 }
+
+@keyframes editorHighlightGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(201, 170, 91, 0);
+  }
+  30% {
+    box-shadow: 0 0 35px 8px rgba(201, 170, 91, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(201, 170, 91, 0);
+  }
+}
+
+.ai-editor-highlight {
+  animation: editorHighlightGlow 2.5s ease-in-out;
+}
+
