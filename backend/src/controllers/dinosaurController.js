@@ -164,10 +164,12 @@ const createDinosaur = async (req, res, next) => {
 
         // Upload Hero Background
         const heroImage = await uploadToCloudinary(req.files.heroBackground[0]);
+        if (!dinosaur.images) dinosaur.images = {};
         dinosaur.images.heroBackground = heroImage.secure_url;
 
         // Upload Fossil Image
         const fossilImage = await uploadToCloudinary(req.files.fossilImage[0]);
+        if (!dinosaur.fossil) dinosaur.fossil = {};
         dinosaur.fossil.image = fossilImage.secure_url;
 
         // Upload Physical Feature Images
@@ -288,10 +290,12 @@ const submitDinosaur = async (req, res, next) => {
 
         // Upload Hero Background
         const heroImage = await uploadToCloudinary(req.files.heroBackground[0]);
+        if (!dinosaur.images) dinosaur.images = {};
         dinosaur.images.heroBackground = heroImage.secure_url;
 
         // Upload Fossil Image
         const fossilImage = await uploadToCloudinary(req.files.fossilImage[0]);
+        if (!dinosaur.fossil) dinosaur.fossil = {};
         dinosaur.fossil.image = fossilImage.secure_url;
 
         // Upload Physical Feature Images
