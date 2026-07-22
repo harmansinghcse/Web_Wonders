@@ -20,6 +20,7 @@ const QuizPlay = lazy(() => import("./pages/QuizPlay"));
 const QuizResult = lazy(() => import("./pages/QuizResult"));
 const AdminSubmissions = lazy(() => import("./pages/AdminSubmissions"));
 const ExploreMap = lazy(() => import("./pages/ExploreMap"));
+const Community = lazy(() => import("./pages/Community"));
 
 const LoadingFallback = () => (
     <div className="flex h-screen w-screen flex-col items-center justify-center bg-[#F7F6F1]">
@@ -54,6 +55,7 @@ function App() {
                     <Route path="/create" element={<CreateDinosaur />} />
                     <Route path="/timeline" element={<Timeline />} />
                     <Route path="/explorer" element={<Explore />} />
+                    <Route path="/community" element={<Community />} />
                     <Route path="/quiz" element={<Quiz />} />
                     <Route path="/quiz/:slug" element={<TopicDetails />} />
                     <Route path="/quiz/:slug/play" element={<PlayQuiz />} />

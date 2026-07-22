@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Menu, Search, X, Bell } from "lucide-react";
 import UserMenu from "../UserMenu";
 import SearchBar from "../../search/SearchBar";
-import { Home, Compass, Clock3, PlusSquare, CircleHelp, Brain, Map } from "lucide-react";
+import { Home, Compass, Clock3, PlusSquare, CircleHelp, Brain, Map, Users } from "lucide-react";
 import NavbarLink from "./NavbarLinks";
 
 function Navbar() {
@@ -49,6 +49,12 @@ function Navbar() {
             icon: CircleHelp,
             label: "Quiz",
             desc: "Test your knowledge",
+        },
+        {
+            to: "/community",
+            icon: Users,
+            label: "Community",
+            desc: "Connect, share hybrids and fossil finds",
         },
         {
             to: "/create",
@@ -158,6 +164,10 @@ function Navbar() {
 
                             <NavbarLink to="/quiz" icon={CircleHelp}>
                                 Quiz
+                            </NavbarLink>
+
+                            <NavbarLink to="/community" icon={Users}>
+                                Community
                             </NavbarLink>
 
                             <Link
