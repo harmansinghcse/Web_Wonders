@@ -37,10 +37,13 @@ const TrendingDinosaurs = ({
                 relative
                 overflow-hidden
                 border-t
-                border-[#294d35]/15
-                bg-[#dedacf]
+                border-[#31583d]/18
+                bg-gradient-to-b
+                from-[#e4e9df]
+                via-[#e8ece3]
+                to-[#dce4da]
                 px-5
-                py-8
+                py-9
                 sm:px-8
                 lg:px-10
             "
@@ -54,13 +57,13 @@ const TrendingDinosaurs = ({
                 className="
                     pointer-events-none
                     absolute
-                    -left-24
+                    -left-28
                     bottom-0
-                    h-60
-                    w-60
+                    h-72
+                    w-72
                     rounded-full
-                    bg-[#4f7354]/8
-                    blur-3xl
+                    bg-[#426b4c]/12
+                    blur-[100px]
                 "
             />
 
@@ -69,13 +72,13 @@ const TrendingDinosaurs = ({
                 className="
                     pointer-events-none
                     absolute
-                    -right-20
-                    -top-20
-                    h-56
-                    w-56
+                    -right-24
+                    -top-24
+                    h-72
+                    w-72
                     rounded-full
-                    bg-[#a78b54]/8
-                    blur-3xl
+                    bg-[#a88a50]/10
+                    blur-[100px]
                 "
             />
 
@@ -124,7 +127,7 @@ const TrendingDinosaurs = ({
                                 font-black
                                 uppercase
                                 tracking-[0.2em]
-                                text-[#748078]
+                                text-[#967642]
                             "
                         >
                             Popular Discoveries
@@ -143,10 +146,10 @@ const TrendingDinosaurs = ({
                             font-black
                             tracking-tight
                             text-[#1d402a]
-                            sm:text-2xl
+                            sm:text-[28px]
                         "
                     >
-                        Trending Dinosaurs
+                        Famous Dinosaurs
                     </h2>
 
 
@@ -159,7 +162,7 @@ const TrendingDinosaurs = ({
                             text-[11px]
                             font-medium
                             leading-relaxed
-                            text-[#6f7970]
+                            text-[#627066]
                         "
                     >
                         Explore some of the most famous
@@ -177,11 +180,17 @@ const TrendingDinosaurs = ({
                         hidden
                         items-center
                         gap-1.5
+                        rounded-full
+                        border
+                        border-[#31583d]/15
+                        bg-[#edf2e9]/75
+                        px-3
+                        py-1.5
                         text-[9px]
                         font-black
                         uppercase
                         tracking-[0.12em]
-                        text-[#56705c]
+                        text-[#496a52]
                         sm:flex
                     "
                 >
@@ -261,19 +270,29 @@ const TrendingDinosaurs = ({
                                     border
                                     text-left
                                     shadow-sm
-                                    transition-all
+                                    transition-[0_5px_16px_rgba(30,64,40,0.07)]
                                     duration-300
-                                    hover:-translate-y-1
-                                    hover:shadow-[0_15px_30px_rgba(29,64,42,0.14)]
+                                    hover:-translate-y-1.5
+                                    hover:shadow-[0_18px_36px_rgba(29,64,42,0.17)]
                                     active:translate-y-0
                                     active:scale-[0.99]
 
                                     ${
                                         isActive
 
-                                            ? "border-[#2f6841]/35 bg-[#f2eee5] ring-2 ring-[#2f6841]/15"
+                                            ?  `
+                                                border-[#2f6841]/40
+                                                bg-[#f4f7f0]
+                                                ring-2
+                                                ring-[#2f6841]/15
+                                                shadow-[0_14px_32px_rgba(29,73,43,0.16)]
+                                            `
 
-                                            : "border-[#31543b]/15 bg-[#eae6dc] hover:border-[#31543b]/30"
+                                            : `
+                                                border-[#31583d]/16
+                                                bg-[#edf1e9]
+                                                hover:border-[#31583d]/32
+                                            `
                                     }
                                 `}
                             >
@@ -285,9 +304,9 @@ const TrendingDinosaurs = ({
                                 <div
                                     className="
                                         relative
-                                        aspect-[16/10]
+                                        aspect-[16/11]
                                         overflow-hidden
-                                        bg-[#526b54]
+                                        bg-[#42634a]
                                     "
                                 >
 
@@ -307,7 +326,7 @@ const TrendingDinosaurs = ({
                                                 object-cover
                                                 transition-transform
                                                 duration-700
-                                                group-hover:scale-105
+                                                group-hover:scale-[1.07]
                                             "
                                         />
 
@@ -321,8 +340,9 @@ const TrendingDinosaurs = ({
                                                 items-center
                                                 justify-center
                                                 bg-gradient-to-br
-                                                from-[#526b54]
-                                                to-[#294c35]
+                                                from-[#4b7052]
+                                                via-[#365b40]
+                                                to-[#213e2b]
                                             "
                                         >
 
@@ -352,9 +372,9 @@ const TrendingDinosaurs = ({
                                             absolute
                                             inset-0
                                             bg-gradient-to-t
-                                            from-[#142c1d]/75
-                                            via-transparent
-                                            to-transparent
+                                            from-[#102719]/88
+                                            via-[#173521]/12
+                                            to-black/10
                                         "
                                     />
 
@@ -371,8 +391,8 @@ const TrendingDinosaurs = ({
                                             gap-1
                                             rounded-lg
                                             border
-                                            border-white/15
-                                            bg-[#1d422b]/85
+                                            border-[#d7bc72]/30
+                                            bg-[#193c27]/88
                                             px-2
                                             py-1
                                             text-[8px]
@@ -413,8 +433,8 @@ const TrendingDinosaurs = ({
                                                 gap-1
                                                 rounded-full
                                                 border
-                                                border-white/15
-                                                bg-[#285f39]/90
+                                                border-white/20
+                                                bg-[#2e6a40]/92
                                                 px-2
                                                 py-1
                                                 text-[7px]
@@ -453,10 +473,10 @@ const TrendingDinosaurs = ({
                                             className="
                                                 truncate
                                                 font-serif
-                                                text-base
+                                                text-[17px]
                                                 font-black
                                                 tracking-tight
-                                                text-[#f4f0e7]
+                                                text-[#f6f3e9]
                                                 drop-shadow-md
                                             "
                                         >
@@ -476,9 +496,9 @@ const TrendingDinosaurs = ({
 
                                 <div
                                     className="
-                                        px-3.5
-                                        pb-3.5
-                                        pt-3
+                                        px-4
+                                        pb-4
+                                        pt-3.5
                                     "
                                 >
 
@@ -491,7 +511,7 @@ const TrendingDinosaurs = ({
                                             gap-1.5
                                             text-[9px]
                                             font-semibold
-                                            text-[#6e786f]
+                                            text-[#5f7064]
                                         "
                                     >
 
@@ -499,7 +519,7 @@ const TrendingDinosaurs = ({
                                             size={10}
                                             className="
                                                 shrink-0
-                                                text-[#487052]
+                                                text-[#3d7049]
                                             "
                                         />
 
@@ -526,7 +546,7 @@ const TrendingDinosaurs = ({
                                             items-center
                                             justify-between
                                             border-t
-                                            border-[#31543b]/10
+                                            border-[#31583d]/14
                                             pt-2.5
                                         "
                                     >
@@ -537,29 +557,36 @@ const TrendingDinosaurs = ({
                                                 font-black
                                                 uppercase
                                                 tracking-[0.1em]
-                                                text-[#66756a]
+                                                text-[#53685a]
                                                 transition-colors
-                                                group-hover:text-[#315e3d]
+                                                group-hover:text-[#285d39]
                                             "
                                         >
-                                            Locate Dinosaur
+                                            {isActive
+                                                ? "Currently on Map"
+                                                : "Locate Dinosaur"}
                                         </span>
 
 
                                         <div
                                             className="
                                                 flex
-                                                h-6
-                                                w-6
+                                                h-7
+                                                w-7
                                                 items-center
                                                 justify-center
                                                 rounded-full
-                                                bg-[#d6d6ca]
-                                                text-[#396247]
+                                                border
+                                                border-[#31583d]/12
+                                                bg-[#dce5da]
+                                                text-[#356344]
                                                 transition-all
                                                 duration-300
+                                                group-hover:translate-x-0.5
+                                                group-hover:border-[#285f39]
                                                 group-hover:bg-[#285f39]
-                                                group-hover:text-[#f5f1e8]
+                                                group-hover:text-[#f7f5ed]
+                                                group-hover:shadow-[0_5px_12px_rgba(40,95,57,0.20)]
                                             "
                                         >
 

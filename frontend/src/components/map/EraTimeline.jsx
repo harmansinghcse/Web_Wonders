@@ -118,8 +118,11 @@ const EraTimeline = ({
                 relative
                 overflow-hidden
                 border-t
-                border-[#294d35]/15
-                bg-[#e8e3d7]
+                border-[#31583d]/18
+                bg-gradient-to-b
+                from-[#e9ede4]
+                via-[#e4e9df]
+                to-[#e8e9df]
                 px-5
                 py-7
                 sm:px-8
@@ -135,13 +138,13 @@ const EraTimeline = ({
                 className="
                     pointer-events-none
                     absolute
-                    -left-24
-                    -top-24
-                    h-64
-                    w-64
+                    -left-28
+                    -top-28
+                    h-80
+                    w-80
                     rounded-full
-                    bg-[#56775a]/10
-                    blur-3xl
+                    bg-[#456d4e]/12
+                    blur-[90px]
                 "
             />
 
@@ -150,13 +153,13 @@ const EraTimeline = ({
                 className="
                     pointer-events-none
                     absolute
-                    -bottom-28
+                    -bottom-32
                     right-0
-                    h-64
-                    w-64
+                    h-80
+                    w-80
                     rounded-full
-                    bg-[#a68a52]/8
-                    blur-3xl
+                    bg-[#aa8a50]/10
+                    blur-[100px]
                 "
             />
 
@@ -205,7 +208,7 @@ const EraTimeline = ({
                                 font-black
                                 uppercase
                                 tracking-[0.2em]
-                                text-[#748078]
+                                text-[#967642]
                             "
                         >
                             Journey Through Time
@@ -220,11 +223,11 @@ const EraTimeline = ({
                         className="
                             mt-1.5
                             font-serif
-                            text-xl
+                            text-2xl
                             font-black
                             tracking-tight
                             text-[#1d402a]
-                            sm:text-2xl
+                            sm:text-[28px]
                         "
                     >
                         Explore the Dinosaur Eras
@@ -240,7 +243,7 @@ const EraTimeline = ({
                             text-[11px]
                             font-medium
                             leading-relaxed
-                            text-[#6f7970]
+                            text-[#627066]
                         "
                     >
                         Travel across millions of years
@@ -265,22 +268,24 @@ const EraTimeline = ({
                             w-fit
                             items-center
                             gap-1.5
-                            rounded-lg
+                            rounded-xl
                             border
-                            border-[#31583c]/15
-                            bg-[#f0ece3]
-                            px-3
-                            py-2
+                            border-[#31583d]/20
+                            bg-[#f4f6ef]/90
+                            px-3.5
+                            py-2.5
                             text-[9px]
                             font-black
                             uppercase
                             tracking-[0.08em]
-                            text-[#49604f]
-                            shadow-sm
+                            text-[#45604d]
+                            shadow-[0_5px_15px_rgba(35,70,45,0.08)]
                             transition-all
-                            hover:border-[#31583c]/30
-                            hover:bg-[#f5f1e8]
+                            duration-200
+                            hover:border-[#31583d]/35
+                            hover:bg-[#fafbf7]
                             hover:text-[#285238]
+                            hover:shadow-md
                             active:scale-[0.97]
                         "
                     >
@@ -324,7 +329,7 @@ const EraTimeline = ({
                         hidden
                         h-[3px]
                         rounded-full
-                        bg-[#b5b4a8]
+                        bg-[#b3bdb1]
                         md:block
                     "
                 />
@@ -343,7 +348,7 @@ const EraTimeline = ({
                         h-[3px]
                         w-[28%]
                         rounded-l-full
-                        bg-[#627c55]
+                        bg-[#77835a]
                         md:block
                     "
                 />
@@ -357,7 +362,7 @@ const EraTimeline = ({
                         hidden
                         h-[3px]
                         w-[28%]
-                        bg-[#47704c]
+                        bg-[#3f704a]
                         md:block
                     "
                 />
@@ -372,7 +377,7 @@ const EraTimeline = ({
                         h-[3px]
                         w-[28%]
                         rounded-r-full
-                        bg-[#8a684b]
+                        bg-[#4f6f58]
                         md:block
                     "
                 />
@@ -451,7 +456,7 @@ const EraTimeline = ({
 
                                                     ? "text-[#2d5d3b]"
 
-                                                    : "text-[#7c847d]"
+                                                    : "text-[#718078]"
                                             }
                                         `}
                                     >
@@ -483,11 +488,11 @@ const EraTimeline = ({
                                             <span
                                                 className="
                                                     absolute
-                                                    h-10
-                                                    w-10
+                                                    h-11
+                                                    w-11
                                                     animate-pulse
                                                     rounded-full
-                                                    bg-[#356844]/15
+                                                    bg-[#356844]/18
                                                 "
                                             />
 
@@ -513,9 +518,9 @@ const EraTimeline = ({
                                                 ${
                                                     isActive
 
-                                                        ? "scale-110 border-[#285f39] bg-[#f4f0e7] shadow-[0_0_0_5px_rgba(40,95,57,0.12)]"
+                                                        ? "scale-110 border-[#285f39] bg-[#356844] shadow-[0_0_0_5px_rgba(40,95,57,0.12)]"
 
-                                                        : "border-[#718271] bg-[#e8e3d7] group-hover:border-[#386747]"
+                                                        : "border-[#718271] bg-[#e8ede5] group-hover:border-[#386747]"
                                                 }
                                             `}
                                         >
@@ -559,9 +564,22 @@ const EraTimeline = ({
                                             ${
                                                 isActive
 
-                                                    ? "border-[#356844]/30 bg-[#f2eee5] shadow-[0_8px_22px_rgba(38,81,49,0.12)]"
+                                                    ? `
+                                                        border-[#356844]/35
+                                                        bg-[#f5f7f1]
+                                                        shadow-[0_10px_26px_rgba(38,81,49,0.14)]
+                                                        ring-1
+                                                        ring-[#356844]/8
+                                                    `
 
-                                                    : "border-[#31533b]/10 bg-[#dedacf]/55 group-hover:border-[#31533b]/20 group-hover:bg-[#e5e1d7]"
+                                                    : `
+                                                        border-[#31583d]/12
+                                                        bg-[#e1e7de]/75
+                                                        shadow-[0_4px_14px_rgba(35,68,44,0.04)]
+                                                        group-hover:border-[#31583d]/25
+                                                        group-hover:bg-[#edf1e9]
+                                                        group-hover:shadow-[0_8px_20px_rgba(35,68,44,0.08)]
+                                                    `
                                             }
                                         `}
                                     >
@@ -594,7 +612,7 @@ const EraTimeline = ({
                                                 text-[9px]
                                                 font-medium
                                                 leading-relaxed
-                                                text-[#7b837c]
+                                                text-[#6d786f]
                                             "
                                         >
                                             {
@@ -611,10 +629,14 @@ const EraTimeline = ({
 
                                         <div
                                             className="
-                                                mt-2
+                                                mt-2.5
                                                 flex
                                                 items-center
                                                 gap-1
+                                                rounded-full
+                                                bg-[#dce9dc]/70
+                                                px-2
+                                                py-1
                                                 text-[8px]
                                                 font-black
                                                 uppercase
@@ -690,8 +712,8 @@ const EraTimeline = ({
                                 rounded-full
                                 border-[3px]
                                 border-[#8e674e]
-                                bg-[#e8e3d7]
-                                shadow-[0_0_0_5px_rgba(142,103,78,0.08)]
+                                bg-[#f0e9df]
+                                shadow-[0_0_0_5px_rgba(142,103,78,0.10)]
                             "
                         >
 
@@ -715,10 +737,11 @@ const EraTimeline = ({
                                 w-full
                                 rounded-xl
                                 border
-                                border-[#936c52]/15
-                                bg-[#dfd7ca]/60
+                                border-[#936c52]/12
+                                bg-[#eee5d9]/75
                                 px-3
                                 py-3
+                                shadow-[0_5px_16px_rgba(111,78,57,0.06)]
                             "
                         >
 
@@ -740,7 +763,7 @@ const EraTimeline = ({
                                     text-[9px]
                                     font-medium
                                     leading-relaxed
-                                    text-[#857a70]
+                                    text-[#796f66]
                                 "
                             >
                                 The end of the age
@@ -773,7 +796,7 @@ const EraTimeline = ({
                     className="
                         text-[9px]
                         font-medium
-                        text-[#818981]
+                        text-[#718078]
                     "
                 >
                     Select an era to filter dinosaur
