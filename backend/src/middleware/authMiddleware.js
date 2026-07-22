@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
-const protect = (req, res, next) => {
+const protect = async (req, res, next) => {
     const token = req.cookies.token;
 
     if (!token) {
@@ -15,7 +16,16 @@ const protect = (req, res, next) => {
 
         console.log("Decoded:", decoded);
 
-        req.user = decoded;
+        const user = await User.findById(decoded.id).select("-password");
+
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "User no longer exists",
+            });
+        }
+
+        req.user = user;
 
         next();
     } catch (error) {
@@ -30,7 +40,7 @@ const protect = (req, res, next) => {
 
 const authorize = (...roles) => {
     return (req, res, next) => {
-        if (!roles.includes(req.user.role)) {
+        if (!req.user || !roles.includes(req.user.role)) {
             return res.status(403).json({
                 message: "Access Denied",
             });
