@@ -37,8 +37,8 @@ const FeaturedDinosaurPanel = ({
                     items-center
                     justify-center
                     border-l
-                    border-[#274a34]/15
-                    bg-[#e4dfd3]
+                    border-[#31583d]/20
+                    bg-[#e4e9de]
                     p-6
                     text-center
                 "
@@ -50,7 +50,7 @@ const FeaturedDinosaurPanel = ({
                         size={34}
                         className="
                             mx-auto
-                            text-[#53705b]
+                            text-[#4f7659]
                         "
                     />
 
@@ -73,7 +73,7 @@ const FeaturedDinosaurPanel = ({
                             mt-2
                             text-xs
                             leading-relaxed
-                            text-[#737c73]
+                            text-[#667368]
                         "
                     >
                         Select a dinosaur from the map
@@ -148,7 +148,7 @@ const FeaturedDinosaurPanel = ({
                     "Carnivore",
 
                 className:
-                    "bg-[#a74d3d]/10 text-[#9e493b] border-[#a74d3d]/20"
+                    "bg-[#a74d3d]/12 text-[#964235] border-[#a74d3d]/25"
 
             };
 
@@ -170,7 +170,7 @@ const FeaturedDinosaurPanel = ({
                     "Herbivore",
 
                 className:
-                    "bg-[#3f7049]/10 text-[#3d7048] border-[#3f7049]/20"
+                    "bg-[#3f7049]/12 text-[#32643e] border-[#3f7049]/25"
 
             };
 
@@ -186,7 +186,7 @@ const FeaturedDinosaurPanel = ({
                 "Omnivore",
 
             className:
-                "bg-[#557899]/10 text-[#496d8d] border-[#557899]/20"
+                "bg-[#557899]/12 text-[#426987] border-[#557899]/25"
 
         };
 
@@ -245,8 +245,12 @@ const FeaturedDinosaurPanel = ({
                 relative
                 overflow-hidden
                 border-l
-                border-[#274a34]/15
-                bg-[#e5e0d4]
+                border-[#31583d]/20
+                bg-gradient-to-b
+                from-[#e7ece2]
+                via-[#edf0e7]
+                to-[#e4e9de]
+                shadow-[-8px_0_28px_rgba(31,64,41,0.08)]
                 xl:min-h-[650px]
             "
         >
@@ -299,7 +303,7 @@ const FeaturedDinosaurPanel = ({
                             aspect-[4/3]
                             w-full
                             overflow-hidden
-                            bg-[#526d56]
+                            bg-[#3f6248]
                         "
                     >
 
@@ -363,9 +367,9 @@ const FeaturedDinosaurPanel = ({
                                 absolute
                                 inset-0
                                 bg-gradient-to-t
-                                from-[#173321]/75
-                                via-transparent
-                                to-black/10
+                                from-[#122d1c]/80
+                                via-[#173321]/10
+                                to-black/15
                             "
                         />
 
@@ -382,8 +386,8 @@ const FeaturedDinosaurPanel = ({
                                 gap-1.5
                                 rounded-full
                                 border
-                                border-white/20
-                                bg-[#173923]/85
+                                border-[#d5bc78]/30
+                                bg-[#173923]/88
                                 px-3
                                 py-1.5
                                 text-[9px]
@@ -399,11 +403,11 @@ const FeaturedDinosaurPanel = ({
                             <Sparkles
                                 size={11}
                                 className="
-                                    text-[#d2b56f]
+                                    text-[#e0c276]
                                 "
                             />
 
-                            Featured Specimen
+                            Specimen Profile
 
                         </div>
 
@@ -426,8 +430,8 @@ const FeaturedDinosaurPanel = ({
                                     gap-1.5
                                     rounded-lg
                                     border
-                                    border-[#d7bf7c]/25
-                                    bg-[#1e452c]/90
+                                    border-[#d8bd72]/35
+                                    bg-[#214d31]/92
                                     px-2.5
                                     py-1.5
                                     text-[9px]
@@ -464,6 +468,7 @@ const FeaturedDinosaurPanel = ({
 
                     <div
                         className="
+                            relative
                             flex
                             flex-1
                             flex-col
@@ -472,6 +477,19 @@ const FeaturedDinosaurPanel = ({
                             pt-5
                         "
                     >
+                        <div
+                            className="
+                                pointer-events-none
+                                absolute
+                                -right-16
+                                top-0
+                                h-36
+                                w-36
+                                rounded-full
+                                bg-[#52755b]/10
+                                blur-[45px]
+                            "
+                        />
 
                         {/* DINOSAUR NAME */}
 
@@ -483,7 +501,7 @@ const FeaturedDinosaurPanel = ({
                                     font-black
                                     uppercase
                                     tracking-[0.18em]
-                                    text-[#788177]
+                                    text-[#967642]
                                 "
                             >
                                 Selected Dinosaur
@@ -494,7 +512,7 @@ const FeaturedDinosaurPanel = ({
                                 className="
                                     mt-1
                                     font-serif
-                                    text-[26px]
+                                    text-[27px]
                                     font-black
                                     leading-none
                                     tracking-tight
@@ -519,7 +537,7 @@ const FeaturedDinosaurPanel = ({
                                         font-serif
                                         text-xs
                                         italic
-                                        text-[#737b72]
+                                        text-[#687568]
                                     "
                                 >
                                     {
@@ -578,13 +596,13 @@ const FeaturedDinosaurPanel = ({
                                     gap-1.5
                                     rounded-full
                                     border
-                                    border-[#476a50]/15
-                                    bg-[#476a50]/8
+                                    border-[#426b4d]/20
+                                    bg-[#dce8dc]/70 
                                     px-3
                                     py-1.5
                                     text-[10px]
                                     font-black
-                                    text-[#476650]
+                                    text-[#3e6548]
                                 "
                             >
 
@@ -609,7 +627,10 @@ const FeaturedDinosaurPanel = ({
                             className="
                                 my-5
                                 h-px
-                                bg-[#294d35]/12
+                                bg-gradient-to-r
+                                from-transparent
+                                via-[#31583d]/25
+                                to-transparent
                             "
                         />
 
@@ -683,18 +704,22 @@ const FeaturedDinosaurPanel = ({
                                 justify-center
                                 gap-2
                                 rounded-xl
-                                bg-[#255b36]
+                                border
+                                border-[#214b30]/15
+                                bg-gradient-to-r
+                                from-[#255637]
+                                via-[#326642]
+                                to-[#44764f]
                                 px-5
                                 py-3
                                 text-xs
                                 font-black
-                                text-[#f5f1e8]
-                                shadow-[0_8px_20px_rgba(36,87,52,0.18)]
+                                text-[#f7f5ed]
+                                shadow-[0_8px_20px_rgba(36,87,52,0.20)]
                                 transition-all
                                 duration-300
                                 hover:-translate-y-0.5
-                                hover:bg-[#1e4d2e]
-                                hover:shadow-[0_12px_25px_rgba(36,87,52,0.25)]
+                                hover:shadow-[0_13px_28px_rgba(36,87,52,0.28)]
                                 active:translate-y-0
                                 active:scale-[0.98]
                             "
@@ -754,9 +779,10 @@ const InformationRow = ({
                     justify-center
                     rounded-xl
                     border
-                    border-[#31583c]/15
-                    bg-[#d8d7cc]
-                    text-[#396247]
+                    border-[#31583d]/18
+                    bg-[#dbe5d9]
+                    text-[#356344]
+                    shadow-[0_3px_10px_rgba(38,79,49,0.08)]
                 "
             >
 
@@ -783,7 +809,7 @@ const InformationRow = ({
                         font-black
                         uppercase
                         tracking-[0.15em]
-                        text-[#81887f]
+                        text-[#718075]
                     "
                 >
                     {title}
@@ -797,7 +823,7 @@ const InformationRow = ({
                         text-[11px]
                         font-bold
                         leading-relaxed
-                        text-[#314a38]
+                        text-[#294633]
                     "
                 >
                     {primary}
