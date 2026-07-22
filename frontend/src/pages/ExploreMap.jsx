@@ -5,7 +5,6 @@ import Navbar from "../components/home_components/hero/Navbar";
 import DinosaurMap from "../components/map/DinosaurMap";
 import ExploreErasPanel from "../components/map/ExploreErasPanel";
 import FeaturedDinosaurPanel from "../components/map/FeaturedDinosaurPanel";
-import MapSearchBar from "../components/map/MapSearchBar";
 import EraTimeline from "../components/map/EraTimeline";
 import TrendingDinosaurs from "../components/map/TrendingDinosaurs";
 import ProfessorRossFloating from "../components/map/ProfessorRossFloating";
@@ -265,8 +264,7 @@ export default function ExploreMap() {
                     (marker) =>
                         marker.id ===
                         activeDinosaurId
-                ) ||
-                null
+                ) || null
             );
 
         }, [
@@ -359,7 +357,7 @@ export default function ExploreMap() {
 
 
     /* =========================================================
-       SEARCH DINOSAUR DIRECTLY
+    SEARCH / LOCATE DINOSAUR DIRECTLY
     ========================================================= */
 
     const handleSearchDinosaur = (
@@ -380,8 +378,8 @@ export default function ExploreMap() {
 
 
         /*
-         * First try exact dinosaur name.
-         */
+        * First try an exact dinosaur-name match.
+        */
 
         let dinosaur =
             markers.find(
@@ -389,15 +387,16 @@ export default function ExploreMap() {
                     (
                         marker.name ||
                         ""
-                    ).toLowerCase() ===
+                    )
+                        .toLowerCase() ===
                     normalizedQuery
             );
 
 
         /*
-         * If exact dinosaur is not found,
-         * try partial matching.
-         */
+        * If no exact match exists,
+        * allow partial-name matching.
+        */
 
         if (!dinosaur) {
 
@@ -425,9 +424,25 @@ export default function ExploreMap() {
 
 
         /*
-         * Keep search field showing
-         * the selected dinosaur.
-         */
+        * Clear the other filters.
+        *
+        * This guarantees that the searched
+        * dinosaur is rendered on the map,
+        * even if the previous Era / Diet /
+        * Country filters excluded it.
+        */
+
+        setSelectedEra("");
+
+        setSelectedDiet("");
+
+        setSelectedCountry("");
+
+
+        /*
+        * Keep the located dinosaur's name
+        * visible inside the search field.
+        */
 
         setSearchQuery(
             dinosaur.name
@@ -435,13 +450,18 @@ export default function ExploreMap() {
 
 
         /*
-         * DinosaurMarker already watches
-         * activeDinosaurId.
-
-         * Therefore setting this automatically
-         * triggers its existing map.flyTo()
-         * functionality.
-         */
+        * This is our single source of truth.
+        *
+        * 1. DinosaurMarker reacts to this ID
+        *    and flies to the dinosaur.
+        *
+        * 2. activeDinosaur updates.
+        *
+        * 3. featuredDinosaur updates.
+        *
+        * 4. The right information panel
+        *    therefore shows the same dinosaur.
+        */
 
         setActiveDinosaurId(
             dinosaur.id
@@ -449,10 +469,9 @@ export default function ExploreMap() {
 
     };
 
-
     /* =========================================================
-       SELECT DINOSAUR
-       FROM TRENDING SECTION
+    SELECT DINOSAUR
+    FROM TRENDING / FAMOUS SECTION
     ========================================================= */
 
     const handleSelectDinosaur = (
@@ -466,15 +485,48 @@ export default function ExploreMap() {
         }
 
 
+        /*
+        * Clear existing filters so the selected
+        * dinosaur is guaranteed to be rendered
+        * on the interactive map.
+        */
+
+        setSelectedEra("");
+
+        setSelectedDiet("");
+
+        setSelectedCountry("");
+
+
+        /*
+        * Keep the selected dinosaur name
+        * visible in the search field.
+        */
+
+        setSearchQuery(
+            dinosaur.name
+        );
+
+
+        /*
+        * Activate the dinosaur.
+        *
+        * This updates:
+        * - the map marker
+        * - map flyTo behaviour
+        * - marker popup
+        * - right-side Featured Dinosaur panel
+        */
+
         setActiveDinosaurId(
             dinosaur.id
         );
 
 
         /*
-         * Move the visitor back
-         * toward the map.
-         */
+        * Bring the visitor smoothly
+        * back to the interactive map.
+        */
 
         document
             .getElementById(
@@ -489,7 +541,6 @@ export default function ExploreMap() {
             });
 
     };
-
 
     /* =========================================================
        TRENDING / FAMOUS DINOSAURS
@@ -796,20 +847,79 @@ export default function ExploreMap() {
 
         <div
             className="
+                relative
                 min-h-screen
-                bg-[#d6d1c3]
+                overflow-x-hidden
+                bg-[#dfe2d4]
                 font-sans
                 text-[#193324]
             "
         >
 
             {/* =================================================
-                EXISTING NAVBAR
-
-                IMPORTANT:
-                WE ARE NOT MODIFYING NAVBAR.
+                NAVBAR
+            ================================================= */}
+            {/* =================================================
+                PAGE ATMOSPHERE
             ================================================= */}
 
+            <div
+                className="
+                    pointer-events-none
+                    absolute
+                    inset-0
+                    overflow-hidden
+                "
+            >
+
+                {/* Forest atmosphere */}
+
+                <div
+                    className="
+                        absolute
+                        -left-40
+                        top-28
+                        h-[520px]
+                        w-[520px]
+                        rounded-full
+                        bg-[#55745b]/12
+                        blur-[110px]
+                    "
+                />
+
+
+                {/* Warm fossil glow */}
+
+                <div
+                    className="
+                        absolute
+                        -right-32
+                        top-[420px]
+                        h-[460px]
+                        w-[460px]
+                        rounded-full
+                        bg-[#b89a62]/12
+                        blur-[120px]
+                    "
+                />
+
+
+                {/* Lower forest depth */}
+
+                <div
+                    className="
+                        absolute
+                        bottom-20
+                        left-1/3
+                        h-[500px]
+                        w-[600px]
+                        rounded-full
+                        bg-[#345a40]/8
+                        blur-[140px]
+                    "
+                />
+
+            </div>
             <header
                 className="
                     relative
@@ -832,9 +942,10 @@ export default function ExploreMap() {
             <main
                 className="
                     relative
+                    z-10
                     mt-20
                     px-3
-                    pb-10
+                    pb-12
                     sm:px-5
                     lg:mt-24
                     lg:px-6
@@ -848,11 +959,12 @@ export default function ExploreMap() {
                         mx-auto
                         max-w-[1500px]
                         overflow-hidden
-                        rounded-[30px]
+                        rounded-[32px]
                         border
-                        border-[#264d34]/20
-                        bg-[#e9e4d8]
-                        shadow-[0_25px_70px_rgba(22,45,30,0.20)]
+                        border-[#31583d]/25
+                        bg-[#eef0e6]/95
+                        shadow-[0_28px_80px_rgba(28,58,38,0.22)]
+                        backdrop-blur-sm
                     "
                 >
 
@@ -867,6 +979,8 @@ export default function ExploreMap() {
                             grid
                             min-h-[650px]
                             grid-cols-1
+                            border-b
+                            border-[#31583d]/15
                             xl:grid-cols-[250px_minmax(0,1fr)_290px]
                         "
                     >
@@ -913,7 +1027,10 @@ export default function ExploreMap() {
                                 relative
                                 min-h-[520px]
                                 overflow-hidden
-                                bg-[#506a52]
+                                border-x
+                                border-[#31583d]/20
+                                bg-[#405f48]
+                                shadow-[inset_0_0_45px_rgba(20,48,30,0.20)]
                             "
                         >
 
@@ -928,20 +1045,28 @@ export default function ExploreMap() {
                                     top-5
                                     z-[400]
                                     -translate-x-1/2
+                                    rounde-2xl
+                                    border
+                                    border-[#31583d]/20
+                                    bg-[#eef1e8]/88
+                                    px-5
+                                    py-2.5
                                     text-center
+                                    shadow-[0_8px_25px_rgba(22,52,32,0.18)]
+                                    backdrop-blur-md
                                 "
                             >
 
                                 <h1
                                     className="
+                                        whitespace-nowrap
                                         font-serif
-                                        text-2xl
+                                        text-xl
                                         font-black
                                         uppercase
-                                        tracking-[0.04em]
-                                        text-[#173923]
-                                        drop-shadow-[0_1px_1px_rgba(255,255,255,0.7)]
-                                        sm:text-3xl
+                                        tracking-[0.055em]
+                                        text-[#183c28]
+                                        sm:text-2xl
                                     "
                                 >
 
@@ -999,11 +1124,11 @@ export default function ExploreMap() {
                                     gap-2
                                     rounded-2xl
                                     border
-                                    border-[#334f3b]/15
-                                    bg-[#f2eee5]/95
+                                    border-[#31583d]/25
+                                    bg-[#edf0e7]/92
                                     px-4
                                     py-2.5
-                                    shadow-xl
+                                    shadow-[0_10px_30px_rgba(22,52,32,0.22)]
                                     backdrop-blur-xl
                                 "
                             >
@@ -1070,31 +1195,6 @@ export default function ExploreMap() {
                         />
 
                     </section>
-
-
-                    {/* =========================================
-                        DIRECT DINOSAUR SEARCH
-                    ========================================= */}
-
-                    <MapSearchBar
-
-                        searchQuery={
-                            searchQuery
-                        }
-
-                        setSearchQuery={
-                            setSearchQuery
-                        }
-
-                        dinosaurs={
-                            markers
-                        }
-
-                        onSearch={
-                            handleSearchDinosaur
-                        }
-
-                    />
 
 
                     {/* =========================================
@@ -1167,7 +1267,7 @@ function LegendItem({
                 px-2
                 text-[11px]
                 font-bold
-                text-[#4f5a50]
+                text-[#3f5144]
             "
         >
 

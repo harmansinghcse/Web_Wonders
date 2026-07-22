@@ -94,8 +94,9 @@ const ExploreErasPanel = ({
                 flex
                 flex-col
                 border-r
-                border-[#274a34]/15
-                bg-[#e8e3d7]
+                border-[#31583d]/20
+                bg-[#e4e9de]
+                shadow-[8px_0_28px_rgba(31,64,41,0.08)]
                 xl:min-h-[650px]
             "
         >
@@ -107,7 +108,11 @@ const ExploreErasPanel = ({
             <div
                 className="
                     border-b
-                    border-[#274a34]/15
+                    border-[#31583d]/15
+                    bg-gradient-to-br
+                    from-[#dce5d9]
+                    via-[#e5e9df]
+                    to-[#ece9dc]
                     px-5
                     pb-5
                     pt-6
@@ -121,7 +126,7 @@ const ExploreErasPanel = ({
                         font-black
                         uppercase
                         tracking-[0.22em]
-                        text-[#70806f]
+                        text-[#967642]
                     "
                 >
                     Prehistoric World
@@ -148,7 +153,7 @@ const ExploreErasPanel = ({
                         text-[11px]
                         font-medium
                         leading-relaxed
-                        text-[#687269]
+                        text-[#5f6f63]
                     "
                 >
                     Explore dinosaur discoveries across
@@ -170,8 +175,8 @@ const ExploreErasPanel = ({
                         grid-cols-2
                         rounded-xl
                         border
-                        border-[#31533b]/15
-                        bg-[#d9d5c9]
+                        border-[#31583d]/20
+                        bg-[#d5ddd2]
                         p-1
                         shadow-inner
                     "
@@ -187,13 +192,15 @@ const ExploreErasPanel = ({
                             justify-center
                             gap-1.5
                             rounded-lg
-                            bg-[#245d38]
+                            bg-gradient-to-r
+                            from-[#255b38]
+                            to-[#376d46]
                             px-3
                             py-2.5
                             text-[11px]
                             font-bold
-                            text-[#f5f1e8]
-                            shadow-md
+                            text-[#f5f4ec]
+                            shadow-[0_5px_14px_rgba(32,81,48,0.22)]
                             transition
                             active:scale-[0.98]
                         "
@@ -221,9 +228,9 @@ const ExploreErasPanel = ({
                             py-2.5
                             text-[11px]
                             font-bold
-                            text-[#55635a]
+                            text-[#4b6252]
                             transition
-                            hover:bg-[#ece8de]
+                            hover:bg-[#edf1e8]
                             hover:text-[#234c31]
                             active:scale-[0.98]
                         "
@@ -249,6 +256,7 @@ const ExploreErasPanel = ({
                     space-y-4
                     px-4
                     py-5
+                    bg-[#e8ece3]/50
                 "
             >
 
@@ -297,12 +305,24 @@ const ExploreErasPanel = ({
             <div
                 className="
                     border-t
-                    border-[#274a34]/15
+                    border-[#31583d]/15
                     px-4
                     pb-5
                     pt-5
                 "
             >
+                <div
+                    className="
+                        rounded-2xl
+                        border
+                        border-[#31583d]/20
+                        bg-[#f0f3ea]
+                        p-3.5
+                        shadow-[0_8px_22px_rgba(32,72,45,0.09)]
+                    "
+                >
+
+                </div>
 
                 <div
                     className="
@@ -315,7 +335,7 @@ const ExploreErasPanel = ({
 
                     <Search
                         size={14}
-                        className="text-[#2f6640]"
+                        className="text-[#967642]"
                     />
 
 
@@ -325,7 +345,7 @@ const ExploreErasPanel = ({
                             font-black
                             uppercase
                             tracking-[0.16em]
-                            text-[#526159]
+                            text-[#31543c]
                         "
                     >
                         Find Dinosaur
@@ -347,7 +367,7 @@ const ExploreErasPanel = ({
                             left-3
                             top-1/2
                             -translate-y-1/2
-                            text-[#788078]
+                            text-[#627767]
                         "
                     />
 
@@ -367,17 +387,18 @@ const ExploreErasPanel = ({
                             rounded-xl
                             border
                             border-[#31533b]/20
-                            bg-[#f2eee5]
+                            bg-[#fafbf7]
                             py-3
                             pl-9
                             pr-3
                             text-[11px]
                             font-semibold
-                            text-[#243c2c]
+                            text-[#203e2b]
                             outline-none
-                            transition
-                            placeholder:text-[#92988f]
-                            focus:border-[#3d7049]
+                            transition-all
+                            placeholder:text-[#879188]
+                            hover:border-[#31583d]/35
+                            focus:border-[#3d7049]/60
                             focus:ring-4
                             focus:ring-[#3d7049]/10
                         "
@@ -414,16 +435,24 @@ const ExploreErasPanel = ({
                         justify-center
                         gap-2
                         rounded-xl
-                        bg-[#285f39]
+                        border
+                        border-[#214b30]/15
+                        bg-gradient-to-r
+                        from-[#28583a]
+                        via-[#356844]
+                        to-[#447650]
                         px-4
                         py-2.5
                         text-[11px]
-                        font-bold
-                        text-[#f8f4ea]
-                        shadow-md
+                        font-black
+                        tracking-[0.03em]
+                        text-[#f8f7f0]
+                        shadow-[0_8px_20px_rgba(34,78,48,0.20)]
                         transition-all
-                        hover:bg-[#214f30]
-                        hover:shadow-lg
+                        duration-300
+                        hover:-translate-y-0.5
+                        hover:shadow-[0_12px_26px_rgba(34,78,48,0.28)]
+                        active:translate-y-0
                         active:scale-[0.98]
                         disabled:cursor-not-allowed
                         disabled:opacity-40
@@ -448,7 +477,7 @@ const ExploreErasPanel = ({
                     mt-auto
                     border-t
                     border-[#274a34]/15
-                    bg-[#dedacf]/60
+                    bg-[#dce3d8]/70
                     px-4
                     py-4
                 "
@@ -465,17 +494,19 @@ const ExploreErasPanel = ({
                         gap-2
                         rounded-xl
                         border
-                        border-[#31583c]/20
-                        bg-[#f1ede4]
+                        border-[#9a7843]/30
+                        bg-[#eee9dc]/80
                         px-4
                         py-2.5
                         text-[11px]
                         font-bold
-                        text-[#295237]
+                        text-[#6f582f]
                         shadow-sm
                         transition-all
-                        hover:border-[#31583c]/35
-                        hover:bg-[#f6f2e9]
+                        duration-200
+                        hover:border-[#9a7843]/45
+                        hover:bg-[#f2ead8]
+                        hover:shadow-md
                         active:scale-[0.98]
                     "
                 >
@@ -502,9 +533,9 @@ const ExploreErasPanel = ({
                         py-2
                         text-[10px]
                         font-bold
-                        text-[#737b73]
+                        text-[#68756b]
                         transition
-                        hover:bg-[#d3d0c6]
+                        hover:bg-[#cfd9cf]/70
                         hover:text-[#284d34]
                     "
                 >
@@ -551,7 +582,7 @@ const PanelSelect = ({
                     font-black
                     uppercase
                     tracking-[0.15em]
-                    text-[#657168]
+                    text-[#4f6656]
                 "
             >
 
@@ -574,25 +605,39 @@ const PanelSelect = ({
                             event.target.value
                         )
                     }
-                    className="
+                    className={`
                         w-full
                         appearance-none
                         rounded-xl
                         border
-                        border-[#31533b]/15
-                        bg-[#f1ede4]
                         px-3
                         py-2.5
                         pr-9
                         text-[11px]
                         font-bold
-                        text-[#344b3a]
                         outline-none
-                        transition
-                        focus:border-[#3d7049]
+                        transition-all
+                        duration-200
+                        focus:border-[#3d7049]/60
                         focus:ring-4
                         focus:ring-[#3d7049]/10
-                    "
+
+                        ${
+                            value
+                                ? `
+                                    border-[#3d7049]/35
+                                    bg-[#edf3e9]
+                                    text-[#21462d]
+                                    shadow-[0_4px_12px_rgba(45,86,55,0.08)]
+                                `
+                                : `
+                                    border-[#31583d]/18
+                                    bg-[#f7f8f2]
+                                    text-[#344b3a]
+                                    hover:border-[#31583d]/30
+                                `
+                        }
+                    `}
                 >
 
                     <option value="">
@@ -622,7 +667,7 @@ const PanelSelect = ({
                         right-3
                         top-1/2
                         -translate-y-1/2
-                        text-[#66736a]
+                        text-[#58705f]
                     "
                 />
 
