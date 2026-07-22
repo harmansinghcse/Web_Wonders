@@ -105,10 +105,46 @@ const MarkerPopup = ({ dinosaur }) => {
                 {/* Specimen Navigation Button */}
                 <Link
                     to={`/dinosaur/${slug}`}
-                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#2E4A37] to-[#516858] text-[#F5F2EA] py-2.5 px-4 text-center text-xs font-bold shadow-md hover:shadow-lg hover:shadow-[#2E4A37]/20 hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-300 border-none cursor-pointer"
+                    className="mt-5
+        flex
+        w-full
+        items-center
+        justify-center
+        gap-2
+        rounded-full
+
+        bg-gradient-to-r
+        from-[#2C653C]
+        via-[#4F7F38]
+        to-[#7A9B2F]
+
+        px-4
+        py-2.5
+
+        text-center
+        text-xs
+        font-bold
+        text-[#FFFDF5]
+
+        border
+        border-[#9CB34A]/25
+
+        shadow-[0_8px_20px_rgba(28,67,37,0.28)]
+
+        transition-all
+        duration-300
+
+        hover:-translate-y-0.5
+        hover:brightness-110
+        hover:shadow-[0_12px_26px_rgba(44,101,60,0.38)]
+
+        active:translate-y-0
+        active:scale-[0.97]
+
+        cursor-pointer"
                 >
                     <span>Explore Specimen</span>
-                    <ArrowRight size={14} />
+                    <ArrowRight size={14} className="text-[#FFFDF5]"/>
                 </Link>
             </div>
         </motion.div>

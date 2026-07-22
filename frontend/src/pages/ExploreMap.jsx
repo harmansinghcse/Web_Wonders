@@ -644,10 +644,10 @@ export default function ExploreMap() {
             <div
                 className="
                     min-h-screen
-                    bg-gradient-to-b
-                    from-[#F0F3E9]
-                    via-[#E9EFE4]
-                    to-[#E3EADF]
+                    bg-gradient-to-br
+                    from-[#FAF8EF]
+                    via-[#F1F6EC]
+                    to-[#E5EFE0]
                 "
             >
 
@@ -721,10 +721,10 @@ export default function ExploreMap() {
             <div
                 className="
                     min-h-screen
-                    bg-gradient-to-b
-                    from-[#F0F3E9]
-                    via-[#E9EFE4]
-                    to-[#E3EADF]
+                    bg-gradient-to-br
+                    from-[#FAF8EF]
+                    via-[#F1F6EC]
+                    to-[#E5EFE0]
                 "
             >
 
@@ -856,10 +856,10 @@ export default function ExploreMap() {
                 relative
                 min-h-screen
                 overflow-x-hidden
-                bg-gradient-to-b
-                from-[#F0F3E9]
-                via-[#E9EFE4]
-                to-[#E3EADF]
+                bg-gradient-to-br
+                from-[#FAF8EF]
+                via-[#F1F6EC]
+                to-[#E5EFE0]
                 font-sans
                 text-[#193324]
             "
