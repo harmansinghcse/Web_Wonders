@@ -38,7 +38,10 @@ const FeaturedDinosaurPanel = ({
                     justify-center
                     border-l
                     border-[#31583d]/20
-                    bg-[#e4e9de]
+                    bg-gradient-to-b
+                    from-[#F3F4EC]
+                    via-[#EDF2E8]
+                    to-[#E5ECE1]
                     p-6
                     text-center
                 "
@@ -50,7 +53,7 @@ const FeaturedDinosaurPanel = ({
                         size={34}
                         className="
                             mx-auto
-                            text-[#4f7659]
+                            text-[#5F963F]
                         "
                     />
 
@@ -61,7 +64,7 @@ const FeaturedDinosaurPanel = ({
                             font-serif
                             text-lg
                             font-black
-                            text-[#23422d]
+                            text-[#1F5133]
                         "
                     >
                         No Specimen Selected
@@ -186,7 +189,7 @@ const FeaturedDinosaurPanel = ({
                 "Omnivore",
 
             className:
-                "bg-[#557899]/12 text-[#426987] border-[#557899]/25"
+                "bg-[#C49A45]/12 text-[#8A692F] border-[#C49A45]/28"
 
         };
 
@@ -245,12 +248,12 @@ const FeaturedDinosaurPanel = ({
                 relative
                 overflow-hidden
                 border-l
-                border-[#31583d]/20
+                border-[#31583d]/16
                 bg-gradient-to-b
-                from-[#e7ece2]
-                via-[#edf0e7]
-                to-[#e4e9de]
-                shadow-[-8px_0_28px_rgba(31,64,41,0.08)]
+                from-[#F3F4EC]
+                via-[#EDF2E8]
+                to-[#E5ECE1]
+                shadow-[-8px_0_28px_rgba(31,81,51,0.07)]
                 xl:min-h-[650px]
             "
         >
@@ -303,7 +306,7 @@ const FeaturedDinosaurPanel = ({
                             aspect-[4/3]
                             w-full
                             overflow-hidden
-                            bg-[#3f6248]
+                            bg-[#42684A]
                         "
                     >
 
@@ -336,8 +339,9 @@ const FeaturedDinosaurPanel = ({
                                     items-center
                                     justify-center
                                     bg-gradient-to-br
-                                    from-[#46654d]
-                                    to-[#294b35]
+                                    from-[#4D7554]
+                                    via-[#376342]
+                                    to-[#234B31]
                                 "
                             >
 
@@ -367,9 +371,9 @@ const FeaturedDinosaurPanel = ({
                                 absolute
                                 inset-0
                                 bg-gradient-to-t
-                                from-[#122d1c]/80
-                                via-[#173321]/10
-                                to-black/15
+                                from-[#102D1C]/72
+                                via-[#173A24]/8
+                                to-black/8
                             "
                         />
 
@@ -430,8 +434,8 @@ const FeaturedDinosaurPanel = ({
                                     gap-1.5
                                     rounded-lg
                                     border
-                                    border-[#d8bd72]/35
-                                    bg-[#214d31]/92
+                                    border-[#CFAE5B]/40
+                                    bg-[#28613A]/90
                                     px-2.5
                                     py-1.5
                                     text-[9px]
@@ -486,7 +490,7 @@ const FeaturedDinosaurPanel = ({
                                 h-36
                                 w-36
                                 rounded-full
-                                bg-[#52755b]/10
+                                bg-[#5F963F]/12
                                 blur-[45px]
                             "
                         />
@@ -516,7 +520,7 @@ const FeaturedDinosaurPanel = ({
                                     font-black
                                     leading-none
                                     tracking-tight
-                                    text-[#183b27]
+                                    text-[#1F5133]
                                 "
                             >
                                 {name}
@@ -537,7 +541,7 @@ const FeaturedDinosaurPanel = ({
                                         font-serif
                                         text-xs
                                         italic
-                                        text-[#687568]
+                                        text-[#607064]
                                     "
                                 >
                                     {
@@ -596,13 +600,13 @@ const FeaturedDinosaurPanel = ({
                                     gap-1.5
                                     rounded-full
                                     border
-                                    border-[#426b4d]/20
-                                    bg-[#dce8dc]/70 
+                                    border-[#327044]/18
+                                    bg-[#DDE9D8]/80 
                                     px-3
                                     py-1.5
                                     text-[10px]
                                     font-black
-                                    text-[#3e6548]
+                                    text-[#356344]
                                 "
                             >
 
@@ -705,27 +709,28 @@ const FeaturedDinosaurPanel = ({
                                 gap-2
                                 rounded-xl
                                 border
-                                border-[#214b30]/15
+                                border-[#245733]/15
                                 bg-gradient-to-r
-                                from-[#255637]
-                                via-[#326642]
-                                to-[#44764f]
+                                from-[#2C653C]
+                                via-[#3E7B45]
+                                to-[#5F963F]
                                 px-5
                                 py-3
                                 text-xs
                                 font-black
-                                text-[#f7f5ed]
-                                shadow-[0_8px_20px_rgba(36,87,52,0.20)]
+                                text-[#FFFDF5]
+                                shadow-[0_8px_22px_rgba(48,112,64,0.24)]
                                 transition-all
                                 duration-300
                                 hover:-translate-y-0.5
-                                hover:shadow-[0_13px_28px_rgba(36,87,52,0.28)]
+                                hover:brightness-105
+                                hover:shadow-[0_13px_30px_rgba(48,112,64,0.32)]
                                 active:translate-y-0
                                 active:scale-[0.98]
                             "
                         >
 
-                            Explore Dinosaur
+                            Explore Specimen
 
                             <ArrowUpRight
                                 size={15}
@@ -779,10 +784,10 @@ const InformationRow = ({
                     justify-center
                     rounded-xl
                     border
-                    border-[#31583d]/18
-                    bg-[#dbe5d9]
-                    text-[#356344]
-                    shadow-[0_3px_10px_rgba(38,79,49,0.08)]
+                    border-[#327044]/16
+                    bg-[#DDE9D8]/85
+                    text-[#327044]
+                    shadow-[0_4px_12px_rgba(38,79,49,0.07)]
                 "
             >
 
@@ -809,7 +814,7 @@ const InformationRow = ({
                         font-black
                         uppercase
                         tracking-[0.15em]
-                        text-[#718075]
+                        text-[#68786D]
                     "
                 >
                     {title}
@@ -823,7 +828,7 @@ const InformationRow = ({
                         text-[11px]
                         font-bold
                         leading-relaxed
-                        text-[#294633]
+                        text-[#284D34]
                     "
                 >
                     {primary}
