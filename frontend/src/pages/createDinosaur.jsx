@@ -16,6 +16,7 @@ import DietFact from "../components/editor-components/DietFact";
 import QuickFacts from "../components/editor-components/QuickFacts";
 import EditorWelcome from "../components/editor-components/EditorWelcome";
 import SubmissionSuccess from "../components/editor-components/SubmissionSuccess";
+import AiGeneratorCard from "../components/editor-components/AiGeneratorCard";
 
 // Preview Display Components
 import DisplayDinoIntro from "../components/info-components/dinoIntro";
@@ -46,6 +47,20 @@ const CreateDinosaurContent = () => {
     const [reviewLoading, setReviewLoading] = useState(false);
     const [feedbackMessage, setFeedbackMessage] = useState("");
     const [showRejectModal, setShowRejectModal] = useState(false);
+
+    // AI Generation highlight state
+    const [isEditorHighlighted, setIsEditorHighlighted] = useState(false);
+
+    const handleAiSuccess = () => {
+        const heroEl = document.getElementById("editor-hero-section");
+        if (heroEl) {
+            heroEl.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        setIsEditorHighlighted(true);
+        setTimeout(() => {
+            setIsEditorHighlighted(false);
+        }, 3000);
+    };
 
     // Context states
     const {
@@ -377,47 +392,63 @@ const CreateDinosaurContent = () => {
                 </div>
             ) : (
                 <div className="animate-fade-in">
+                    {/* AI Generator Card for Admin */}
+                    {isAdmin && !isReviewMode && (
+                        <div className="mx-auto max-w-7xl px-6 pt-6">
+                            <AiGeneratorCard onSuccess={handleAiSuccess} />
+                        </div>
+                    )}
+
                     {/* Edit Form layout */}
-                    <BasicInfo />
+                    <div
+                        id="editor-hero-section"
+                        className={
+                            isEditorHighlighted
+                                ? "ai-editor-highlight transition-all duration-700"
+                                : "transition-all duration-700"
+                        }
+                    >
+                        <BasicInfo />
 
-                    <div className="relative flex min-h-screen flex-col justify-end overflow-hidden bg-black font-sans">
-                        <div className="absolute inset-0 z-0">
-                            {dinosaur.images.heroBackground ? (
-                                <img
-                                    src={dinosaur.images.heroBackground}
-                                    alt="Background"
-                                    className="h-full w-full object-cover opacity-70"
-                                />
-                            ) : (
-                                <div className="flex h-full w-full items-center justify-center bg-neutral-900 text-gray-500">
-                                    No Hero Background Uploaded
-                                </div>
-                            )}
-                            <div className="absolute inset-0 bg-linear-to-r from-black/90 via-black/40 to-transparent"></div>
-                            <div className="absolute inset-0 bg-linear-to-r from-black/80 via-transparent to-transparent"></div>
+                        <div className="relative flex min-h-screen flex-col justify-end overflow-hidden bg-black font-sans">
+                            <div className="absolute inset-0 z-0">
+                                {dinosaur.images.heroBackground ? (
+                                    <img
+                                        src={dinosaur.images.heroBackground}
+                                        alt="Background"
+                                        className="h-full w-full object-cover opacity-70"
+                                    />
+                                ) : (
+                                    <div className="flex h-full w-full items-center justify-center bg-neutral-900 text-gray-500">
+                                        No Hero Background Uploaded
+                                    </div>
+                                )}
+                                <div className="absolute inset-0 bg-linear-to-r from-black/90 via-black/40 to-transparent"></div>
+                                <div className="absolute inset-0 bg-linear-to-r from-black/80 via-transparent to-transparent"></div>
+                            </div>
+
+                            <div className="relative z-20 mx-auto mt-8 w-full max-w-7xl px-8 md:px-16">
+                                <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/20 bg-black/60 px-5 py-3 text-sm font-semibold text-white backdrop-blur-md transition hover:bg-black/80">
+                                    📷 Change Hero Background
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={handleBackgroundUpload}
+                                    />
+                                </label>
+                            </div>
+
+                            <DinoIntro />
+                            <QuickFacts />
                         </div>
 
-                        <div className="relative z-20 mx-auto mt-8 w-full max-w-7xl px-8 md:px-16">
-                            <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/20 bg-black/60 px-5 py-3 text-sm font-semibold text-white backdrop-blur-md transition hover:bg-black/80">
-                                📷 Change Hero Background
-                                <input
-                                    type="file"
-                                    accept="image/*"
-                                    className="hidden"
-                                    onChange={handleBackgroundUpload}
-                                />
-                            </label>
-                        </div>
-
-                        <DinoIntro />
-                        <QuickFacts />
+                        <Fossil />
+                        <hr className="border-[#c6a87c]" />
+                        <PhysicalFeatures />
+                        <TimelineStrat />
+                        <DietFact />
                     </div>
-
-                    <Fossil />
-                    <hr className="border-[#c6a87c]" />
-                    <PhysicalFeatures />
-                    <TimelineStrat />
-                    <DietFact />
                 </div>
             )}
 
