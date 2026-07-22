@@ -94,9 +94,12 @@ const ExploreErasPanel = ({
                 flex
                 flex-col
                 border-r
-                border-[#31583d]/20
-                bg-[#e4e9de]
-                shadow-[8px_0_28px_rgba(31,64,41,0.08)]
+                border-[#31583d]/16
+                bg-gradient-to-b
+                from-[#F1F4EB]
+                via-[#EAF0E6]
+                to-[#E4EBE0]
+                shadow-[8px_0_28px_rgba(31,81,51,0.07)]
                 xl:min-h-[650px]
             "
         >
@@ -110,9 +113,9 @@ const ExploreErasPanel = ({
                     border-b
                     border-[#31583d]/15
                     bg-gradient-to-br
-                    from-[#dce5d9]
-                    via-[#e5e9df]
-                    to-[#ece9dc]
+                    from-[#E4EDE0]
+                    via-[#EDF2E8]
+                    to-[#F3F4EC]
                     px-5
                     pb-5
                     pt-6
@@ -140,7 +143,7 @@ const ExploreErasPanel = ({
                         text-2xl
                         font-black
                         tracking-tight
-                        text-[#183b27]
+                        text-[#1F5133]
                     "
                 >
                     Explore Eras
@@ -153,7 +156,7 @@ const ExploreErasPanel = ({
                         text-[11px]
                         font-medium
                         leading-relaxed
-                        text-[#5f6f63]
+                        text-[#607064]
                     "
                 >
                     Explore dinosaur discoveries across
@@ -175,8 +178,8 @@ const ExploreErasPanel = ({
                         grid-cols-2
                         rounded-xl
                         border
-                        border-[#31583d]/20
-                        bg-[#d5ddd2]
+                        border-[#327044]/16
+                        bg-[#DDE9D8]/80
                         p-1
                         shadow-inner
                     "
@@ -193,8 +196,9 @@ const ExploreErasPanel = ({
                             gap-1.5
                             rounded-lg
                             bg-gradient-to-r
-                            from-[#255b38]
-                            to-[#376d46]
+                            from-[#2C653C]
+                            via-[#3E7B45]
+                            to-[#5F963F]
                             px-3
                             py-2.5
                             text-[11px]
@@ -228,10 +232,10 @@ const ExploreErasPanel = ({
                             py-2.5
                             text-[11px]
                             font-bold
-                            text-[#4b6252]
+                            text-[#496452]
                             transition
-                            hover:bg-[#edf1e8]
-                            hover:text-[#234c31]
+                            hover:bg-[#F5F3E9]/80
+                            hover:text-[#1F5133]
                             active:scale-[0.98]
                         "
                     >
@@ -256,7 +260,7 @@ const ExploreErasPanel = ({
                     space-y-4
                     px-4
                     py-5
-                    bg-[#e8ece3]/50
+                    bg-[#EDF2E8]/55
                 "
             >
 
@@ -321,8 +325,6 @@ const ExploreErasPanel = ({
                         shadow-[0_8px_22px_rgba(32,72,45,0.09)]
                     "
                 >
-
-                </div>
 
                 <div
                     className="
@@ -398,9 +400,9 @@ const ExploreErasPanel = ({
                             transition-all
                             placeholder:text-[#879188]
                             hover:border-[#31583d]/35
-                            focus:border-[#3d7049]/60
+                            focus:border-[#5F963F]/55
                             focus:ring-4
-                            focus:ring-[#3d7049]/10
+                            focus:ring-[#5F963F]/10
                         "
                     />
 
@@ -466,7 +468,7 @@ const ExploreErasPanel = ({
                 </button>
 
             </div>
-
+        </div>
 
             {/* =================================================
                 BOTTOM ACTIONS
@@ -477,7 +479,7 @@ const ExploreErasPanel = ({
                     mt-auto
                     border-t
                     border-[#274a34]/15
-                    bg-[#dce3d8]/70
+                    bg-[#E4EBE0]/75
                     px-4
                     py-4
                 "
@@ -495,17 +497,17 @@ const ExploreErasPanel = ({
                         rounded-xl
                         border
                         border-[#9a7843]/30
-                        bg-[#eee9dc]/80
+                        bg-[#F5F0E3]/90
                         px-4
                         py-2.5
                         text-[11px]
                         font-bold
-                        text-[#6f582f]
+                        text-[#765A2B]
                         shadow-sm
                         transition-all
                         duration-200
                         hover:border-[#9a7843]/45
-                        hover:bg-[#f2ead8]
+                        hover:bg-[#FAF3E2]
                         hover:shadow-md
                         active:scale-[0.98]
                     "
@@ -533,9 +535,9 @@ const ExploreErasPanel = ({
                         py-2
                         text-[10px]
                         font-bold
-                        text-[#68756b]
+                        text-[#5B6E60]
                         transition
-                        hover:bg-[#cfd9cf]/70
+                        hover:bg-[#D6E3D4]/80
                         hover:text-[#284d34]
                     "
                 >
@@ -588,7 +590,7 @@ const PanelSelect = ({
 
                 <Icon
                     size={12}
-                    className="text-[#3d6b48]"
+                    className="text-[#4D814F]"
                 />
 
                 {label}
@@ -625,14 +627,14 @@ const PanelSelect = ({
                         ${
                             value
                                 ? `
-                                    border-[#3d7049]/35
-                                    bg-[#edf3e9]
-                                    text-[#21462d]
+                                    border-[#5F963F]/35
+                                    bg-[#DDE9D8]
+                                    text-[#285A36]
                                     shadow-[0_4px_12px_rgba(45,86,55,0.08)]
                                 `
                                 : `
                                     border-[#31583d]/18
-                                    bg-[#f7f8f2]
+                                    bg-[#F8F9F4]
                                     text-[#344b3a]
                                     hover:border-[#31583d]/30
                                 `

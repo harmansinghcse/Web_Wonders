@@ -120,9 +120,9 @@ const EraTimeline = ({
                 border-t
                 border-[#31583d]/18
                 bg-gradient-to-b
-                from-[#e9ede4]
-                via-[#e4e9df]
-                to-[#e8e9df]
+                from-[#F0F3E9]
+                via-[#E9EFE4]
+                to-[#E4EBE0]
                 px-5
                 py-7
                 sm:px-8
@@ -143,7 +143,7 @@ const EraTimeline = ({
                     h-80
                     w-80
                     rounded-full
-                    bg-[#456d4e]/12
+                    bg-[#5F963F]/10
                     blur-[90px]
                 "
             />
@@ -158,7 +158,7 @@ const EraTimeline = ({
                     h-80
                     w-80
                     rounded-full
-                    bg-[#aa8a50]/10
+                    bg-[#C49A45]/10
                     blur-[100px]
                 "
             />
@@ -197,7 +197,7 @@ const EraTimeline = ({
                         <Clock3
                             size={13}
                             className="
-                                text-[#3e704a]
+                                text-[#4D814F]
                             "
                         />
 
@@ -208,7 +208,7 @@ const EraTimeline = ({
                                 font-black
                                 uppercase
                                 tracking-[0.2em]
-                                text-[#967642]
+                                text-[#9A793A]
                             "
                         >
                             Journey Through Time
@@ -226,7 +226,7 @@ const EraTimeline = ({
                             text-2xl
                             font-black
                             tracking-tight
-                            text-[#1d402a]
+                            text-[#1F5133]
                             sm:text-[28px]
                         "
                     >
@@ -243,7 +243,7 @@ const EraTimeline = ({
                             text-[11px]
                             font-medium
                             leading-relaxed
-                            text-[#627066]
+                            text-[#607064]
                         "
                     >
                         Travel across millions of years
@@ -270,21 +270,21 @@ const EraTimeline = ({
                             gap-1.5
                             rounded-xl
                             border
-                            border-[#31583d]/20
-                            bg-[#f4f6ef]/90
+                            border-[#327044]/18
+                            bg-[#F5F3E9]/90
                             px-3.5
                             py-2.5
                             text-[9px]
                             font-black
                             uppercase
                             tracking-[0.08em]
-                            text-[#45604d]
+                            text-[#496452]
                             shadow-[0_5px_15px_rgba(35,70,45,0.08)]
                             transition-all
                             duration-200
-                            hover:border-[#31583d]/35
-                            hover:bg-[#fafbf7]
-                            hover:text-[#285238]
+                            hover:border-[#5F963F]/35
+                            hover:bg-[#FAFBF7]
+                            hover:text-[#1F5133]
                             hover:shadow-md
                             active:scale-[0.97]
                         "
@@ -329,7 +329,7 @@ const EraTimeline = ({
                         hidden
                         h-[3px]
                         rounded-full
-                        bg-[#b3bdb1]
+                        bg-[#B8C7B7]
                         md:block
                     "
                 />
@@ -348,7 +348,7 @@ const EraTimeline = ({
                         h-[3px]
                         w-[28%]
                         rounded-l-full
-                        bg-[#77835a]
+                        bg-[#78845A]
                         md:block
                     "
                 />
@@ -362,7 +362,7 @@ const EraTimeline = ({
                         hidden
                         h-[3px]
                         w-[28%]
-                        bg-[#3f704a]
+                        bg-[#327044]
                         md:block
                     "
                 />
@@ -377,7 +377,7 @@ const EraTimeline = ({
                         h-[3px]
                         w-[28%]
                         rounded-r-full
-                        bg-[#4f6f58]
+                        bg-[#5F7D60]
                         md:block
                     "
                 />
@@ -454,7 +454,7 @@ const EraTimeline = ({
                                             ${
                                                 isActive
 
-                                                    ? "text-[#2d5d3b]"
+                                                    ? "text-[#327044]"
 
                                                     : "text-[#718078]"
                                             }
@@ -492,7 +492,7 @@ const EraTimeline = ({
                                                     w-11
                                                     animate-pulse
                                                     rounded-full
-                                                    bg-[#356844]/18
+                                                    bg-[#5F963F]/16
                                                 "
                                             />
 
@@ -518,9 +518,9 @@ const EraTimeline = ({
                                                 ${
                                                     isActive
 
-                                                        ? "scale-110 border-[#285f39] bg-[#356844] shadow-[0_0_0_5px_rgba(40,95,57,0.12)]"
+                                                        ? "scale-110 border-[#327044] bg-[#F5F3E9] shadow-[0_0_0_5px_rgba(95,150,63,0.14)]"
 
-                                                        : "border-[#718271] bg-[#e8ede5] group-hover:border-[#386747]"
+                                                        : "border-[#718271] bg-[#E9EFE4] group-hover:border-[#5F963F]"
                                                 }
                                             `}
                                         >
@@ -534,7 +534,7 @@ const EraTimeline = ({
                                                     ${
                                                         isActive
 
-                                                            ? "bg-[#285f39]"
+                                                            ? "bg-[#5F963F]"
 
                                                             : "bg-[#718271]"
                                                     }
@@ -565,19 +565,19 @@ const EraTimeline = ({
                                                 isActive
 
                                                     ? `
-                                                        border-[#356844]/35
-                                                        bg-[#f5f7f1]
-                                                        shadow-[0_10px_26px_rgba(38,81,49,0.14)]
+                                                        border-[#5F963F]/30
+                                                        bg-[#F5F7F1]
+                                                        shadow-[0_10px_26px_rgba(48,112,64,0.13)]
                                                         ring-1
-                                                        ring-[#356844]/8
+                                                        ring-[#5F963F]/10
                                                     `
 
                                                     : `
-                                                        border-[#31583d]/12
-                                                        bg-[#e1e7de]/75
+                                                        border-[#327044]/12
+                                                        bg-white/40
                                                         shadow-[0_4px_14px_rgba(35,68,44,0.04)]
-                                                        group-hover:border-[#31583d]/25
-                                                        group-hover:bg-[#edf1e9]
+                                                        group-hover:border-[#5F963F]/25
+                                                        group-hover:bg-white/60
                                                         group-hover:shadow-[0_8px_20px_rgba(35,68,44,0.08)]
                                                     `
                                             }
@@ -594,7 +594,7 @@ const EraTimeline = ({
                                                 ${
                                                     isActive
 
-                                                        ? "text-[#245a37]"
+                                                        ? "text-[#327044]"
 
                                                         : "text-[#344e3b]"
                                                 }
@@ -612,7 +612,7 @@ const EraTimeline = ({
                                                 text-[9px]
                                                 font-medium
                                                 leading-relaxed
-                                                text-[#6d786f]
+                                                text-[#607064]
                                             "
                                         >
                                             {
@@ -634,19 +634,20 @@ const EraTimeline = ({
                                                 items-center
                                                 gap-1
                                                 rounded-full
-                                                bg-[#dce9dc]/70
+                                                bg-[#DDE9D8]/85
                                                 px-2
                                                 py-1
                                                 text-[8px]
                                                 font-black
                                                 uppercase
                                                 tracking-[0.12em]
-                                                text-[#356844]
+                                                text-[#327044]
                                             "
                                         >
 
                                             <Sparkles
                                                 size={9}
+                                                className="text-[#5F963F]"
                                             />
 
                                             Viewing on Map
@@ -737,8 +738,8 @@ const EraTimeline = ({
                                 w-full
                                 rounded-xl
                                 border
-                                border-[#936c52]/12
-                                bg-[#eee5d9]/75
+                                border-[#A07858]/25
+                                bg-[#F3EADF]/80
                                 px-3
                                 py-3
                                 shadow-[0_5px_16px_rgba(111,78,57,0.06)]

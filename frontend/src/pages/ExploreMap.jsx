@@ -644,7 +644,10 @@ export default function ExploreMap() {
             <div
                 className="
                     min-h-screen
-                    bg-[#d8d3c4]
+                    bg-gradient-to-br
+                    from-[#FAF8EF]
+                    via-[#F1F6EC]
+                    to-[#E5EFE0]
                 "
             >
 
@@ -692,7 +695,7 @@ export default function ExploreMap() {
                                 rounded-[28px]
                                 border
                                 border-[#314c38]/15
-                                bg-[#e8e3d7]
+                                bg-[#E4EBE0]
                             "
                         />
 
@@ -718,7 +721,10 @@ export default function ExploreMap() {
             <div
                 className="
                     min-h-screen
-                    bg-[#d8d3c4]
+                    bg-gradient-to-br
+                    from-[#FAF8EF]
+                    via-[#F1F6EC]
+                    to-[#E5EFE0]
                 "
             >
 
@@ -756,7 +762,7 @@ export default function ExploreMap() {
                             rounded-[28px]
                             border
                             border-[#31503b]/20
-                            bg-[#eee9df]
+                            bg-[#F3F4EC]
                             p-8
                             text-center
                             shadow-xl
@@ -850,7 +856,10 @@ export default function ExploreMap() {
                 relative
                 min-h-screen
                 overflow-x-hidden
-                bg-[#dfe2d4]
+                bg-gradient-to-br
+                from-[#FAF8EF]
+                via-[#F1F6EC]
+                to-[#E5EFE0]
                 font-sans
                 text-[#193324]
             "
@@ -882,7 +891,7 @@ export default function ExploreMap() {
                         h-[520px]
                         w-[520px]
                         rounded-full
-                        bg-[#55745b]/12
+                        bg-[#5F963F]/14
                         blur-[110px]
                     "
                 />
@@ -898,7 +907,7 @@ export default function ExploreMap() {
                         h-[460px]
                         w-[460px]
                         rounded-full
-                        bg-[#b89a62]/12
+                        bg-[#C49A45]/13
                         blur-[120px]
                     "
                 />
@@ -914,7 +923,7 @@ export default function ExploreMap() {
                         h-[500px]
                         w-[600px]
                         rounded-full
-                        bg-[#345a40]/8
+                        bg-[#327044]/10
                         blur-[140px]
                     "
                 />
@@ -961,9 +970,9 @@ export default function ExploreMap() {
                         overflow-hidden
                         rounded-[32px]
                         border
-                        border-[#31583d]/25
-                        bg-[#eef0e6]/95
-                        shadow-[0_28px_80px_rgba(28,58,38,0.22)]
+                        border-[#31583d]/18
+                        bg-[#F3F4EC]/95
+                        shadow-[0_24px_65px_rgba(28,58,38,0.14)]
                         backdrop-blur-sm
                     "
                 >
@@ -1028,9 +1037,9 @@ export default function ExploreMap() {
                                 min-h-[520px]
                                 overflow-hidden
                                 border-x
-                                border-[#31583d]/20
-                                bg-[#405f48]
-                                shadow-[inset_0_0_45px_rgba(20,48,30,0.20)]
+                                border-[#4F7D58]/25
+                                bg-[#42684A]
+                                shadow-[inset_0_0_32px_rgba(20,48,30,0.14)]
                             "
                         >
 
@@ -1045,14 +1054,14 @@ export default function ExploreMap() {
                                     top-5
                                     z-[400]
                                     -translate-x-1/2
-                                    rounde-2xl
+                                    rounded-2xl
                                     border
-                                    border-[#31583d]/20
-                                    bg-[#eef1e8]/88
+                                    border-[#327044]/20
+                                    bg-[#F5F3E9]/94
                                     px-5
                                     py-2.5
                                     text-center
-                                    shadow-[0_8px_25px_rgba(22,52,32,0.18)]
+                                    shadow-[0_8px_24px_rgba(31,81,51,0.14)]
                                     backdrop-blur-md
                                 "
                             >
@@ -1065,7 +1074,7 @@ export default function ExploreMap() {
                                         font-black
                                         uppercase
                                         tracking-[0.055em]
-                                        text-[#183c28]
+                                        text-[#1F5133]
                                         sm:text-2xl
                                     "
                                 >
@@ -1124,11 +1133,11 @@ export default function ExploreMap() {
                                     gap-2
                                     rounded-2xl
                                     border
-                                    border-[#31583d]/25
-                                    bg-[#edf0e7]/92
+                                    border-[#327044]/20
+                                    bg-[#F5F3E9]/94
                                     px-4
                                     py-2.5
-                                    shadow-[0_10px_30px_rgba(22,52,32,0.22)]
+                                    shadow-[0_8px_24px_rgba(31,81,51,0.15)]
                                     backdrop-blur-xl
                                 "
                             >
@@ -1161,7 +1170,7 @@ export default function ExploreMap() {
 
                                     label="Omnivore"
 
-                                    color="text-[#3e76a8]"
+                                    color="text-[#B1843E]"
 
                                 />
 
@@ -1172,7 +1181,7 @@ export default function ExploreMap() {
 
                                     label="Fossil Site"
 
-                                    color="text-[#947038]"
+                                    color="text-[#8A6935]"
 
                                 />
 
@@ -1267,7 +1276,7 @@ function LegendItem({
                 px-2
                 text-[11px]
                 font-bold
-                text-[#3f5144]
+                text-[#36503D]
             "
         >
 
