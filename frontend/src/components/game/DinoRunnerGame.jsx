@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import Navbar from "../home_components/hero/Navbar";
-import { ArrowLeft, Play, RotateCcw, Volume2, VolumeX, Zap, Trophy, Shield } from "lucide-react";
+import { ArrowLeft, Play, RotateCcw, Volume2, VolumeX, Shield, Heart } from "lucide-react";
 
 export default function DinoRunnerGame({ onBackToHub }) {
     const [gameState, setGameState] = useState("start"); // 'start' | 'playing' | 'gameover'
+    const [difficulty, setDifficulty] = useState("moderate"); // 'easy' | 'moderate' | 'hard'
     const [score, setScore] = useState(0);
     const [highScore, setHighScore] = useState(() => {
         return parseInt(localStorage.getItem("jurassic_runner_high") || "0", 10);
@@ -11,6 +12,7 @@ export default function DinoRunnerGame({ onBackToHub }) {
     const [dinoPos, setDinoPos] = useState({ y: 0, isJumping: false });
     const [obstacles, setObstacles] = useState([]);
     const [gems, setGems] = useState([]);
+    const [shields, setShields] = useState(1);
     const [soundEnabled, setSoundEnabled] = useState(true);
 
     const gameLoopRef = useRef(null);
@@ -19,6 +21,19 @@ export default function DinoRunnerGame({ onBackToHub }) {
     const isJumpingRef = useRef(false);
     const velocityYRef = useRef(0);
     const scoreRef = useRef(0);
+    const shieldsRef = useRef(1);
+
+    // Get difficulty config
+    const getDiffConfig = (diff = difficulty) => {
+        if (diff === "easy") {
+            return { speed: 0.8, spawnRate: 120, initialShields: 3 };
+        } else if (diff === "moderate") {
+            return { speed: 1.2, spawnRate: 90, initialShields: 1 };
+        } else {
+            // hard
+            return { speed: 1.8, spawnRate: 60, initialShields: 0 };
+        }
+    };
 
     // Audio effects synthesizer
     const playSound = (type) => {
@@ -79,21 +94,24 @@ export default function DinoRunnerGame({ onBackToHub }) {
                 if (gameState === "playing") {
                     triggerJump();
                 } else if (gameState === "start" || gameState === "gameover") {
-                    startGame();
+                    startGame(difficulty);
                 }
             }
         };
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [gameState]);
+    }, [gameState, difficulty]);
 
     // Start Game
-    const startGame = () => {
+    const startGame = (selectedDiff = difficulty) => {
+        const config = getDiffConfig(selectedDiff);
         setGameState("playing");
         setScore(0);
         scoreRef.current = 0;
         setObstacles([]);
         setGems([]);
+        setShields(config.initialShields);
+        shieldsRef.current = config.initialShields;
         dinoYRef.current = 0;
         isJumpingRef.current = false;
         velocityYRef.current = 0;
@@ -103,6 +121,7 @@ export default function DinoRunnerGame({ onBackToHub }) {
     // Main Game Loop
     useEffect(() => {
         if (gameState !== "playing") return;
+        const config = getDiffConfig(difficulty);
 
         const updateGame = () => {
             frameCountRef.current += 1;
@@ -126,8 +145,8 @@ export default function DinoRunnerGame({ onBackToHub }) {
             }
 
             // Spawn Obstacles (Volcanic Lava Boulders or Pterodactyls)
-            if (frameCountRef.current % 90 === 0) {
-                const isFlying = Math.random() > 0.6;
+            if (frameCountRef.current % config.spawnRate === 0) {
+                const isFlying = Math.random() > 0.55;
                 setObstacles((prev) => [
                     ...prev,
                     {
@@ -140,7 +159,7 @@ export default function DinoRunnerGame({ onBackToHub }) {
             }
 
             // Spawn Amber Gems
-            if (frameCountRef.current % 140 === 0) {
+            if (frameCountRef.current % 130 === 0) {
                 setGems((prev) => [
                     ...prev,
                     {
@@ -151,22 +170,36 @@ export default function DinoRunnerGame({ onBackToHub }) {
                 ]);
             }
 
-            // Move Obstacles
+            // Move Obstacles & Check Collisions
             setObstacles((prev) => {
                 const nextObstacles = [];
                 for (let obs of prev) {
-                    const nextX = obs.x - 1.2;
-                    // Collision Check with Dino (X range: 10% to 20%, Y matching)
+                    const nextX = obs.x - config.speed;
+                    
+                    // Collision Check with Dino
                     if (nextX > 8 && nextX < 22) {
                         const dinoBottom = dinoYRef.current;
+                        let hasCollided = false;
+
                         if (obs.type === "lava_rock" && dinoBottom < 30) {
-                            handleGameOver();
-                            return prev;
+                            hasCollided = true;
                         } else if (obs.type === "pterodactyl" && dinoBottom > 35 && dinoBottom < 85) {
-                            handleGameOver();
-                            return prev;
+                            hasCollided = true;
+                        }
+
+                        if (hasCollided) {
+                            playSound("hit");
+                            if (shieldsRef.current > 0) {
+                                shieldsRef.current -= 1;
+                                setShields(shieldsRef.current);
+                                continue; // Shield absorbed collision, clear obstacle
+                            } else {
+                                handleGameOver();
+                                return prev;
+                            }
                         }
                     }
+
                     if (nextX > -10) {
                         nextObstacles.push({ ...obs, x: nextX });
                     }
@@ -178,7 +211,7 @@ export default function DinoRunnerGame({ onBackToHub }) {
             setGems((prev) => {
                 const nextGems = [];
                 for (let gem of prev) {
-                    const nextX = gem.x - 1.2;
+                    const nextX = gem.x - config.speed;
                     if (nextX > 10 && nextX < 20 && Math.abs(dinoYRef.current - gem.height) < 40) {
                         playSound("gem");
                         scoreRef.current += 50;
@@ -197,10 +230,9 @@ export default function DinoRunnerGame({ onBackToHub }) {
         return () => {
             if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
         };
-    }, [gameState]);
+    }, [gameState, difficulty]);
 
     const handleGameOver = () => {
-        playSound("hit");
         if (scoreRef.current > highScore) {
             setHighScore(scoreRef.current);
             localStorage.setItem("jurassic_runner_high", scoreRef.current.toString());
@@ -209,140 +241,221 @@ export default function DinoRunnerGame({ onBackToHub }) {
     };
 
     return (
-        <div className="relative min-h-screen bg-[#0e1711] text-[#e4dac6] pt-20 pb-12 px-4 sm:px-6 font-sans select-none">
-            <div className="relative z-10 max-w-5xl mx-auto flex flex-col space-y-6">
-                
-                {/* HUD Header */}
-                <div className="flex items-center justify-between bg-[#18291c] border border-[#2b4c34] rounded-2xl p-4 shadow-xl">
-                    <div className="flex items-center gap-3">
+        <div className="relative min-h-screen bg-[#0e1711] text-[#e4dac6] font-sans select-none">
+            
+            {/* Header only on start */}
+            {gameState === "start" && (
+                <div className="relative z-50">
+                    <Navbar />
+                </div>
+            )}
+
+            {/* START SCREEN / DIFFICULTY SELECTOR */}
+            {gameState === "start" && (
+                <main className="relative z-10 max-w-4xl mx-auto pt-28 pb-16 px-4 flex flex-col items-center justify-center min-h-screen text-center space-y-8">
+                    
+                    {onBackToHub && (
                         <button
                             onClick={onBackToHub}
-                            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-all text-white"
+                            className="inline-flex items-center gap-2 self-start bg-white/10 hover:bg-white/20 text-emerald-200 px-4 py-2 rounded-xl text-xs font-bold shadow-md transition-all cursor-pointer"
                         >
-                            <ArrowLeft size={20} />
+                            <ArrowLeft size={16} />
+                            <span>Back to Game Hub</span>
                         </button>
-                        <div>
-                            <h1 className="text-xl font-serif font-bold text-amber-200 uppercase tracking-wider">
-                                JURASSIC DINO ESCAPE
-                            </h1>
-                            <p className="text-xs text-emerald-300/80">Press Space or Click to Jump!</p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                        <div className="bg-[#0c1810] px-4 py-1.5 rounded-xl border border-[#2b4c34] text-center">
-                            <span className="text-[10px] text-gray-400 block uppercase">Distance / Score</span>
-                            <span className="text-lg font-mono font-bold text-emerald-400">{score}</span>
-                        </div>
-                        <div className="bg-[#0c1810] px-4 py-1.5 rounded-xl border border-[#2b4c34] text-center">
-                            <span className="text-[10px] text-gray-400 block uppercase">High Score</span>
-                            <span className="text-lg font-mono font-bold text-amber-300">{highScore}</span>
-                        </div>
-                        <button
-                            onClick={() => setSoundEnabled(!soundEnabled)}
-                            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white"
-                        >
-                            {soundEnabled ? <Volume2 size={20} /> : <VolumeX size={20} />}
-                        </button>
-                    </div>
-                </div>
-
-                {/* Game Runner Track Window */}
-                <div 
-                    onClick={triggerJump}
-                    className="relative w-full h-[380px] rounded-3xl border-2 border-[#2b4c34] bg-gradient-to-b from-[#132317] via-[#1b2b1f] to-[#0c160e] shadow-2xl overflow-hidden cursor-pointer"
-                >
-                    {/* Background Distant Jungle Silhouette */}
-                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#2b4c34_0%,transparent_70%)] opacity-30 pointer-events-none" />
-
-                    {/* Ground Track */}
-                    <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-b from-[#3d3326] to-[#1e1912] border-t-4 border-[#6e5d47]">
-                        <div className="w-full h-full bg-[linear-gradient(90deg,transparent_50%,rgba(0,0,0,0.3)_50%)] bg-[length:40px_100%] animate-pulse" />
-                    </div>
-
-                    {/* Dinosaur Runner Sprite */}
-                    <div
-                        className="absolute left-[12%] bottom-16 text-5xl transition-all duration-75 filter drop-shadow-lg"
-                        style={{ transform: `translateY(-${dinoPos.y}px)` }}
-                    >
-                        🦖
-                    </div>
-
-                    {/* Obstacles Rendering */}
-                    {obstacles.map((obs) => (
-                        <div
-                            key={obs.id}
-                            className="absolute text-4xl filter drop-shadow-md"
-                            style={{
-                                left: `${obs.x}%`,
-                                bottom: `${16 + (obs.height || 0)}px`,
-                            }}
-                        >
-                            {obs.type === "pterodactyl" ? "🦅" : "🌋"}
-                        </div>
-                    ))}
-
-                    {/* Amber Gems Rendering */}
-                    {gems.map((gem) => (
-                        <div
-                            key={gem.id}
-                            className="absolute text-3xl animate-spin filter drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]"
-                            style={{
-                                left: `${gem.x}%`,
-                                bottom: `${20 + gem.height}px`,
-                                animationDuration: "3s",
-                            }}
-                        >
-                            💎
-                        </div>
-                    ))}
-
-                    {/* Start Screen Overlay */}
-                    {gameState === "start" && (
-                        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center space-y-4">
-                            <span className="text-6xl animate-bounce">🦖</span>
-                            <h2 className="text-3xl font-serif font-black text-amber-300">JURASSIC DINO ESCAPE</h2>
-                            <p className="text-xs text-emerald-200 max-w-sm">
-                                Jump over volcanic rocks and dodge flying Pterodactyls! Collect Amber Gems for extra points.
-                            </p>
-                            <button
-                                onClick={startGame}
-                                className="px-8 py-3.5 rounded-2xl bg-[#52B788] text-[#0a180e] hover:bg-[#66d29f] font-extrabold text-sm uppercase tracking-wider shadow-xl transition-all hover:scale-105 flex items-center gap-2"
-                            >
-                                <Play size={18} />
-                                <span>Start Run</span>
-                            </button>
-                        </div>
                     )}
 
-                    {/* Game Over Overlay */}
-                    {gameState === "gameover" && (
-                        <div className="absolute inset-0 bg-black/75 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center space-y-4">
-                            <span className="text-5xl">💥</span>
-                            <h2 className="text-3xl font-serif font-black text-red-400">ESCAPE FAILED!</h2>
-                            <p className="text-xs text-gray-300">Your dinosaur collided with an obstacle.</p>
-                            <div className="bg-[#09150d] px-6 py-3 rounded-2xl border border-white/10 flex gap-6 font-mono text-sm">
-                                <div>
-                                    <span className="text-[10px] text-gray-400 block uppercase">Distance</span>
-                                    <span className="text-emerald-400 font-bold">{score}</span>
+                    <div className="space-y-3">
+                        <span className="text-6xl animate-bounce inline-block">🦖</span>
+                        <h1 className="text-4xl sm:text-6xl font-black font-serif text-white uppercase tracking-wider">
+                            JURASSIC DINO ESCAPE
+                        </h1>
+                        <p className="text-sm sm:text-base text-emerald-200/90 max-w-lg mx-auto">
+                            Jump over volcanic rocks and dodge flying Pterodactyls! Collect Amber Gems for extra score.
+                        </p>
+                    </div>
+
+                    {/* Difficulty Selection Card */}
+                    <div className="w-full max-w-md bg-[#142418] border border-[#2b4c34] p-5 rounded-3xl shadow-2xl space-y-4">
+                        <h3 className="text-xs font-serif font-bold text-[#52B788] uppercase tracking-widest">
+                            SELECT DIFFICULTY LEVEL
+                        </h3>
+
+                        <div className="grid grid-cols-3 gap-3">
+                            {[
+                                { id: "easy", name: "Easy", speed: "Normal Speed", shields: "3 Shields" },
+                                { id: "moderate", name: "Moderate", speed: "Faster Speed", shields: "1 Shield" },
+                                { id: "hard", name: "Hard", speed: "Extreme Speed", shields: "0 Shields" },
+                            ].map((diff) => (
+                                <button
+                                    key={diff.id}
+                                    onClick={() => setDifficulty(diff.id)}
+                                    className={`py-3 px-2 rounded-2xl text-xs font-bold transition-all flex flex-col items-center space-y-1 cursor-pointer border ${
+                                        difficulty === diff.id
+                                            ? "bg-[#52B788] text-slate-950 border-[#52B788] shadow-lg scale-105"
+                                            : "bg-white/5 text-emerald-200 border-white/10 hover:bg-white/10"
+                                    }`}
+                                >
+                                    <span className="font-extrabold uppercase">{diff.name}</span>
+                                    <span className="text-[10px] opacity-80">{diff.speed}</span>
+                                    <span className="text-[9px] opacity-70">{diff.shields}</span>
+                                </button>
+                            ))}
+                        </div>
+
+                        <button
+                            onClick={() => startGame(difficulty)}
+                            className="w-full py-4 rounded-2xl bg-[#52B788] text-slate-950 hover:bg-[#66d29f] font-black text-sm uppercase tracking-wider shadow-xl transition-all hover:scale-105 flex items-center justify-center gap-2 cursor-pointer mt-2"
+                        >
+                            <Play size={18} />
+                            <span>START RUN</span>
+                        </button>
+                    </div>
+
+                </main>
+            )}
+
+            {/* ACTIVE GAMEPLAY RUNNER TRACK */}
+            {(gameState === "playing" || gameState === "gameover") && (
+                <main className="relative z-10 max-w-5xl mx-auto pt-8 pb-12 px-4 sm:px-6 flex flex-col space-y-6">
+                    
+                    {/* HUD Header */}
+                    <div className="flex items-center justify-between bg-[#18291c] border border-[#2b4c34] rounded-2xl p-4 shadow-xl">
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={() => setGameState("start")}
+                                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-all text-white cursor-pointer"
+                                title="Exit Run"
+                            >
+                                <ArrowLeft size={20} />
+                            </button>
+                            <div>
+                                <div className="flex items-center gap-2">
+                                    <h1 className="text-base sm:text-lg font-serif font-bold text-amber-200 uppercase tracking-wider">
+                                        DINO ESCAPE
+                                    </h1>
+                                    <span className="bg-[#52B788]/20 border border-[#52B788]/40 px-2 py-0.5 rounded-full text-[10px] font-bold text-[#52B788] uppercase">
+                                        {difficulty}
+                                    </span>
                                 </div>
+                                <p className="text-xs text-emerald-300/80">Press Space or Tap Screen to Jump!</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 sm:gap-4">
+                            <div className="bg-[#0c1810] px-3.5 py-1.5 rounded-xl border border-[#2b4c34] flex items-center gap-1.5 text-center">
+                                <Heart size={16} className="text-red-400 fill-red-400" />
                                 <div>
-                                    <span className="text-[10px] text-gray-400 block uppercase">Best Distance</span>
-                                    <span className="text-amber-300 font-bold">{highScore}</span>
+                                    <span className="text-[9px] text-gray-400 block uppercase leading-none">Shields</span>
+                                    <span className="text-sm font-mono font-bold text-white leading-none mt-0.5 block">{shields}</span>
                                 </div>
                             </div>
+                            <div className="bg-[#0c1810] px-3.5 py-1.5 rounded-xl border border-[#2b4c34] text-center">
+                                <span className="text-[10px] text-gray-400 block uppercase">Distance</span>
+                                <span className="text-sm font-mono font-bold text-emerald-400">{score} m</span>
+                            </div>
+                            <div className="bg-[#0c1810] px-3.5 py-1.5 rounded-xl border border-[#2b4c34] text-center">
+                                <span className="text-[10px] text-gray-400 block uppercase">Best</span>
+                                <span className="text-sm font-mono font-bold text-amber-300">{highScore} m</span>
+                            </div>
                             <button
-                                onClick={startGame}
-                                className="px-8 py-3.5 rounded-2xl bg-[#52B788] text-[#0a180e] hover:bg-[#66d29f] font-extrabold text-sm uppercase tracking-wider shadow-xl transition-all hover:scale-105 flex items-center gap-2"
+                                onClick={() => setSoundEnabled(!soundEnabled)}
+                                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white cursor-pointer"
                             >
-                                <RotateCcw size={18} />
-                                <span>Try Again</span>
+                                {soundEnabled ? <Volume2 size={20} /> : <VolumeX size={20} />}
                             </button>
                         </div>
-                    )}
-                </div>
+                    </div>
 
-            </div>
+                    {/* Game Runner Track Window */}
+                    <div 
+                        onClick={triggerJump}
+                        className="relative w-full h-[400px] rounded-3xl border-2 border-[#2b4c34] bg-gradient-to-b from-[#132317] via-[#1b2b1f] to-[#0c160e] shadow-2xl overflow-hidden cursor-pointer"
+                    >
+                        {/* Background Distant Jungle Silhouette */}
+                        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#2b4c34_0%,transparent_70%)] opacity-30 pointer-events-none" />
+
+                        {/* Ground Track */}
+                        <div className="absolute bottom-0 inset-x-0 h-16 bg-gradient-to-b from-[#3d3326] to-[#1e1912] border-t-4 border-[#6e5d47]">
+                            <div className="w-full h-full bg-[linear-gradient(90deg,transparent_50%,rgba(0,0,0,0.3)_50%)] bg-[length:40px_100%] animate-pulse" />
+                        </div>
+
+                        {/* Dinosaur Runner Sprite */}
+                        <div
+                            className="absolute left-[12%] bottom-16 text-5xl transition-all duration-75 filter drop-shadow-lg"
+                            style={{ transform: `translateY(-${dinoPos.y}px)` }}
+                        >
+                            🦖
+                        </div>
+
+                        {/* Obstacles Rendering */}
+                        {obstacles.map((obs) => (
+                            <div
+                                key={obs.id}
+                                className="absolute text-4xl filter drop-shadow-md"
+                                style={{
+                                    left: `${obs.x}%`,
+                                    bottom: `${16 + (obs.height || 0)}px`,
+                                }}
+                            >
+                                {obs.type === "pterodactyl" ? "🦅" : "🌋"}
+                            </div>
+                        ))}
+
+                        {/* Amber Gems Rendering */}
+                        {gems.map((gem) => (
+                            <div
+                                key={gem.id}
+                                className="absolute text-3xl animate-spin filter drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]"
+                                style={{
+                                    left: `${gem.x}%`,
+                                    bottom: `${20 + gem.height}px`,
+                                    animationDuration: "3s",
+                                }}
+                            >
+                                💎
+                            </div>
+                        ))}
+
+                        {/* Game Over Overlay */}
+                        {gameState === "gameover" && (
+                            <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center space-y-4">
+                                <span className="text-5xl">💥</span>
+                                <h2 className="text-3xl font-serif font-black text-red-400">ESCAPE FAILED!</h2>
+                                <p className="text-xs text-gray-300">
+                                    Your dinosaur collided on <span className="font-bold text-amber-300 uppercase">{difficulty}</span> mode!
+                                </p>
+                                <div className="bg-[#09150d] px-6 py-3 rounded-2xl border border-white/10 flex gap-6 font-mono text-sm">
+                                    <div>
+                                        <span className="text-[10px] text-gray-400 block uppercase">Distance</span>
+                                        <span className="text-emerald-400 font-bold">{score} m</span>
+                                    </div>
+                                    <div>
+                                        <span className="text-[10px] text-gray-400 block uppercase">Best Distance</span>
+                                        <span className="text-amber-300 font-bold">{highScore} m</span>
+                                    </div>
+                                </div>
+                                <div className="flex gap-3 pt-2">
+                                    <button
+                                        onClick={() => startGame(difficulty)}
+                                        className="px-6 py-3 rounded-2xl bg-[#52B788] text-[#0a180e] hover:bg-[#66d29f] font-extrabold text-xs uppercase tracking-wider shadow-xl transition-all hover:scale-105 flex items-center gap-2 cursor-pointer"
+                                    >
+                                        <RotateCcw size={16} />
+                                        <span>Try Again</span>
+                                    </button>
+                                    <button
+                                        onClick={() => setGameState("start")}
+                                        className="px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-extrabold text-xs uppercase tracking-wider transition-all cursor-pointer"
+                                    >
+                                        Change Level
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                </main>
+            )}
+
         </div>
     );
 }
