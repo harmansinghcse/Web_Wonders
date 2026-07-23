@@ -16,7 +16,11 @@ import {
     Zap,
     ChevronRight,
     Gamepad2,
-    Crown
+    Crown,
+    Star,
+    Lightbulb,
+    Pause,
+    Menu as MenuIcon
 } from "lucide-react";
 
 // Synthesized Web Audio API sound generator for card flips, matches, and victory
@@ -78,99 +82,120 @@ const playSound = (type, enabled = true) => {
     }
 };
 
-// Dinosaurs deck definition
+// Expanded Dinosaurs deck definition (10 distinct dinosaurs for up to 10 pairs / 20 cards grid matching Image 1)
 const DINOSAURS_DATA = [
     {
-        id: "trex",
-        name: "Tyrannosaurus Rex",
-        tagline: "Apex Predator",
-        era: "Late Cretaceous",
-        fact: "T-Rex had a jaw bite force of 12,000 lbs—powerful enough to crush solid bone!",
-        image: "/trex-dino.png",
-        color: "from-[#2a1d13]/90 to-[#120a06]/95",
-        borderColor: "border-amber-600/50",
-    },
-    {
         id: "velociraptor",
-        name: "Velociraptor",
+        name: "VELOCIRAPTOR",
         tagline: "Swift Hunter",
         era: "Late Cretaceous",
         fact: "Velociraptors possessed a 3-inch curved sickle claw used for precise hunting strikes!",
         image: "/baby-raptor.png",
-        color: "from-[#132c1c]/90 to-[#07130b]/95",
-        borderColor: "border-emerald-600/50",
+        color: "from-[#2b271d] via-[#1f1d16] to-[#12110d]",
+        borderColor: "border-[#8a7b63]",
+    },
+    {
+        id: "trex",
+        name: "T-REX",
+        tagline: "Apex Predator",
+        era: "Late Cretaceous",
+        fact: "T-Rex had a jaw bite force of 12,000 lbs—powerful enough to crush solid bone!",
+        image: "/trex-dino.png",
+        color: "from-[#2b271d] via-[#1f1d16] to-[#12110d]",
+        borderColor: "border-[#8a7b63]",
     },
     {
         id: "triceratops",
-        name: "Triceratops",
+        name: "TRICERATOPS",
         tagline: "Shielded Giant",
         era: "Late Cretaceous",
         fact: "Triceratops possessed up to 800 teeth continuously replacing themselves as they ate!",
         image: "/trissiac-dino.png",
-        color: "from-[#27231c]/90 to-[#0e0c0a]/95",
-        borderColor: "border-stone-500/50",
+        color: "from-[#2b271d] via-[#1f1d16] to-[#12110d]",
+        borderColor: "border-[#8a7b63]",
     },
     {
         id: "stegosaurus",
-        name: "Stegosaurus",
+        name: "STEGOSAURUS",
         tagline: "Plated Defender",
         era: "Late Jurassic",
         fact: "Stegosaurus had large dorsal bony plates that helped regulate body temperature!",
         image: "/tyrastego_hybrid.jpg",
-        color: "from-[#223315]/90 to-[#0a1205]/95",
-        borderColor: "border-lime-600/50",
+        color: "from-[#2b271d] via-[#1f1d16] to-[#12110d]",
+        borderColor: "border-[#8a7b63]",
     },
     {
         id: "brachiosaurus",
-        name: "Brachiosaurus",
+        name: "BRACHIOSAURUS",
         tagline: "Canopy Feeder",
         era: "Late Jurassic",
         fact: "Brachiosaurus stood over 40 feet tall, allowing it to reach tree leaves untouched by others!",
         image: "/jurassic-dino.png",
-        color: "from-[#122e2b]/90 to-[#051413]/95",
-        borderColor: "border-teal-600/50",
+        color: "from-[#2b271d] via-[#1f1d16] to-[#12110d]",
+        borderColor: "border-[#8a7b63]",
     },
     {
         id: "spinosaurus",
-        name: "Spinosaurus",
+        name: "SPINOSAURUS",
         tagline: "River Monster",
         era: "Cretaceous",
         fact: "Spinosaurus was the largest known carnivorous dinosaur—even longer than T-Rex!",
         image: "/spinosaurus_skull.jpg",
-        color: "from-[#0e2c36]/90 to-[#041217]/95",
-        borderColor: "border-cyan-600/50",
+        color: "from-[#2b271d] via-[#1f1d16] to-[#12110d]",
+        borderColor: "border-[#8a7b63]",
     },
     {
         id: "pterodactyl",
-        name: "Pterodactyl",
+        name: "PTERODACTYL",
         tagline: "Sky Ruler",
         era: "Jurassic",
         fact: "Pterodactyls had hollow light bones and wings made of skin stretched over elongated fingers!",
         image: "/fossil-skull.png",
-        color: "from-[#122b3b]/90 to-[#051118]/95",
-        borderColor: "border-sky-600/50",
+        color: "from-[#2b271d] via-[#1f1d16] to-[#12110d]",
+        borderColor: "border-[#8a7b63]",
     },
     {
         id: "ankylosaurus",
-        name: "Ankylosaurus",
+        name: "ANKYLOSAURUS",
         tagline: "Living Tank",
         era: "Late Cretaceous",
         fact: "Ankylosaurus was covered in thick armored plates and possessed a heavy bone club tail!",
         image: "/baby-dino.png",
-        color: "from-[#332213]/90 to-[#120904]/95",
-        borderColor: "border-orange-600/50",
+        color: "from-[#2b271d] via-[#1f1d16] to-[#12110d]",
+        borderColor: "border-[#8a7b63]",
+    },
+    {
+        id: "ammonite",
+        name: "AMMONITE",
+        tagline: "Prehistoric Shell",
+        era: "Mesozoic Era",
+        fact: "Ammonites are extinct marine mollusks with distinctive spiral shells!",
+        image: "/trex1.jpg",
+        color: "from-[#2b271d] via-[#1f1d16] to-[#12110d]",
+        borderColor: "border-[#8a7b63]",
+    },
+    {
+        id: "parasaurolophus",
+        name: "PARASAUR",
+        tagline: "Crested Vocalist",
+        era: "Late Cretaceous",
+        fact: "Parasaurolophus had a long hollow crest on its head used to resonate deep sound calls!",
+        image: "/trex2.png",
+        color: "from-[#2b271d] via-[#1f1d16] to-[#12110d]",
+        borderColor: "border-[#8a7b63]",
     },
 ];
 
 export default function Games() {
-    // Game States: 'landing' | 'playing' | 'gameover'
+    // Game States: 'landing' | 'playing' | 'paused' | 'gameover'
     const [gameState, setGameState] = useState("landing");
-    const [difficulty, setDifficulty] = useState("medium"); // 'easy' (4 pairs), 'medium' (6 pairs), 'hard' (8 pairs)
+    const [difficulty, setDifficulty] = useState("medium"); // 'easy' (6 pairs / 12 cards), 'medium' (8 pairs / 16 cards), 'hard' (10 pairs / 20 cards)
     const [cards, setCards] = useState([]);
     const [flippedIndices, setFlippedIndices] = useState([]);
     const [matchedIds, setMatchedIds] = useState([]);
     const [moves, setMoves] = useState(0);
     const [timer, setTimer] = useState(0);
+    const [hintsRemaining, setHintsRemaining] = useState(3);
     const [soundEnabled, setSoundEnabled] = useState(true);
     const [unlockedFacts, setUnlockedFacts] = useState([]);
     const [recentFact, setRecentFact] = useState(null);
@@ -178,13 +203,17 @@ export default function Games() {
         return parseInt(localStorage.getItem("jurassic_memory_best") || "0", 10);
     });
 
-    const timerRef = useRef(null);
+    // Preload background image for 0ms latency rendering
+    useEffect(() => {
+        const bgImg = new Image();
+        bgImg.src = "/jurassic_memory_match_bg.jpg";
+    }, []);
 
     // Get number of pairs based on difficulty
     const getPairCount = () => {
-        if (difficulty === "easy") return 4;
-        if (difficulty === "hard") return 8;
-        return 6; // medium
+        if (difficulty === "easy") return 6;
+        if (difficulty === "medium") return 8;
+        return 10; // hard (Image 1 style with 10 pairs / 20 cards)
     };
 
     // Initialize Game
@@ -210,6 +239,7 @@ export default function Games() {
         setMatchedIds([]);
         setMoves(0);
         setTimer(0);
+        setHintsRemaining(3);
         setUnlockedFacts([]);
         setRecentFact(null);
         setGameState("playing");
@@ -232,6 +262,8 @@ export default function Games() {
 
     // Handle Card Click
     const handleCardClick = (index) => {
+        if (gameState !== "playing") return;
+
         // Prevent click if card already flipped or matched or 2 cards already being evaluated
         if (
             flippedIndices.length >= 2 ||
@@ -284,11 +316,33 @@ export default function Games() {
         }
     };
 
+    // Hint Feature: Briefly reveals an unmatched pair
+    const handleUseHint = () => {
+        if (hintsRemaining <= 0 || flippedIndices.length > 0) return;
+        
+        // Find an unmatched dinosaur ID
+        const unmatchedDino = cards.find(card => !matchedIds.includes(card.id));
+        if (!unmatchedDino) return;
+
+        const indicesToReveal = cards
+            .map((card, idx) => (card.id === unmatchedDino.id ? idx : -1))
+            .filter(idx => idx !== -1);
+
+        if (indicesToReveal.length === 2) {
+            setHintsRemaining(prev => prev - 1);
+            setFlippedIndices(indicesToReveal);
+            playSound("flip", soundEnabled);
+            setTimeout(() => {
+                setFlippedIndices([]);
+            }, 1200);
+        }
+    };
+
     // Calculate score formula
     const calculateScore = () => {
         const baseScore = getPairCount() * 250;
         const movePenalty = moves * 15;
-        const timePenalty = timer * 4;
+        const timePenalty = timer * 3;
         return Math.max(100, baseScore - movePenalty - timePenalty);
     };
 
@@ -313,7 +367,7 @@ export default function Games() {
     return (
         <div className="relative min-h-screen font-sans text-slate-900 selection:bg-[#52B788] selection:text-black overflow-x-hidden">
             
-            {/* EXACT IMAGE 2 COMPOSITION WITH FRONT PAGE GOLDEN SUNSET COLOR CONTRAST */}
+            {/* BACKGROUND matching Image 2 front-page shade */}
             <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
                 <img
                     src="/jurassic_memory_match_bg.jpg"
@@ -321,20 +375,22 @@ export default function Games() {
                     className="h-full w-full object-cover object-center scale-100 filter brightness-100 contrast-105"
                 />
                 
-                {/* Soft ambient golden light overlay matching Front Page (Image 3) */}
+                {/* Soft ambient golden light overlay matching Image 2 */}
                 <div className="absolute inset-0 bg-gradient-to-r from-stone-900/35 via-stone-900/10 to-transparent" />
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_left,#FFFFFF_0%,transparent_40%)] opacity-35" />
             </div>
 
-            {/* Navigation Header */}
-            <div className="relative z-50">
-                <Navbar />
-            </div>
+            {/* Navigation Header (only on landing page, hidden in active fullscreen game to match Image 1 HUD) */}
+            {gameState === "landing" && (
+                <div className="relative z-50">
+                    <Navbar />
+                </div>
+            )}
 
             {/* Main Content Area */}
-            <main className="relative z-10 pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col min-h-[calc(100vh-7rem)]">
+            <main className={`relative z-10 mx-auto flex flex-col min-h-screen ${gameState === "landing" ? "pt-28 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl" : "p-3 sm:p-6 max-w-[1400px]"}`}>
                 
-                {/* LANDING / HERO SCREEN (Exact Layout of Image 2) */}
+                {/* LANDING / HERO SCREEN (Exact Image 2 UI) */}
                 {gameState === "landing" && (
                     <div className="flex-1 flex flex-col justify-between pt-2">
                         
@@ -371,15 +427,15 @@ export default function Games() {
                                 </p>
 
                                 {/* Difficulty Selector */}
-                                <div className="w-full max-w-md bg-[#ffffff]/80 border border-[#c5b9a4] p-3 rounded-2xl backdrop-blur-md shadow-md">
+                                <div className="w-full max-w-md bg-[#ffffff]/80 border border-[#c5b9a4] p-3.5 rounded-2xl backdrop-blur-md shadow-md">
                                     <p className="text-xs font-bold text-[#1b3827] uppercase tracking-wider mb-2">
-                                        Select Difficulty
+                                        SELECT DIFFICULTY
                                     </p>
                                     <div className="grid grid-cols-3 gap-2">
                                         {[
-                                            { id: "easy", name: "Easy", cards: "8 Cards" },
-                                            { id: "medium", name: "Medium", cards: "12 Cards" },
-                                            { id: "hard", name: "Hard", cards: "16 Cards" },
+                                            { id: "easy", name: "Easy", cards: "12 Cards" },
+                                            { id: "medium", name: "Medium", cards: "16 Cards" },
+                                            { id: "hard", name: "Hard", cards: "20 Cards" },
                                         ].map((diff) => (
                                             <button
                                                 key={diff.id}
@@ -397,10 +453,10 @@ export default function Games() {
                                     </div>
                                 </div>
 
-                                {/* START GAME Button (Image 2 style) */}
+                                {/* START GAME Button (Image 2 style -> Clicking opens Image 1 Active Game!) */}
                                 <button
                                     onClick={startNewGame}
-                                    className="group inline-flex items-center justify-center gap-3 bg-[#1c3827] hover:bg-[#284f38] text-white px-10 py-4 rounded-2xl font-bold text-base tracking-widest uppercase shadow-xl hover:scale-105 transition-all duration-300"
+                                    className="group inline-flex items-center justify-center gap-3 bg-[#1c3827] hover:bg-[#284f38] text-white px-10 py-4 rounded-2xl font-bold text-base tracking-widest uppercase shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer"
                                 >
                                     <Play size={20} className="fill-current text-[#52B788] group-hover:scale-110 transition-transform" />
                                     <span>START GAME</span>
@@ -414,7 +470,7 @@ export default function Games() {
 
                             {/* Right Column: T-Rex integrated into misty background artwork (Image 2) */}
                             <div className="lg:col-span-5 relative flex items-center justify-center min-h-[320px] lg:min-h-[460px]">
-                                {/* Empty container so background artwork T-Rex is clearly visible */}
+                                {/* Background artwork contains T-Rex */}
                             </div>
                         </div>
 
@@ -472,158 +528,252 @@ export default function Games() {
                     </div>
                 )}
 
-                {/* PLAYING GAMEPLAY ARENA */}
-                {gameState === "playing" && (
-                    <div className="flex-1 flex flex-col items-center">
+                {/* ACTIVE GAMEPLAY SCREEN (Exact Image 1 UI & Layout) */}
+                {(gameState === "playing" || gameState === "paused") && (
+                    <div className="flex-1 flex flex-col space-y-4">
                         
-                        {/* Control Bar Header */}
-                        <div className="w-full max-w-4xl bg-[#102216]/95 border border-[#385c42]/70 rounded-2xl p-4 mb-6 backdrop-blur-md shadow-xl flex flex-wrap items-center justify-between gap-4 text-white">
+                        {/* Top HUD Header Bar (Exact Image 1 Header) */}
+                        <div className="w-full bg-[#182a1d]/95 border border-[#2b4c34] rounded-2xl px-5 py-3 shadow-xl backdrop-blur-md flex items-center justify-between text-[#e4dac6]">
                             
-                            {/* Exit Button */}
-                            <button
-                                onClick={() => setGameState("landing")}
-                                className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-gray-200 hover:text-white bg-white/10 hover:bg-white/20 px-3.5 py-2 rounded-xl transition-all"
-                            >
-                                <ArrowLeft size={16} />
-                                <span>Exit</span>
-                            </button>
-
-                            {/* Stat Badges */}
-                            <div className="flex items-center gap-4 sm:gap-6">
-                                {/* Timer */}
-                                <div className="flex items-center gap-2 bg-[#0a150d] border border-white/10 px-3 py-1.5 rounded-xl">
-                                    <Clock size={16} className="text-[#52B788]" />
-                                    <span className="text-xs font-medium text-gray-300">Time:</span>
-                                    <span className="text-sm font-bold text-white font-mono">{formatTime(timer)}</span>
-                                </div>
-
-                                {/* Moves */}
-                                <div className="flex items-center gap-2 bg-[#0a150d] border border-white/10 px-3 py-1.5 rounded-xl">
-                                    <Zap size={16} className="text-amber-400" />
-                                    <span className="text-xs font-medium text-gray-300">Moves:</span>
-                                    <span className="text-sm font-bold text-white font-mono">{moves}</span>
-                                </div>
-
-                                {/* Pairs Matched */}
-                                <div className="flex items-center gap-2 bg-[#0a150d] border border-white/10 px-3 py-1.5 rounded-xl">
-                                    <Trophy size={16} className="text-emerald-400" />
-                                    <span className="text-xs font-medium text-gray-300">Matched:</span>
-                                    <span className="text-sm font-bold text-emerald-400 font-mono">
-                                        {matchedIds.length} / {getPairCount()}
-                                    </span>
-                                </div>
+                            {/* Left: Back Arrow + Title */}
+                            <div className="flex items-center gap-3">
+                                <button
+                                    onClick={() => setGameState("landing")}
+                                    className="p-1.5 rounded-lg hover:bg-white/10 text-[#e4dac6] transition-all cursor-pointer"
+                                    title="Exit to Title"
+                                >
+                                    <ArrowLeft size={20} />
+                                </button>
+                                <h2 className="text-sm sm:text-base font-serif font-bold tracking-wider text-[#e4dac6] uppercase">
+                                    JURASSIC MEMORY MATCH
+                                </h2>
                             </div>
 
-                            {/* Audio & Restart Actions */}
-                            <div className="flex items-center gap-2">
+                            {/* Center/Right Stats HUD Badges (Exact Image 1 Header HUD) */}
+                            <div className="flex items-center gap-3 sm:gap-6">
+                                
+                                {/* TIME */}
+                                <div className="flex items-center gap-2 bg-[#0c1810]/80 border border-[#2b4c34] px-3.5 py-1.5 rounded-xl shadow-inner">
+                                    <Clock size={18} className="text-[#52B788]" />
+                                    <div className="flex flex-col text-left leading-none">
+                                        <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">TIME</span>
+                                        <span className="text-xs sm:text-sm font-mono font-bold text-white mt-0.5">
+                                            {formatTime(timer)}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* MOVES */}
+                                <div className="flex items-center gap-2 bg-[#0c1810]/80 border border-[#2b4c34] px-3.5 py-1.5 rounded-xl shadow-inner">
+                                    <span className="text-lg">🐾</span>
+                                    <div className="flex flex-col text-left leading-none">
+                                        <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">MOVES</span>
+                                        <span className="text-xs sm:text-sm font-mono font-bold text-white mt-0.5">
+                                            {moves}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* SCORE */}
+                                <div className="flex items-center gap-2 bg-[#0c1810]/80 border border-[#2b4c34] px-3.5 py-1.5 rounded-xl shadow-inner">
+                                    <Star size={18} className="text-amber-400 fill-amber-400" />
+                                    <div className="flex flex-col text-left leading-none">
+                                        <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">SCORE</span>
+                                        <span className="text-xs sm:text-sm font-mono font-bold text-amber-300 mt-0.5">
+                                            {calculateScore()}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Menu / Pause Button */}
                                 <button
-                                    onClick={() => setSoundEnabled((prev) => !prev)}
-                                    className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-gray-200 transition-all"
-                                    title={soundEnabled ? "Mute Sound" : "Enable Sound"}
+                                    onClick={() => setGameState(gameState === "paused" ? "playing" : "paused")}
+                                    className="p-2 rounded-xl bg-[#0c1810]/80 border border-[#2b4c34] text-[#e4dac6] hover:bg-white/10 transition-all cursor-pointer"
+                                    title="Menu / Pause"
                                 >
-                                    {soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
-                                </button>
-                                <button
-                                    onClick={startNewGame}
-                                    className="flex items-center gap-1.5 text-xs font-bold bg-[#52B788] text-[#0a180e] hover:bg-[#68cda0] px-3.5 py-2 rounded-xl transition-all"
-                                >
-                                    <RotateCcw size={15} />
-                                    <span>Restart</span>
+                                    <MenuIcon size={20} />
                                 </button>
                             </div>
                         </div>
 
-                        {/* Recent Unlocked Fact Toast Popup */}
+                        {/* Unlocked Fact Toast Popup */}
                         {recentFact && (
-                            <div className="w-full max-w-xl mb-4 bg-gradient-to-r from-emerald-950/90 via-[#132c1c]/95 to-emerald-950/90 border border-[#52B788]/60 text-emerald-100 p-4 rounded-2xl shadow-2xl backdrop-blur-md animate-in fade-in slide-in-from-top-4 duration-300 flex items-start gap-3">
-                                <Sparkles className="w-6 h-6 text-amber-300 shrink-0 mt-0.5 animate-spin" style={{ animationDuration: "4s" }} />
+                            <div className="w-full max-w-xl mx-auto bg-gradient-to-r from-emerald-950/95 via-[#132c1c]/95 to-emerald-950/95 border border-[#52B788]/70 text-emerald-100 p-3.5 rounded-2xl shadow-2xl backdrop-blur-md animate-in fade-in slide-in-from-top-4 duration-300 flex items-start gap-3">
+                                <Sparkles className="w-5 h-5 text-amber-300 shrink-0 mt-0.5 animate-spin" style={{ animationDuration: "4s" }} />
                                 <div className="text-left">
                                     <span className="text-xs font-bold uppercase tracking-wider text-amber-300 block">
                                         🦕 Fact Unlocked: {recentFact.name}
                                     </span>
-                                    <p className="text-xs sm:text-sm font-medium mt-0.5 text-slate-200">
+                                    <p className="text-xs font-medium mt-0.5 text-slate-200">
                                         {recentFact.fact}
                                     </p>
                                 </div>
                             </div>
                         )}
 
-                        {/* Card Grid Layout */}
-                        <div
-                            className={`w-full max-w-4xl grid gap-3 sm:gap-4 p-2 ${
-                                getPairCount() === 4
-                                    ? "grid-cols-2 sm:grid-cols-4"
-                                    : getPairCount() === 6
-                                    ? "grid-cols-3 sm:grid-cols-4"
-                                    : "grid-cols-4 sm:grid-cols-4"
-                            }`}
-                        >
-                            {cards.map((card, index) => {
-                                const isFlipped = flippedIndices.includes(index);
-                                const isMatched = matchedIds.includes(card.id);
+                        {/* Main Playing Stage (Grid on Left + Sidebar on Right as in Image 1) */}
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 flex-1 items-start">
+                            
+                            {/* LEFT / CENTER: CARD MEMORY GRID (Image 1 Layout) */}
+                            <div className="lg:col-span-9 bg-[#122317]/85 border border-[#274630] rounded-2xl p-4 sm:p-5 shadow-2xl backdrop-blur-md min-h-[460px] flex items-center justify-center">
+                                <div
+                                    className={`w-full grid gap-3 ${
+                                        getPairCount() <= 6
+                                            ? "grid-cols-3 sm:grid-cols-4"
+                                            : getPairCount() <= 8
+                                            ? "grid-cols-4 sm:grid-cols-4"
+                                            : "grid-cols-4 sm:grid-cols-5"
+                                    }`}
+                                >
+                                    {cards.map((card, index) => {
+                                        const isFlipped = flippedIndices.includes(index);
+                                        const isMatched = matchedIds.includes(card.id);
 
-                                return (
-                                    <div
-                                        key={card.cardUniqueId}
-                                        onClick={() => handleCardClick(index)}
-                                        className="perspective-1000 h-36 sm:h-44 xl:h-48 cursor-pointer select-none"
-                                    >
-                                        <div
-                                            className={`relative w-full h-full transform-style-preserve-3d transition-transform duration-500 ${
-                                                isFlipped || isMatched ? "rotate-y-180" : ""
-                                            }`}
-                                        >
-                                            {/* CARD BACK (Unflipped view) */}
-                                            <div className="absolute inset-0 backface-hidden rounded-2xl border-2 border-[#456b4f] bg-gradient-to-br from-[#1b3624] via-[#122418] to-[#09140c] shadow-lg flex flex-col items-center justify-center p-3 hover:border-[#52B788] transition-all hover:scale-[1.02]">
-                                                <div className="w-12 h-12 rounded-full border border-[#52B788]/40 bg-[#0c1a10] flex items-center justify-center text-2xl shadow-inner">
-                                                    🦖
-                                                </div>
-                                                <span className="mt-2 text-[10px] sm:text-xs font-serif font-bold tracking-widest text-[#8fa894] uppercase">
-                                                    JURASSIC
-                                                </span>
-                                            </div>
-
-                                            {/* CARD FRONT (Flipped view) */}
+                                        return (
                                             <div
-                                                className={`absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border-2 ${
-                                                    isMatched
-                                                        ? "border-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.5)]"
-                                                        : card.borderColor
-                                                } bg-gradient-to-br ${
-                                                    card.color
-                                                } p-2.5 flex flex-col justify-between overflow-hidden shadow-xl text-white`}
+                                                key={card.cardUniqueId}
+                                                onClick={() => handleCardClick(index)}
+                                                className="perspective-1000 h-28 sm:h-36 xl:h-40 cursor-pointer select-none"
                                             >
-                                                {/* Header Badge */}
-                                                <div className="flex items-center justify-between text-[10px] font-bold text-white/80 uppercase">
-                                                    <span className="truncate max-w-[80%]">{card.era}</span>
-                                                    {isMatched && (
-                                                        <CheckCircle2 size={16} className="text-emerald-300" />
-                                                    )}
-                                                </div>
+                                                <div
+                                                    className={`relative w-full h-full transform-style-preserve-3d transition-transform duration-500 ${
+                                                        isFlipped || isMatched ? "rotate-y-180" : ""
+                                                    }`}
+                                                >
+                                                    {/* CARD BACK (Stone slab with dinosaur footprint - Image 1 exact style) */}
+                                                    <div className="absolute inset-0 backface-hidden rounded-2xl border-2 border-[#5a4f3d] bg-[#3a3327] bg-[radial-gradient(ellipse_at_center,#4a4233_0%,#2b251b_100%)] shadow-xl flex flex-col items-center justify-center p-2 hover:border-amber-400 hover:scale-[1.03] transition-all border-b-4 border-r-4 border-stone-800">
+                                                        {/* Embedded Prehistoric Footprint Icon */}
+                                                        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl border border-[#6b5c46]/40 bg-[#251f16]/60 flex items-center justify-center shadow-inner">
+                                                            <span className="text-2xl sm:text-3xl filter brightness-95 opacity-85 transform -rotate-12">
+                                                                🐾
+                                                            </span>
+                                                        </div>
+                                                    </div>
 
-                                                {/* Image */}
-                                                <div className="flex-1 flex items-center justify-center my-1 overflow-hidden">
-                                                    <img
-                                                        src={card.image}
-                                                        alt={card.name}
-                                                        className="max-h-20 sm:max-h-28 w-auto object-contain filter drop-shadow-md transition-transform hover:scale-110"
-                                                    />
-                                                </div>
+                                                    {/* CARD FRONT (Dinosaur portrait + species tag banner - Image 1 exact style) */}
+                                                    <div
+                                                        className={`absolute inset-0 backface-hidden rotate-y-180 rounded-2xl border-2 ${
+                                                            isMatched
+                                                                ? "border-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.6)]"
+                                                                : "border-[#8a7b63]"
+                                                        } bg-gradient-to-b from-[#4a4233] via-[#332b20] to-[#1f1912] p-2 flex flex-col justify-between overflow-hidden shadow-xl text-white`}
+                                                    >
+                                                        {/* Dinosaur Portrait */}
+                                                        <div className="flex-1 flex items-center justify-center overflow-hidden my-1">
+                                                            <img
+                                                                src={card.image}
+                                                                alt={card.name}
+                                                                className="max-h-20 sm:max-h-24 w-auto object-contain filter drop-shadow-md transition-transform hover:scale-110"
+                                                            />
+                                                        </div>
 
-                                                {/* Name */}
-                                                <div className="text-center bg-black/40 backdrop-blur-sm rounded-lg p-1">
-                                                    <p className="text-xs sm:text-sm font-serif font-bold text-white leading-tight truncate">
-                                                        {card.name}
-                                                    </p>
-                                                    <p className="text-[9px] text-amber-200/90 font-medium truncate">
-                                                        {card.tagline}
-                                                    </p>
+                                                        {/* Species Tag Banner at Bottom (Image 1 Style) */}
+                                                        <div className="w-full bg-[#17140e]/90 border-t border-[#6b5c46]/40 py-1 text-center rounded-b-xl">
+                                                            <p className="text-[10px] sm:text-xs font-serif font-black tracking-wider text-amber-200 uppercase truncate px-1">
+                                                                {card.name}
+                                                            </p>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* RIGHT SIDEBAR PANEL (Exact Image 1 Layout) */}
+                            <div className="lg:col-span-3 bg-[#14261a]/95 border border-[#2b4c34] rounded-2xl p-5 shadow-2xl backdrop-blur-md flex flex-col justify-between space-y-6 text-[#e4dac6] text-left">
+                                
+                                {/* Section 1: HOW TO PLAY */}
+                                <div className="space-y-2 border-b border-[#2b4c34] pb-5">
+                                    <h3 className="text-xs sm:text-sm font-serif font-bold tracking-widest text-[#e4dac6] uppercase">
+                                        HOW TO PLAY
+                                    </h3>
+                                    <div className="text-xs text-[#a9bcae] space-y-1 font-medium leading-relaxed">
+                                        <p>Flip two cards.</p>
+                                        <p>Match all pairs</p>
+                                        <p>before time runs out!</p>
                                     </div>
-                                );
-                            })}
+                                </div>
+
+                                {/* Section 2: PROGRESS */}
+                                <div className="space-y-3 border-b border-[#2b4c34] pb-5">
+                                    <h3 className="text-xs sm:text-sm font-serif font-bold tracking-widest text-[#e4dac6] uppercase">
+                                        PROGRESS
+                                    </h3>
+                                    <div className="flex items-center justify-between text-xs font-semibold">
+                                        <span className="text-[#a9bcae]">Pairs Found</span>
+                                        <span className="text-sm font-mono font-bold text-white flex items-center gap-1">
+                                            <span className="text-emerald-400">➔</span>
+                                            {matchedIds.length} / {getPairCount()}
+                                        </span>
+                                    </div>
+                                    {/* Progress Bar */}
+                                    <div className="w-full h-2 rounded-full bg-[#0c1810] overflow-hidden border border-white/10">
+                                        <div 
+                                            className="h-full bg-[#52B788] transition-all duration-300 rounded-full"
+                                            style={{ width: `${(matchedIds.length / getPairCount()) * 100}%` }}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Section 3: ACTION BUTTONS (HINT & PAUSE - Image 1 Style) */}
+                                <div className="space-y-3 pt-2">
+                                    {/* HINT Button */}
+                                    <button
+                                        onClick={handleUseHint}
+                                        disabled={hintsRemaining <= 0}
+                                        className={`w-full relative flex items-center justify-center gap-2 py-3 px-4 rounded-xl border text-xs font-extrabold tracking-wider uppercase transition-all shadow-md ${
+                                            hintsRemaining > 0
+                                                ? "bg-[#253d2d] hover:bg-[#31523c] border-[#52B788]/40 text-white cursor-pointer"
+                                                : "bg-[#142017] border-gray-700 text-gray-500 cursor-not-allowed"
+                                        }`}
+                                    >
+                                        <Lightbulb size={16} className="text-amber-300" />
+                                        <span>HINT</span>
+                                        {hintsRemaining > 0 && (
+                                            <span className="absolute -top-2 -right-2 w-5 h-5 rounded-full bg-amber-400 text-slate-950 text-[10px] font-black flex items-center justify-center shadow-md">
+                                                {hintsRemaining}
+                                            </span>
+                                        )}
+                                    </button>
+
+                                    {/* PAUSE Button */}
+                                    <button
+                                        onClick={() => setGameState(gameState === "paused" ? "playing" : "paused")}
+                                        className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-[#253d2d] hover:bg-[#31523c] border border-[#52B788]/40 text-white text-xs font-extrabold tracking-wider uppercase transition-all shadow-md cursor-pointer"
+                                    >
+                                        <Pause size={16} />
+                                        <span>{gameState === "paused" ? "RESUME" : "PAUSE"}</span>
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                )}
+
+                {/* PAUSE MODAL OVERLAY */}
+                {gameState === "paused" && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                        <div className="w-full max-w-sm bg-[#122317] border border-[#52B788] rounded-3xl p-6 shadow-2xl text-center space-y-4">
+                            <h3 className="text-2xl font-serif font-bold text-white">GAME PAUSED</h3>
+                            <p className="text-xs text-gray-300">Take a breather, Jurassic Explorer!</p>
+                            <div className="flex flex-col gap-2 pt-2">
+                                <button
+                                    onClick={() => setGameState("playing")}
+                                    className="w-full py-3 rounded-xl bg-[#52B788] text-slate-950 font-bold text-sm uppercase tracking-wider hover:bg-[#64cca2] transition-all cursor-pointer"
+                                >
+                                    Resume Game
+                                </button>
+                                <button
+                                    onClick={() => setGameState("landing")}
+                                    className="w-full py-3 rounded-xl bg-white/10 text-white font-bold text-sm uppercase tracking-wider hover:bg-white/20 transition-all cursor-pointer"
+                                >
+                                    Exit to Title
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}
@@ -694,7 +844,7 @@ export default function Games() {
                             <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
                                 <button
                                     onClick={startNewGame}
-                                    className="flex items-center gap-2 bg-[#52B788] text-[#0a180e] hover:bg-[#66d29f] px-6 py-3 rounded-2xl font-bold text-sm uppercase tracking-wider shadow-lg transition-all hover:scale-105"
+                                    className="flex items-center gap-2 bg-[#52B788] text-[#0a180e] hover:bg-[#66d29f] px-6 py-3 rounded-2xl font-bold text-sm uppercase tracking-wider shadow-lg transition-all hover:scale-105 cursor-pointer"
                                 >
                                     <RotateCcw size={18} />
                                     <span>Play Again</span>
