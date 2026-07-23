@@ -205,6 +205,7 @@ export default function Games() {
 
     // Preload background image for 0ms latency rendering
     useEffect(() => {
+        const timerRef = useRef(null);
         const bgImg = new Image();
         bgImg.src = "/jurassic_memory_match_bg.jpg";
     }, []);
