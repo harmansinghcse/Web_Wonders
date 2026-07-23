@@ -21,6 +21,7 @@ const QuizResult = lazy(() => import("./pages/QuizResult"));
 const AdminSubmissions = lazy(() => import("./pages/AdminSubmissions"));
 const ExploreMap = lazy(() => import("./pages/ExploreMap"));
 const Community = lazy(() => import("./pages/Community"));
+const Games = lazy(() => import("./pages/Games"));
 
 const LoadingFallback = () => (
     <div className="flex h-screen w-screen flex-col items-center justify-center bg-[#F7F6F1]">
@@ -64,6 +65,11 @@ function App() {
                     <Route path="/quiz/topic/:slug" element={<QuizTopic />}/>
                     <Route path="/quiz/play/:slug/:difficulty" element={<QuizPlay />}/>
                     <Route path="/quiz/result" element={<QuizResult />}/>
+
+                    {/* Games & Jurassic Memory Match Routes */}
+                    <Route path="/games" element={<Games />} />
+                    <Route path="/games/memory-match" element={<Games />} />
+                    <Route path="/games/jurassic-memory-match" element={<Games />} />
                     
                 </Routes>
             </Suspense>
