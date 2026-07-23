@@ -1,10 +1,17 @@
 import logo from "../../../assets/jurrasic-logo.png";
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Menu, Search, X, Bell, ChevronDown, ChevronRight, Sparkles, BookOpen, Gamepad2, Globe } from "lucide-react";
-import UserMenu from "../UserMenu";
-import SearchBar from "../../search/SearchBar";
 import { 
+    Menu, 
+    Search, 
+    X, 
+    Bell, 
+    ChevronDown, 
+    ChevronRight, 
+    Sparkles, 
+    BookOpen, 
+    Gamepad2, 
+    Globe,
     Home, 
     Compass, 
     Clock3, 
@@ -12,13 +19,11 @@ import {
     CircleHelp, 
     Brain, 
     Map, 
-    Users, 
-    Gamepad2, 
-    GraduationCap, 
-    Sparkles 
+    Users 
 } from "lucide-react";
+import UserMenu from "../UserMenu";
+import SearchBar from "../../search/SearchBar";
 import NavbarLink from "./NavbarLinks";
-import NavDropdown from "./NavDropdown";
 
 function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -39,96 +44,49 @@ function Navbar() {
         };
     }, [menuOpen, searchOpen]);
 
-    const exploreDropdownItems = [
-        {
-            to: "/explorer",
-            label: "Explore Dinosaurs",
-            icon: Compass,
-            desc: "Browse full prehistoric database",
-        },
-        {
-            to: "/map",
-            label: "Fossil Map",
-            icon: Map,
-            desc: "Locate dinosaur fossils globally",
-        },
-    ];
-
-    const createDropdownItems = [
-        {
-            to: "/create",
-            label: "Create Dinosaur",
-            icon: PlusSquare,
-            desc: "Design and submit your species",
-        },
-        {
-            to: "/community",
-            label: "Community Hybrids",
-            icon: Users,
-            desc: "View community creations & finds",
-        },
-    ];
-
-    const learnDropdownItems = [
-        {
-            to: "/quiz",
-            label: "Interactive Quiz",
-            icon: CircleHelp,
-        },
-        {
-            to: "/games",
-            label: "Games",
-            icon: Gamepad2,
-        },
-    ];
-
     const mobileLinks = [
         {
             to: "/games",
             icon: Gamepad2,
             label: "Games (Memory Match)",
             desc: "Flip cards and match dinosaur pairs",
-            badge: "NEW",
+        },
+        {
+            to: "/quiz",
+            icon: CircleHelp,
+            label: "Interactive Quiz",
+            desc: "Test your paleontology knowledge",
         },
         {
             to: "/explorer",
             icon: Compass,
-            label: "Dinosaur Encyclopedia",
+            label: "Explore Dinosaurs",
             desc: "Browse all dinosaurs",
         },
         {
             to: "/map",
             icon: Map,
-            label: "Map View",
+            label: "Explore Map",
             desc: "Locate dinosaur fossils on the world map",
         },
         {
             to: "/timeline",
             icon: Clock3,
-            label: "Timeline View",
+            label: "Timeline",
             desc: "Travel through prehistoric eras",
         },
         {
             to: "/create",
             icon: PlusSquare,
-            label: "Create Your Dinosaur",
+            label: "Create Dinosaur",
             desc: "Contribute a new species",
-        },
-<<<<<<< HEAD
-=======
-        {
-            to: "/quiz",
-            icon: CircleHelp,
-            label: "Interactive Quiz & Games",
-            desc: "Test your paleontology knowledge",
         },
         {
             to: "/community",
             icon: Users,
-            label: "Community Page",
+            label: "Community",
             desc: "Connect, share hybrids and fossil finds",
         },
->>>>>>> 327963855d7b81f258d458e499c15b428bead804
         {
             to: "/professor",
             icon: Brain,
@@ -206,37 +164,18 @@ function Navbar() {
                             </button>
                         </div>
 
-                        {/* Mid-Section (Desktop Structured Dropdowns) */}
+                        {/* Mid-Section (Desktop Navbar matching Screenshot) */}
                         <div className="hidden items-center gap-1.5 xl:gap-2.5 lg:flex">
                             
-                            {/* Home */}
+                            {/* Home Link */}
                             <NavbarLink to="/" icon={Home}>
                                 Home
                             </NavbarLink>
 
-<<<<<<< HEAD
-                            <NavDropdown
-                                label="Explore"
-                                icon={Compass}
-                                items={exploreDropdownItems}
-                            />
-
-                            <NavDropdown
-                                label="Create"
-                                icon={PlusSquare}
-                                items={createDropdownItems}
-                            />
-
-                            <NavDropdown
-                                label="Learn"
-                                icon={GraduationCap}
-                                items={learnDropdownItems}
-                            />
-=======
                             {/* Explore Dropdown */}
                             <div className="relative group">
                                 <button className={`flex items-center gap-1.5 rounded-full border border-transparent px-3 xl:px-4 py-1.5 xl:py-2 text-xs xl:text-sm font-medium transition-all duration-200 cursor-pointer ${
-                                    location.pathname.startsWith('/explore') || location.pathname === '/map' || location.pathname === '/timeline'
+                                    location.pathname.startsWith('/explore') || location.pathname === '/map' || location.pathname === '/timeline' || location.pathname === '/explorer'
                                         ? 'bg-[#E8F0E8] text-[#36593D] border-[#36593D]/20 shadow-[0_4px_12px_rgba(54,89,61,0.15)]'
                                         : 'text-[#4A4A4A] hover:bg-[#F8F5EF] hover:text-[#36593D] hover:border-[#36593D]/15'
                                 }`}>
@@ -246,45 +185,28 @@ function Navbar() {
                                 </button>
 
                                 {/* Dropdown Menu Panel */}
-                                <div className="absolute top-full left-0 mt-2 w-64 rounded-2xl border border-[#e3d7c2] bg-white p-2 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 z-50">
-                                    
-                                    {/* Dinosaur Encyclopedia */}
+                                <div className="absolute top-full left-0 mt-2 w-60 rounded-2xl border border-[#e3d7c2] bg-white p-2 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 z-50">
                                     <Link
                                         to="/explorer"
                                         className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D] transition-colors"
                                     >
                                         <Compass size={16} className="text-[#36593D]" />
-                                        <span>Dinosaur Encyclopedia</span>
+                                        <span>Explore Dinosaurs</span>
                                     </Link>
-
-                                    {/* Explore Eras (Flyout Submenu) */}
-                                    <div className="relative group/sub">
-                                        <div className="flex items-center justify-between rounded-xl px-3 py-2.5 text-xs font-semibold text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D] cursor-pointer transition-colors">
-                                            <div className="flex items-center gap-2.5">
-                                                <Globe size={16} className="text-[#36593D]" />
-                                                <span>Explore Eras</span>
-                                            </div>
-                                            <ChevronRight size={14} className="text-stone-400 group-hover/sub:text-[#36593D] group-hover/sub:translate-x-0.5 transition-all" />
-                                        </div>
-
-                                        {/* Submenu Panel */}
-                                        <div className="absolute top-0 left-full ml-1.5 w-52 rounded-2xl border border-[#e3d7c2] bg-white p-2 shadow-xl opacity-0 invisible group-hover/sub:opacity-100 group-hover/sub:visible transition-all duration-200 z-50">
-                                            <Link
-                                                to="/map"
-                                                className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D] transition-colors"
-                                            >
-                                                <Map size={15} className="text-[#36593D]" />
-                                                <span>Map View</span>
-                                            </Link>
-                                            <Link
-                                                to="/timeline"
-                                                className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D] transition-colors"
-                                            >
-                                                <Clock3 size={15} className="text-[#36593D]" />
-                                                <span>Timeline View</span>
-                                            </Link>
-                                        </div>
-                                    </div>
+                                    <Link
+                                        to="/map"
+                                        className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D] transition-colors"
+                                    >
+                                        <Map size={16} className="text-[#36593D]" />
+                                        <span>Fossil Map</span>
+                                    </Link>
+                                    <Link
+                                        to="/timeline"
+                                        className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D] transition-colors"
+                                    >
+                                        <Clock3 size={16} className="text-[#36593D]" />
+                                        <span>Timeline View</span>
+                                    </Link>
                                 </div>
                             </div>
 
@@ -299,23 +221,23 @@ function Navbar() {
                                     <span>Create</span>
                                     <ChevronDown size={14} className="transition-transform duration-200 group-hover:rotate-180 opacity-70" />
                                 </button>
->>>>>>> 327963855d7b81f258d458e499c15b428bead804
 
+                                {/* Dropdown Menu Panel */}
                                 <div className="absolute top-full left-0 mt-2 w-56 rounded-2xl border border-[#e3d7c2] bg-white p-2 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 z-50">
                                     <Link
                                         to="/create"
                                         className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D] transition-colors"
                                     >
                                         <PlusSquare size={16} className="text-[#36593D]" />
-                                        <span>Create Your Dinosaur</span>
+                                        <span>Create Dinosaur</span>
                                     </Link>
                                 </div>
                             </div>
 
-                            {/* Learn Dropdown */}
+                            {/* Learn Dropdown (Matching Screenshot Exactly) */}
                             <div className="relative group">
                                 <button className={`flex items-center gap-1.5 rounded-full border border-transparent px-3 xl:px-4 py-1.5 xl:py-2 text-xs xl:text-sm font-medium transition-all duration-200 cursor-pointer ${
-                                    location.pathname.startsWith('/quiz')
+                                    location.pathname === '/quiz' || location.pathname.startsWith('/games')
                                         ? 'bg-[#E8F0E8] text-[#36593D] border-[#36593D]/20 shadow-[0_4px_12px_rgba(54,89,61,0.15)]'
                                         : 'text-[#4A4A4A] hover:bg-[#F8F5EF] hover:text-[#36593D] hover:border-[#36593D]/15'
                                 }`}>
@@ -324,21 +246,35 @@ function Navbar() {
                                     <ChevronDown size={14} className="transition-transform duration-200 group-hover:rotate-180 opacity-70" />
                                 </button>
 
-                                <div className="absolute top-full left-0 mt-2 w-56 rounded-2xl border border-[#e3d7c2] bg-white p-2 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 z-50">
+                                {/* Dropdown Menu Panel with Exactly 2 Options: Interactive Quiz & Games */}
+                                <div className="absolute top-full left-0 mt-2 w-52 rounded-2xl border border-[#e3d7c2] bg-white p-2 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 z-50">
+                                    
+                                    {/* Option 1: Interactive Quiz */}
                                     <Link
                                         to="/quiz"
-                                        className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D] transition-colors"
+                                        className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs sm:text-sm font-medium transition-colors ${
+                                            location.pathname === '/quiz'
+                                                ? 'bg-[#E8F0E8] text-[#36593D] font-semibold'
+                                                : 'text-stone-700 hover:bg-[#F4F8F4] hover:text-[#36593D]'
+                                        }`}
                                     >
-                                        <CircleHelp size={16} className="text-[#36593D]" />
+                                        <CircleHelp size={18} className="text-[#36593D] shrink-0" />
                                         <span>Interactive Quiz</span>
                                     </Link>
+
+                                    {/* Option 2: Games (Opens Jurassic Memory Match page) */}
                                     <Link
-                                        to="/quiz"
-                                        className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-semibold text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D] transition-colors"
+                                        to="/games"
+                                        className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs sm:text-sm font-medium transition-colors ${
+                                            location.pathname.startsWith('/games')
+                                                ? 'bg-[#E8F0E8] text-[#36593D] font-semibold'
+                                                : 'text-stone-700 hover:bg-[#F4F8F4] hover:text-[#36593D]'
+                                        }`}
                                     >
-                                        <Gamepad2 size={16} className="text-[#36593D]" />
+                                        <Gamepad2 size={18} className="text-[#36593D] shrink-0" />
                                         <span>Games</span>
                                     </Link>
+
                                 </div>
                             </div>
 
@@ -347,13 +283,13 @@ function Navbar() {
                                 Community
                             </NavbarLink>
 
-                            {/* Ask Professor Ross AI */}
+                            {/* Ask Professor Ross AI Button */}
                             <Link
                                 to="/professor"
                                 className="
                                     group flex items-center gap-1.5 xl:gap-2
                                     rounded-full
-                                    px-3 xl:px-4 py-1.5 xl:py-2
+                                    px-3 xl:px-5 py-2 xl:py-3
                                     bg-gradient-to-r
                                     from-[#184D30]
                                     via-[#1F5C38]
@@ -369,6 +305,7 @@ function Navbar() {
                                     shrink-0
                                 "
                             >
+                                {/* AI Status Indicator */}
                                 <span className="relative flex h-2 w-2 xl:h-2.5 xl:w-2.5">
                                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-300 opacity-75"></span>
                                     <span className="relative inline-flex h-2 w-2 xl:h-2.5 xl:w-2.5 rounded-full bg-green-200"></span>
@@ -396,7 +333,6 @@ function Navbar() {
                             </Link>
                         </div>
 
-                        {/*integrate dinosaur search functionality*/}
                         {/* Right-Section (Desktop) */}
                         <div className="hidden items-center gap-2 lg:flex">
                             {/* search field */}
@@ -461,7 +397,7 @@ function Navbar() {
                         {/* Navigation */}
                         <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-6 py-8 sm:px-8">
                             {mobileLinks.map(
-                                ({ to, icon: Icon, label, desc, badge }) => (
+                                ({ to, icon: Icon, label, desc }) => (
                                     <Link
                                         key={to}
                                         to={to}
@@ -491,12 +427,6 @@ function Navbar() {
                                                 <p className="text-lg font-semibold text-white">
                                                     {label}
                                                 </p>
-
-                                                {badge && (
-                                                    <span className="rounded-full bg-[#52B788] px-2 py-0.5 text-[10px] font-bold tracking-wider text-slate-950 uppercase">
-                                                        {badge}
-                                                    </span>
-                                                )}
 
                                                 {label === "Ask Professor Ross" && (
                                                     <span className="rounded-full bg-green-400/20 px-2 py-0.5 text-[10px] font-bold tracking-wider text-green-300">
