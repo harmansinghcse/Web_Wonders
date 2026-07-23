@@ -856,20 +856,55 @@ export default function ExploreMap() {
                 relative
                 min-h-screen
                 overflow-x-hidden
-                bg-gradient-to-br
-                from-[#FAF8EF]
-                via-[#F1F6EC]
-                to-[#E5EFE0]
+                bg-[#FAF8EF]
                 font-sans
                 text-[#193324]
             "
         >
 
             {/* =================================================
+                PROMINENT MAP BACKGROUND IMAGE
+            ================================================= */}
+            <div
+                className="
+                    pointer-events-none
+                    fixed
+                    inset-0
+                    z-0
+                    bg-cover
+                    bg-center
+                    bg-no-repeat
+                    opacity-75
+                    filter
+                    contrast-[1.12]
+                    saturate-[1.20]
+                    transition-opacity
+                    duration-500
+                "
+                style={{
+                    backgroundImage: "url('/map-soft-bg.jpg')"
+                }}
+            />
+
+            {/* Subtle Soft Atmosphere Overlay */}
+            <div
+                className="
+                    pointer-events-none
+                    fixed
+                    inset-0
+                    z-0
+                    bg-gradient-to-b
+                    from-[#FAF8EF]/25
+                    via-transparent
+                    to-[#FAF8EF]/35
+                "
+            />
+
+            {/* =================================================
                 NAVBAR
             ================================================= */}
             {/* =================================================
-                PAGE ATMOSPHERE
+                PAGE ATMOSPHERE (SUBTLE SOFT GLOWS)
             ================================================= */}
 
             <div
@@ -877,43 +912,44 @@ export default function ExploreMap() {
                     pointer-events-none
                     absolute
                     inset-0
+                    z-0
                     overflow-hidden
                 "
             >
 
-                {/* Forest atmosphere */}
+                {/* Soft Forest atmosphere */}
 
                 <div
                     className="
                         absolute
                         -left-40
                         top-28
-                        h-[520px]
-                        w-[520px]
+                        h-[500px]
+                        w-[500px]
                         rounded-full
-                        bg-[#5F963F]/14
-                        blur-[110px]
+                        bg-[#5F963F]/10
+                        blur-[130px]
                     "
                 />
 
 
-                {/* Warm fossil glow */}
+                {/* Soft Warm Sunlight glow */}
 
                 <div
                     className="
                         absolute
                         -right-32
-                        top-[420px]
-                        h-[460px]
-                        w-[460px]
+                        top-[350px]
+                        h-[480px]
+                        w-[480px]
                         rounded-full
-                        bg-[#C49A45]/13
-                        blur-[120px]
+                        bg-[#E5B548]/10
+                        blur-[130px]
                     "
                 />
 
 
-                {/* Lower forest depth */}
+                {/* Soft Lower forest depth glow */}
 
                 <div
                     className="
@@ -923,7 +959,7 @@ export default function ExploreMap() {
                         h-[500px]
                         w-[600px]
                         rounded-full
-                        bg-[#327044]/10
+                        bg-[#327044]/08
                         blur-[140px]
                     "
                 />
@@ -971,8 +1007,8 @@ export default function ExploreMap() {
                         rounded-[32px]
                         border
                         border-[#31583d]/18
-                        bg-[#F3F4EC]/95
-                        shadow-[0_24px_65px_rgba(28,58,38,0.14)]
+                        bg-[#F6F7F2]/90
+                        shadow-[0_20px_60px_rgba(24,53,36,0.12)]
                         backdrop-blur-sm
                     "
                 >
