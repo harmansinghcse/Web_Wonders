@@ -19,10 +19,15 @@ import {
     X,
     Sparkles,
     Hash,
-    Bell
+    Bell,
+    Swords,
+    Search,
+    ShieldCheck
 } from "lucide-react";
 
 import Navbar from "../components/home_components/hero/Navbar";
+import { useAuth } from "../context/AuthContext";
+import { getProfile } from "../api/profileService";
 import {
     fetchPostsService,
     createPostService,
@@ -33,52 +38,92 @@ import {
 } from "../services/communityService";
 import { getStoredFollows } from "../services/communityServiceHelpers";
 
+// Community subcomponents
+import ExplorerProfileModal from "../components/community/ExplorerProfileModal";
+import HybridBattleModal from "../components/community/HybridBattleModal";
+import NotificationsModal from "../components/community/NotificationsModal";
+import CreatePostModal from "../components/community/CreatePostModal";
+
 export default function Community() {
-    // Current Logged In User state
-    const [currentUser, setCurrentUser] = useState(() => {
+    // 1. DYNAMIC CURRENT USER STATE (from AuthContext, backend API /api/profile, or localStorage)
+    const { user: authUser } = useAuth();
+    const [apiProfile, setApiProfile] = useState(null);
+
+    // Fetch user profile from API as well to guarantee fresh profile name & avatar
+    useEffect(() => {
+        const loadProfile = async () => {
+            try {
+                const res = await getProfile();
+                if (res && res.profile) {
+                    setApiProfile(res.profile);
+                }
+            } catch (e) {
+                // Silently fallback if not logged in via cookie
+            }
+        };
+        loadProfile();
+    }, []);
+
+    const currentUser = useMemo(() => {
+        const u = authUser || apiProfile;
+        if (u) {
+            const rawName = u.name || u.username || u.email?.split("@")[0] || "Explorer";
+            return {
+                name: rawName,
+                handle: `@${rawName.toLowerCase().replace(/\s+/g, "_")}`,
+                role: u.role || u.rank || "Explorer",
+                avatar: u.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250",
+                bio: u.bio || "Dedicated Jurassic Explorer and Prehistoric Geneticist.",
+                id: u._id || u.id || "user-logged",
+            };
+        }
         try {
             const savedUser = localStorage.getItem("user");
             if (savedUser) {
                 const parsed = JSON.parse(savedUser);
+                const rawName = parsed.name || parsed.username || parsed.email?.split("@")[0] || "Explorer";
                 return {
-                    name: parsed.name || parsed.username || "Meshvi",
-                    handle: `@${(parsed.name || parsed.username || "meshvi").toLowerCase().replace(/\s+/g, "_")}`,
-                    role: parsed.role || "Explorer",
+                    name: rawName,
+                    handle: `@${rawName.toLowerCase().replace(/\s+/g, "_")}`,
+                    role: parsed.role || parsed.rank || "Explorer",
                     avatar: parsed.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250",
+                    bio: parsed.bio || "Dedicated Jurassic Explorer and Prehistoric Geneticist.",
+                    id: parsed._id || parsed.id || "user-logged",
                 };
             }
         } catch (e) {
             // fallback
         }
         return {
-            name: "Meshvi",
-            handle: "@meshvi",
+            name: "Explorer",
+            handle: "@explorer",
             role: "Explorer",
             avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250",
+            bio: "Dedicated Jurassic Explorer and Prehistoric Geneticist.",
+            id: "user-default",
         };
-    });
+    }, [authUser, apiProfile]);
 
     // Posts state
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Active Sidebar Tab
+    // Sidebar active navigation tab ('feed', 'hybrids', 'myposts', 'saved')
     const [activeTab, setActiveTab] = useState("feed");
 
     // Search query & tag filter
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedTag, setSelectedTag] = useState(null);
 
-    // Create Post Modal & Form State
+    // Modal States
     const [isCreateOpen, setIsCreateOpen] = useState(false);
-    const [postType, setPostType] = useState("text"); // 'text', 'hybrid', 'photo', 'fossil'
-    const [formTitle, setFormTitle] = useState("");
-    const [formText, setFormText] = useState("");
-    const [formImageUrl, setFormImageUrl] = useState("");
-    const [formAttack, setFormAttack] = useState(85);
-    const [formDefense, setFormDefense] = useState(90);
-    const [formSpeed, setFormSpeed] = useState(70);
-    const [formSize, setFormSize] = useState("Huge");
+    const [createModalType, setCreateModalType] = useState("text");
+    const [createModalTitle, setCreateModalTitle] = useState("");
+    const [createModalTag, setCreateModalTag] = useState("");
+
+    const [activeProfileExplorer, setActiveProfileExplorer] = useState(null);
+    const [activeBattleHybrid, setActiveBattleHybrid] = useState(null);
+    const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
     // Comment Modal State
     const [activeCommentPost, setActiveCommentPost] = useState(null);
@@ -89,6 +134,9 @@ export default function Community() {
     const [remixAttack, setRemixAttack] = useState(85);
     const [remixDefense, setRemixDefense] = useState(90);
 
+    // Quick Composer Text State
+    const [quickPostText, setQuickPostText] = useState("");
+
     // Suggested Explorers State
     const [suggestedExplorers, setSuggestedExplorers] = useState([
         {
@@ -96,6 +144,8 @@ export default function Community() {
             name: "Rohan Explorer",
             handle: "@rohan_explore",
             avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=250",
+            role: "Senior Paleontologist",
+            bio: "Specializing in Jurassic sauropod bone structures and fossil excavations.",
             isFollowing: false,
         },
         {
@@ -103,6 +153,8 @@ export default function Community() {
             name: "Palak FossilHunter",
             handle: "@palak_fossil",
             avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=250",
+            role: "Fossil Analyst",
+            bio: "Uncovering ancient amber specimens and Cretaceous footprints.",
             isFollowing: false,
         },
         {
@@ -110,6 +162,8 @@ export default function Community() {
             name: "Aarav DinoFan",
             handle: "@aarav_dinofan",
             avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=250",
+            role: "Genetic Engineer",
+            bio: "Designing apex predator hybrids with reinforced defensive armor.",
             isFollowing: false,
         },
     ]);
@@ -122,18 +176,17 @@ export default function Community() {
         setTimeout(() => setToastMessage(""), 3500);
     };
 
-    // Load initial dynamic posts & follows on mount
+    // Load initial posts & sync stored follows on mount
     useEffect(() => {
         const loadInitialData = async () => {
             setLoading(true);
             const fetchedPosts = await fetchPostsService();
             setPosts(fetchedPosts);
 
-            // Sync follows from storage
             const follows = getStoredFollows();
             if (follows.length > 0) {
-                setSuggestedExplorers(prev =>
-                    prev.map(exp => ({ ...exp, isFollowing: follows.includes(exp.id) }))
+                setSuggestedExplorers((prev) =>
+                    prev.map((exp) => ({ ...exp, isFollowing: follows.includes(exp.id) }))
                 );
             }
             setLoading(false);
@@ -141,7 +194,7 @@ export default function Community() {
         loadInitialData();
     }, []);
 
-    // DYNAMIC TRENDING HYBRIDS (Computed from posts state in real time sorted by likes)
+    // Dynamic Trending Hybrids
     const trendingHybrids = useMemo(() => {
         const hybrids = posts.filter(
             (p) => p.type === "hybrid" || p.badge === "Hybrid" || p.tags?.includes("#Hybrids")
@@ -151,23 +204,18 @@ export default function Community() {
             {
                 id: "trend-1",
                 title: "Dracorex",
-                author: { name: "Rohan" },
+                author: { name: "Rohan Explorer", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=250" },
                 likes: 230,
                 image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&q=80&w=100",
+                stats: { attack: 88, defense: 82, speed: 75, size: "Large" }
             },
             {
                 id: "trend-2",
                 title: "Velocirhino",
-                author: { name: "Palak" },
+                author: { name: "Palak FossilHunter", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=250" },
                 likes: 189,
                 image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&q=80&w=100",
-            },
-            {
-                id: "trend-3",
-                title: "Stegoceratops",
-                author: { name: "Aarav" },
-                likes: 176,
-                image: "https://images.unsplash.com/photo-1569982175971-d92b01cf8694?auto=format&fit=crop&q=80&w=100",
+                stats: { attack: 94, defense: 70, speed: 90, size: "Medium" }
             },
         ];
 
@@ -176,10 +224,8 @@ export default function Community() {
             const key = item.title?.trim().toLowerCase() || item.id;
             if (!combinedMap.has(key)) {
                 combinedMap.set(key, item);
-            } else {
-                if ((item.likes || 0) > (combinedMap.get(key).likes || 0)) {
-                    combinedMap.set(key, item);
-                }
+            } else if ((item.likes || 0) > (combinedMap.get(key).likes || 0)) {
+                combinedMap.set(key, item);
             }
         });
 
@@ -188,7 +234,7 @@ export default function Community() {
             .slice(0, 3);
     }, [posts]);
 
-    // DYNAMIC RECENT FOSSIL FINDS (Computed from posts state in real time)
+    // Dynamic Recent Fossil Finds
     const recentFossils = useMemo(() => {
         const fossils = posts.filter(
             (p) =>
@@ -201,119 +247,75 @@ export default function Community() {
         const defaultFossils = [
             {
                 id: "fossil-1",
-                title: "Triceratops Tooth",
-                author: { name: "Karan" },
+                title: "Triceratops Horn Fossil",
+                author: { name: "Aarav DinoFan" },
                 likes: 132,
-                icon: "🦴",
                 image: "/spinosaurus_skull.jpg",
             },
             {
                 id: "fossil-2",
-                title: "Ammonite Fossil",
-                author: { name: "Diya" },
+                title: "Ammonite Shell",
+                author: { name: "Palak FossilHunter" },
                 likes: 98,
-                icon: "🐚",
                 image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=100",
-            },
-            {
-                id: "fossil-3",
-                title: "Dinosaur Footprint",
-                author: { name: "Rohan" },
-                likes: 76,
-                icon: "🐾",
-                image: null,
             },
         ];
 
         const combinedMap = new Map();
         [...fossils, ...defaultFossils].forEach((item) => {
             const key = item.title?.trim().toLowerCase() || item.id;
-            if (!combinedMap.has(key)) {
-                combinedMap.set(key, item);
-            }
+            if (!combinedMap.has(key)) combinedMap.set(key, item);
         });
 
         return Array.from(combinedMap.values()).slice(0, 3);
     }, [posts]);
 
-    // Dynamic Post Publisher Handler (Bulletproof & Instant)
-    const handleCreatePost = async (e) => {
-        if (e && e.preventDefault) e.preventDefault();
+    // Publish New Post Handler (Attributed dynamically to currentUser)
+    const handlePublishPost = async (newPostData) => {
+        // Ensure author is explicitly current user
+        const postToSave = {
+            ...newPostData,
+            author: currentUser,
+        };
 
-        const contentText = formText.trim();
-        const contentTitle = formTitle.trim();
+        setPosts((prev) => [postToSave, ...prev]);
+        setActiveTab("feed");
+        setSelectedTag(null);
+        setSearchQuery("");
+        setIsCreateOpen(false);
 
-        if (!contentText && !contentTitle) {
-            showToast("Please enter some thoughts or a title for your post!");
-            return;
+        showToast(`🎉 Published as ${currentUser.name}!`);
+
+        try {
+            await createPostService(postToSave);
+        } catch (err) {
+            console.error("Async save post error:", err);
         }
+    };
 
-        const defaultTitle =
-            postType === "hybrid"
-                ? "New Hybrid Species"
-                : postType === "fossil"
-                ? "Rare Fossil Discovery"
-                : postType === "photo"
-                ? "Prehistoric Snapshot"
-                : "Explorer Note";
+    // Quick Composer Submit
+    const handleQuickPostSubmit = (e) => {
+        e.preventDefault();
+        if (!quickPostText.trim()) return;
 
-        const newPostObj = {
+        handlePublishPost({
             id: `post-${Date.now()}`,
             author: currentUser,
             timeAgo: "Just now",
-            category:
-                postType === "hybrid"
-                    ? "Shared a hybrid"
-                    : postType === "fossil"
-                    ? "Fossil Find"
-                    : postType === "photo"
-                    ? "Photo Upload"
-                    : "Community Post",
-            type: postType,
-            title: contentTitle || defaultTitle,
-            badge: postType === "hybrid" ? "Hybrid" : postType === "fossil" ? "Fossil" : "Post",
-            description: contentText || contentTitle,
-            image:
-                formImageUrl.trim() ||
-                (postType === "hybrid"
-                    ? "/tyrastego_hybrid.jpg"
-                    : postType === "fossil"
-                    ? "/spinosaurus_skull.jpg"
-                    : postType === "photo"
-                    ? "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=1200"
-                    : null),
-            stats: postType === "hybrid" ? { attack: formAttack, defense: formDefense, speed: formSpeed, size: formSize } : null,
+            category: "Explorer Journal",
+            type: "text",
+            title: "Explorer Note",
+            badge: "Post",
+            description: quickPostText.trim(),
             likes: 1,
             commentsCount: 0,
             isLiked: true,
             isSaved: false,
             comments: [],
-            tags: postType === "hybrid" ? ["#Hybrids"] : postType === "fossil" ? ["#Fossils", "#FossilFind"] : ["#JurassicJourney"]
-        };
+            tags: ["#JurassicJourney"],
+        });
 
-        // 1. Prepend to local state for 0ms instant UI update
-        setPosts((prevPosts) => [newPostObj, ...prevPosts]);
-
-        // 2. Reset filters to show newly posted item
-        setActiveTab("feed");
-        setSelectedTag(null);
-        setSearchQuery("");
-
-        // 3. Reset form inputs
-        setFormTitle("");
-        setFormText("");
-        setFormImageUrl("");
-        setIsCreateOpen(false);
-
-        // 4. Show success toast notification
-        showToast("🎉 Post published successfully to the Community!");
-
-        // 5. Persist asynchronously in storage & backend
-        try {
-            await createPostService(newPostObj);
-        } catch (err) {
-            console.error("Async save post error:", err);
-        }
+        setQuickPostText("");
     };
 
     // Dynamic Like Handler
@@ -337,7 +339,7 @@ export default function Community() {
         const updated = await addCommentService(activeCommentPost.id, commentObj, posts);
         setPosts(updated);
 
-        setActiveCommentPost(prev => ({
+        setActiveCommentPost((prev) => ({
             ...prev,
             commentsCount: (prev.commentsCount || 0) + 1,
             comments: [...(prev.comments || []), commentObj],
@@ -347,11 +349,11 @@ export default function Community() {
         showToast("Comment published!");
     };
 
-    // Dynamic Save Handler
+    // Dynamic Save / Bookmark Handler
     const handleToggleSave = (postId) => {
         const updated = toggleSaveService(postId, posts);
         setPosts(updated);
-        const target = updated.find(p => p.id === postId);
+        const target = updated.find((p) => p.id === postId);
         showToast(target?.isSaved ? "Saved to your bookmarks!" : "Removed from bookmarks");
     };
 
@@ -367,7 +369,7 @@ export default function Community() {
             type: "hybrid",
             title: `${activeRemixPost.title} Prime`,
             badge: "Remix",
-            description: `Custom remixed variant with Attack: ${remixAttack}, Defense: ${remixDefense}!`,
+            description: `Custom remixed variant engineered by ${currentUser.name}! Attack: ${remixAttack}, Defense: ${remixDefense}.`,
             image: activeRemixPost.image,
             stats: {
                 attack: remixAttack,
@@ -380,13 +382,13 @@ export default function Community() {
             isLiked: true,
             isSaved: false,
             comments: [],
-            tags: ["#Hybrids", "#Remix"]
+            tags: ["#Hybrids", "#Remix"],
         };
 
         setPosts((prev) => [remixedPost, ...prev]);
         setActiveTab("feed");
         setActiveRemixPost(null);
-        showToast(`🎉 Published ${activeRemixPost.title} Prime remix!`);
+        showToast(`🎉 Published ${activeRemixPost.title} Prime remix as ${currentUser.name}!`);
 
         try {
             await createPostService(remixedPost);
@@ -399,25 +401,49 @@ export default function Community() {
     const handleFollow = (expId) => {
         const { updatedExplorers } = toggleFollowService(expId, suggestedExplorers);
         setSuggestedExplorers(updatedExplorers);
-        const target = updatedExplorers.find(e => e.id === expId);
+        const target = updatedExplorers.find((e) => e.id === expId);
         showToast(target?.isFollowing ? `You are now following ${target.name}` : `Unfollowed ${target?.name}`);
     };
 
-    // Filter Posts by Sidebar Tab & Search & Tag
-    const filteredPosts = posts.filter(post => {
-        if (activeTab === "hybrids" && post.type !== "hybrid") return false;
-        if (activeTab === "myposts" && post.author.name !== currentUser.name) return false;
-        if (activeTab === "saved" && !post.isSaved) return false;
+    // Filter Posts dynamically by Sidebar Tab, Search, and Tag
+    const filteredPosts = posts.filter((post) => {
+        // Tab filtering
+        if (activeTab === "hybrids") {
+            // Show hybrids created by currentUser OR all hybrids if user has none
+            const userHybrids = posts.filter(
+                (p) => (p.type === "hybrid" || p.badge === "Hybrid") &&
+                (p.author?.name?.toLowerCase() === currentUser.name.toLowerCase() || p.author?.handle === currentUser.handle)
+            );
+            if (userHybrids.length > 0) {
+                if (post.author?.name?.toLowerCase() !== currentUser.name.toLowerCase() && post.author?.handle !== currentUser.handle) {
+                    return false;
+                }
+            } else if (post.type !== "hybrid" && post.badge !== "Hybrid") {
+                return false;
+            }
+        }
 
-        if (selectedTag && !post.tags?.includes(selectedTag) && !post.description.includes(selectedTag)) {
+        if (activeTab === "myposts") {
+            if (post.author?.name?.toLowerCase() !== currentUser.name.toLowerCase() && post.author?.handle !== currentUser.handle) {
+                return false;
+            }
+        }
+
+        if (activeTab === "saved") {
+            if (!post.isSaved) return false;
+        }
+
+        // Hashtag filtering
+        if (selectedTag && !post.tags?.includes(selectedTag) && !post.description?.includes(selectedTag)) {
             return false;
         }
 
+        // Search query filtering
         if (searchQuery.trim()) {
             const q = searchQuery.toLowerCase();
             const matchesTitle = post.title?.toLowerCase().includes(q);
             const matchesDesc = post.description?.toLowerCase().includes(q);
-            const matchesAuthor = post.author.name?.toLowerCase().includes(q);
+            const matchesAuthor = post.author?.name?.toLowerCase().includes(q);
             if (!matchesTitle && !matchesDesc && !matchesAuthor) return false;
         }
 
@@ -426,14 +452,13 @@ export default function Community() {
 
     return (
         <div className="relative min-h-screen font-sans text-[#2C352E]">
-            {/* FRONT PAGE PARCHMENT/SUNSET WALLPAPER BACKGROUND */}
+            {/* FRONT PAGE PARCHMENT & ATMOSPHERIC BACKGROUND */}
             <div className="fixed inset-0 z-0">
                 <img
                     src="/jurrasic-home-bg.png"
                     alt="Jurassic Background"
                     className="h-full w-full object-cover object-center"
                 />
-                {/* Soft gradient light overlays matching front page */}
                 <div className="absolute inset-0 bg-gradient-to-b from-[#0E1A11]/60 via-[#F8F6F1]/80 to-[#F8F6F1]/95 backdrop-blur-[3px]" />
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#FFFFFF_0%,transparent_60%)] opacity-40" />
             </div>
@@ -443,26 +468,54 @@ export default function Community() {
                 <Navbar />
             </header>
 
-            {/* MAIN COMMUNITY LAYOUT */}
+            {/* MAIN COMMUNITY HUB CONTENT */}
             <main className="relative z-10 mx-auto max-w-7xl px-4 pt-20 sm:px-6 lg:px-8 pb-16">
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
                     
                     {/* LEFT SIDEBAR (3 cols) */}
                     <aside className="space-y-5 lg:col-span-3">
+                        {/* Current User Quick Badge */}
+                        <div
+                            onClick={() => setActiveProfileExplorer(currentUser)}
+                            className="flex items-center gap-3 rounded-2xl border border-white/60 bg-white/90 p-3.5 shadow-md backdrop-blur-md cursor-pointer transition hover:scale-[1.02] hover:shadow-lg"
+                        >
+                            <img
+                                src={currentUser.avatar}
+                                alt={currentUser.name}
+                                className="h-12 w-12 rounded-xl object-cover border-2 border-[#1E3A23]/30 shrink-0"
+                            />
+                            <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-1">
+                                    <h3 className="text-sm font-bold text-[#1E3A23] truncate">
+                                        {currentUser.name}
+                                    </h3>
+                                    <ShieldCheck size={14} className="text-[#2F7D4D] shrink-0" />
+                                </div>
+                                <p className="text-[11px] text-[#6D7A6F] font-semibold truncate">
+                                    {currentUser.handle} • <span className="text-[#2F7D4D] font-bold">{currentUser.role}</span>
+                                </p>
+                            </div>
+                        </div>
+
                         {/* Primary Action Button */}
                         <button
-                            onClick={() => setIsCreateOpen(true)}
+                            onClick={() => {
+                                setCreateModalType("text");
+                                setCreateModalTitle("");
+                                setCreateModalTag("");
+                                setIsCreateOpen(true);
+                            }}
                             className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#184D30] via-[#1F5C38] to-[#2F7D4D] px-5 py-3.5 text-sm font-bold text-white shadow-lg transition duration-200 hover:scale-[1.02] hover:shadow-xl active:scale-98 cursor-pointer"
                         >
                             <Plus size={20} strokeWidth={2.5} />
                             <span>Create Post</span>
                         </button>
 
-                        {/* Sidebar Navigation */}
+                        {/* Sidebar Navigation Links */}
                         <div className="rounded-2xl border border-white/60 bg-white/85 p-3 shadow-md backdrop-blur-md space-y-1">
                             <button
-                                onClick={() => { setActiveTab("feed"); setSelectedTag(null); }}
-                                className={`flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold transition ${
+                                onClick={() => { setActiveTab("feed"); setSelectedTag(null); setSearchQuery(""); }}
+                                className={`flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold transition cursor-pointer ${
                                     activeTab === "feed"
                                         ? "bg-[#1E3A23] text-white shadow-xs"
                                         : "text-[#4A554B] hover:bg-[#EFEFE6] hover:text-[#1E3A23]"
@@ -473,8 +526,8 @@ export default function Community() {
                             </button>
 
                             <button
-                                onClick={() => { setActiveTab("hybrids"); setSelectedTag(null); }}
-                                className={`flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold transition ${
+                                onClick={() => { setActiveTab("hybrids"); setSelectedTag(null); setSearchQuery(""); }}
+                                className={`flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold transition cursor-pointer ${
                                     activeTab === "hybrids"
                                         ? "bg-[#1E3A23] text-white shadow-xs"
                                         : "text-[#4A554B] hover:bg-[#EFEFE6] hover:text-[#1E3A23]"
@@ -485,8 +538,8 @@ export default function Community() {
                             </button>
 
                             <button
-                                onClick={() => { setActiveTab("myposts"); setSelectedTag(null); }}
-                                className={`flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold transition ${
+                                onClick={() => { setActiveTab("myposts"); setSelectedTag(null); setSearchQuery(""); }}
+                                className={`flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold transition cursor-pointer ${
                                     activeTab === "myposts"
                                         ? "bg-[#1E3A23] text-white shadow-xs"
                                         : "text-[#4A554B] hover:bg-[#EFEFE6] hover:text-[#1E3A23]"
@@ -497,8 +550,8 @@ export default function Community() {
                             </button>
 
                             <button
-                                onClick={() => { setActiveTab("saved"); setSelectedTag(null); }}
-                                className={`flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold transition ${
+                                onClick={() => { setActiveTab("saved"); setSelectedTag(null); setSearchQuery(""); }}
+                                className={`flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold transition cursor-pointer ${
                                     activeTab === "saved"
                                         ? "bg-[#1E3A23] text-white shadow-xs"
                                         : "text-[#4A554B] hover:bg-[#EFEFE6] hover:text-[#1E3A23]"
@@ -508,81 +561,59 @@ export default function Community() {
                                 <span>Saved Posts</span>
                             </button>
 
-                            <Link
-                                to="/profile"
-                                className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold text-[#4A554B] transition hover:bg-[#EFEFE6] hover:text-[#1E3A23]"
+                            <button
+                                onClick={() => setActiveProfileExplorer(currentUser)}
+                                className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold text-[#4A554B] transition hover:bg-[#EFEFE6] hover:text-[#1E3A23] cursor-pointer"
                             >
                                 <User size={18} />
-                                <span>My Profile</span>
-                            </Link>
-
-                            <button
-                                onClick={() => showToast("Notifications panel active")}
-                                className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold text-[#4A554B] transition hover:bg-[#EFEFE6] hover:text-[#1E3A23]"
-                            >
-                                <Bell size={18} />
-                                <span>Notifications</span>
+                                <span>My Passport</span>
                             </button>
 
                             <button
-                                onClick={() => showToast("Settings panel active")}
-                                className="flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold text-[#4A554B] transition hover:bg-[#EFEFE6] hover:text-[#1E3A23]"
+                                onClick={() => setIsNotificationsOpen(true)}
+                                className="flex w-full items-center justify-between rounded-xl px-4 py-2.5 text-sm font-bold text-[#4A554B] transition hover:bg-[#EFEFE6] hover:text-[#1E3A23] cursor-pointer"
                             >
-                                <Settings size={18} />
-                                <span>Settings</span>
+                                <div className="flex items-center gap-3">
+                                    <Bell size={18} />
+                                    <span>Notifications</span>
+                                </div>
+                                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#D9381E] text-[10px] font-extrabold text-white">
+                                    2
+                                </span>
                             </button>
-                        </div>
-
-                        {/* Bottom Promo Card */}
-                        <div className="relative overflow-hidden rounded-2xl border border-white/60 bg-gradient-to-br from-[#1E3A23]/90 via-[#27482D]/90 to-[#122416]/95 p-5 shadow-lg text-white">
-                            <div className="relative z-10 space-y-2">
-                                <h3 className="font-serif text-lg font-bold leading-tight text-[#E8F0E8]">
-                                    Be a part of the Jurassic Community!
-                                </h3>
-                                <p className="text-xs text-[#B5CBBA]">
-                                    Share, discover and create something prehistoric.
-                                </p>
-                            </div>
-                            <div className="mt-4 flex justify-end opacity-90">
-                                <span className="text-6xl animate-bounce">🦕</span>
-                            </div>
                         </div>
                     </aside>
 
                     {/* CENTER MAIN FEED (6 cols) */}
                     <section className="space-y-5 lg:col-span-6">
                         
-                        {/* Interactive Feed Composer Form */}
+                        {/* Interactive Quick Feed Composer */}
                         <form
-                            onSubmit={handleCreatePost}
+                            onSubmit={handleQuickPostSubmit}
                             className="rounded-2xl border border-white/60 bg-white/90 p-4 shadow-md backdrop-blur-md"
                         >
                             <div className="flex items-start gap-3">
                                 <img
                                     src={currentUser.avatar}
                                     alt={currentUser.name}
-                                    className="h-11 w-11 rounded-full object-cover border-2 border-[#1E3A23]/30 shrink-0"
+                                    onClick={() => setActiveProfileExplorer(currentUser)}
+                                    className="h-11 w-11 rounded-full object-cover border-2 border-[#1E3A23]/30 shrink-0 cursor-pointer"
                                 />
                                 <div className="flex-1">
                                     <textarea
                                         rows={2}
-                                        value={formText}
-                                        onChange={(e) => setFormText(e.target.value)}
-                                        placeholder="What's on your mind, explorer?"
+                                        value={quickPostText}
+                                        onChange={(e) => setQuickPostText(e.target.value)}
+                                        placeholder={`What's on your mind, ${currentUser.name}?`}
                                         className="w-full rounded-xl border border-[#E1DEC9] bg-[#FAF9F5] px-4 py-2.5 text-sm text-[#2C352E] placeholder-[#819083] transition focus:border-[#1E3A23] focus:bg-white focus:outline-none resize-none"
                                     />
 
-                                    {/* Action Buttons Row */}
                                     <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-[#F0EFE8] pt-3">
                                         <div className="flex flex-wrap items-center gap-1.5">
                                             <button
                                                 type="button"
-                                                onClick={() => { setPostType("text"); setIsCreateOpen(true); }}
-                                                className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition ${
-                                                    postType === "text"
-                                                        ? "border-[#1E3A23] bg-[#EFEFE6] text-[#1E3A23]"
-                                                        : "border-[#E1DEC9] bg-[#FBFBF8] text-[#4A554B] hover:bg-[#EFEFE6]"
-                                                }`}
+                                                onClick={() => { setCreateModalType("text"); setIsCreateOpen(true); }}
+                                                className="flex items-center gap-1.5 rounded-lg border border-[#E1DEC9] bg-[#FBFBF8] px-3 py-1.5 text-xs font-semibold text-[#4A554B] hover:bg-[#EFEFE6] cursor-pointer"
                                             >
                                                 <FileText size={14} className="text-[#627265]" />
                                                 <span>Text</span>
@@ -590,12 +621,8 @@ export default function Community() {
 
                                             <button
                                                 type="button"
-                                                onClick={() => { setPostType("hybrid"); setIsCreateOpen(true); }}
-                                                className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition ${
-                                                    postType === "hybrid"
-                                                        ? "border-[#1E3A23] bg-[#EFEFE6] text-[#1E3A23]"
-                                                        : "border-[#E1DEC9] bg-[#FBFBF8] text-[#4A554B] hover:bg-[#EFEFE6]"
-                                                }`}
+                                                onClick={() => { setCreateModalType("hybrid"); setIsCreateOpen(true); }}
+                                                className="flex items-center gap-1.5 rounded-lg border border-[#E1DEC9] bg-[#FBFBF8] px-3 py-1.5 text-xs font-semibold text-[#4A554B] hover:bg-[#EFEFE6] cursor-pointer"
                                             >
                                                 <Dna size={14} className="text-[#2F7D4D]" />
                                                 <span>Share Hybrid</span>
@@ -603,12 +630,8 @@ export default function Community() {
 
                                             <button
                                                 type="button"
-                                                onClick={() => { setPostType("photo"); setIsCreateOpen(true); }}
-                                                className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition ${
-                                                    postType === "photo"
-                                                        ? "border-[#1E3A23] bg-[#EFEFE6] text-[#1E3A23]"
-                                                        : "border-[#E1DEC9] bg-[#FBFBF8] text-[#4A554B] hover:bg-[#EFEFE6]"
-                                                }`}
+                                                onClick={() => { setCreateModalType("photo"); setIsCreateOpen(true); }}
+                                                className="flex items-center gap-1.5 rounded-lg border border-[#E1DEC9] bg-[#FBFBF8] px-3 py-1.5 text-xs font-semibold text-[#4A554B] hover:bg-[#EFEFE6] cursor-pointer"
                                             >
                                                 <ImageIcon size={14} className="text-[#3B82F6]" />
                                                 <span>Photo</span>
@@ -616,12 +639,8 @@ export default function Community() {
 
                                             <button
                                                 type="button"
-                                                onClick={() => { setPostType("fossil"); setIsCreateOpen(true); }}
-                                                className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition ${
-                                                    postType === "fossil"
-                                                        ? "border-[#1E3A23] bg-[#EFEFE6] text-[#1E3A23]"
-                                                        : "border-[#E1DEC9] bg-[#FBFBF8] text-[#4A554B] hover:bg-[#EFEFE6]"
-                                                }`}
+                                                onClick={() => { setCreateModalType("fossil"); setIsCreateOpen(true); }}
+                                                className="flex items-center gap-1.5 rounded-lg border border-[#E1DEC9] bg-[#FBFBF8] px-3 py-1.5 text-xs font-semibold text-[#4A554B] hover:bg-[#EFEFE6] cursor-pointer"
                                             >
                                                 <Target size={14} className="text-[#D97706]" />
                                                 <span>Fossil Find</span>
@@ -639,18 +658,26 @@ export default function Community() {
                             </div>
                         </form>
 
-                        {/* Search & Tag Filter Banner */}
-                        {(selectedTag || searchQuery) && (
+                        {/* Search & Tag Active Filter Banner */}
+                        {(selectedTag || searchQuery || activeTab !== "feed") && (
                             <div className="flex items-center justify-between rounded-xl bg-[#1E3A23] px-4 py-2.5 text-xs font-bold text-white shadow-xs">
                                 <div className="flex items-center gap-2">
                                     <Hash size={14} />
                                     <span>
-                                        {selectedTag ? `Filtered Tag: ${selectedTag}` : `Search query: "${searchQuery}"`}
+                                        {activeTab === "myposts"
+                                            ? `Showing My Posts (${filteredPosts.length})`
+                                            : activeTab === "hybrids"
+                                            ? `Showing My Hybrids (${filteredPosts.length})`
+                                            : activeTab === "saved"
+                                            ? `Showing Saved Bookmarks (${filteredPosts.length})`
+                                            : selectedTag
+                                            ? `Tag Filter: ${selectedTag}`
+                                            : `Search: "${searchQuery}"`}
                                     </span>
                                 </div>
                                 <button
-                                    onClick={() => { setSelectedTag(null); setSearchQuery(""); }}
-                                    className="rounded-md bg-white/20 p-1 hover:bg-white/30"
+                                    onClick={() => { setActiveTab("feed"); setSelectedTag(null); setSearchQuery(""); }}
+                                    className="rounded-md bg-white/20 p-1 hover:bg-white/30 cursor-pointer"
                                 >
                                     <X size={14} />
                                 </button>
@@ -664,16 +691,35 @@ export default function Community() {
                                 <p className="mt-3 text-sm font-bold text-[#1E3A23]">Loading Prehistoric Feed...</p>
                             </div>
                         ) : filteredPosts.length === 0 ? (
-                            <div className="rounded-2xl border border-white/60 bg-white/90 p-8 text-center shadow-md">
+                            <div className="rounded-2xl border border-white/60 bg-white/90 p-8 text-center shadow-md space-y-3">
                                 <span className="text-4xl">🦖</span>
-                                <h3 className="mt-3 text-base font-bold text-[#1E3A23]">No community posts found</h3>
-                                <p className="mt-1 text-xs text-[#687A6C]">Try resetting your search query or tab filters.</p>
-                                <button
-                                    onClick={() => { setActiveTab("feed"); setSelectedTag(null); setSearchQuery(""); }}
-                                    className="mt-4 rounded-xl bg-[#1E3A23] px-4 py-2 text-xs font-bold text-white"
-                                >
-                                    Reset Filters
-                                </button>
+                                <h3 className="text-base font-bold text-[#1E3A23]">No community posts found</h3>
+                                <p className="text-xs text-[#687A6C]">
+                                    {activeTab === "myposts"
+                                        ? `You haven't created any posts as ${currentUser.name} yet!`
+                                        : activeTab === "hybrids"
+                                        ? `You haven't engineered any hybrid species yet!`
+                                        : activeTab === "saved"
+                                        ? "You haven't bookmarked any posts yet."
+                                        : "Try resetting your search query or tag filters."}
+                                </p>
+                                <div className="flex justify-center gap-2 pt-2">
+                                    <button
+                                        onClick={() => {
+                                            setCreateModalType(activeTab === "hybrids" ? "hybrid" : "text");
+                                            setIsCreateOpen(true);
+                                        }}
+                                        className="rounded-xl bg-[#1E3A23] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#152A19] cursor-pointer"
+                                    >
+                                        Create New Post
+                                    </button>
+                                    <button
+                                        onClick={() => { setActiveTab("feed"); setSelectedTag(null); setSearchQuery(""); }}
+                                        className="rounded-xl border border-[#E1DEC9] bg-[#FAF9F5] px-4 py-2.5 text-xs font-bold text-[#556358] cursor-pointer"
+                                    >
+                                        Reset View
+                                    </button>
+                                </div>
                             </div>
                         ) : (
                             filteredPosts.map((post) => (
@@ -683,15 +729,18 @@ export default function Community() {
                                 >
                                     {/* Card Header */}
                                     <div className="flex items-center justify-between p-4 pb-3">
-                                        <div className="flex items-center gap-3">
+                                        <div
+                                            onClick={() => setActiveProfileExplorer(post.author || currentUser)}
+                                            className="flex items-center gap-3 cursor-pointer group"
+                                        >
                                             <img
                                                 src={post.author?.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250"}
                                                 alt={post.author?.name || "Explorer"}
-                                                className="h-10 w-10 rounded-full object-cover border border-[#1E3A23]/30"
+                                                className="h-10 w-10 rounded-full object-cover border border-[#1E3A23]/30 group-hover:border-[#2F7D4D] transition"
                                             />
                                             <div>
                                                 <div className="flex items-center gap-2">
-                                                    <h4 className="text-sm font-bold text-[#1E3A23]">
+                                                    <h4 className="text-sm font-bold text-[#1E3A23] group-hover:text-[#2F7D4D] transition">
                                                         {post.author?.name || "Explorer"}
                                                     </h4>
                                                     <span className="rounded-md bg-[#E4ECE3] px-2 py-0.5 text-[10px] font-bold text-[#2A5231]">
@@ -704,18 +753,18 @@ export default function Community() {
                                             </div>
                                         </div>
 
-                                        <button className="rounded-full p-1.5 text-[#6D7A6F] hover:bg-[#F7F6F0]">
+                                        <button className="rounded-full p-1.5 text-[#6D7A6F] hover:bg-[#F7F6F0] cursor-pointer">
                                             <MoreHorizontal size={18} />
                                         </button>
                                     </div>
 
                                     {/* Card Body */}
                                     {post.type === "hybrid" ? (
-                                        /* HYBRID SPLIT LAYOUT */
+                                        /* HYBRID SPLIT CARD LAYOUT */
                                         <div className="px-4 pb-3">
                                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                                {/* Left Image */}
-                                                <div className="overflow-hidden rounded-xl border border-[#E1DEC9] bg-[#0E1A11]">
+                                                {/* Left Specimen Image */}
+                                                <div className="overflow-hidden rounded-xl border border-[#E1DEC9] bg-[#0E1A11] relative">
                                                     <img
                                                         src={post.image || "/tyrastego_hybrid.jpg"}
                                                         alt={post.title}
@@ -739,7 +788,7 @@ export default function Community() {
                                                         </p>
                                                     </div>
 
-                                                    {/* 4 Stat Badges */}
+                                                    {/* 4 Stat Cards */}
                                                     {post.stats && (
                                                         <div className="grid grid-cols-2 gap-2 pt-1">
                                                             <div className="rounded-xl bg-[#FDF2F2] p-2.5 text-center border border-[#F8D7D7]">
@@ -764,7 +813,7 @@ export default function Community() {
                                             </div>
                                         </div>
                                     ) : (
-                                        /* REGULAR POST LAYOUT */
+                                        /* STANDARD POST LAYOUT */
                                         <div className="space-y-3 px-4 pb-3">
                                             {post.image && (
                                                 <div className="overflow-hidden rounded-xl border border-[#E1DEC9]">
@@ -819,28 +868,40 @@ export default function Community() {
                                             </button>
                                         </div>
 
-                                        {post.type === "hybrid" ? (
-                                            <button
-                                                onClick={() => {
-                                                    setActiveRemixPost(post);
-                                                    setRemixAttack(post.stats?.attack || 85);
-                                                    setRemixDefense(post.stats?.defense || 90);
-                                                }}
-                                                className="flex items-center gap-1.5 rounded-lg border border-[#D1D5DB] bg-white px-3 py-1 text-xs font-bold text-[#2C352E] shadow-2xs transition hover:bg-[#EFEFE6] hover:border-[#1E3A23] cursor-pointer"
-                                            >
-                                                <Repeat size={14} />
-                                                <span>Remix</span>
-                                            </button>
-                                        ) : (
-                                            <button
-                                                onClick={() => handleToggleSave(post.id)}
-                                                className={`p-1 transition cursor-pointer ${
-                                                    post.isSaved ? "text-[#1E3A23]" : "text-[#859487] hover:text-[#1E3A23]"
-                                                }`}
-                                            >
-                                                <Bookmark size={18} className={post.isSaved ? "fill-[#1E3A23]" : ""} />
-                                            </button>
-                                        )}
+                                        <div className="flex items-center gap-2">
+                                            {post.type === "hybrid" && (
+                                                <button
+                                                    onClick={() => setActiveBattleHybrid(post)}
+                                                    className="flex items-center gap-1 rounded-lg border border-amber-300 bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-900 transition hover:bg-amber-100 cursor-pointer"
+                                                >
+                                                    <Swords size={14} className="text-amber-700" />
+                                                    <span>Compare</span>
+                                                </button>
+                                            )}
+
+                                            {post.type === "hybrid" ? (
+                                                <button
+                                                    onClick={() => {
+                                                        setActiveRemixPost(post);
+                                                        setRemixAttack(post.stats?.attack || 85);
+                                                        setRemixDefense(post.stats?.defense || 90);
+                                                    }}
+                                                    className="flex items-center gap-1.5 rounded-lg border border-[#D1D5DB] bg-white px-3 py-1 text-xs font-bold text-[#2C352E] shadow-2xs transition hover:bg-[#EFEFE6] hover:border-[#1E3A23] cursor-pointer"
+                                                >
+                                                    <Repeat size={14} />
+                                                    <span>Remix</span>
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    onClick={() => handleToggleSave(post.id)}
+                                                    className={`p-1 transition cursor-pointer ${
+                                                        post.isSaved ? "text-[#1E3A23]" : "text-[#859487] hover:text-[#1E3A23]"
+                                                    }`}
+                                                >
+                                                    <Bookmark size={18} className={post.isSaved ? "fill-[#1E3A23]" : ""} />
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 </article>
                             ))
@@ -952,7 +1013,7 @@ export default function Community() {
                                                 />
                                             ) : (
                                                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#F5F2E6] text-base">
-                                                    {fossil.icon || "🦴"}
+                                                    🦴
                                                 </div>
                                             )}
                                             <div className="truncate">
@@ -988,7 +1049,6 @@ export default function Community() {
                                     "#JurassicJourney",
                                     "#FossilFind",
                                     "#Paleontology",
-                                    "#Art",
                                 ].map((tag) => (
                                     <button
                                         key={tag}
@@ -1011,12 +1071,6 @@ export default function Community() {
                                 <h3 className="font-serif text-sm font-bold text-[#1E3A23]">
                                     Suggested Explorers
                                 </h3>
-                                <button
-                                    onClick={() => showToast("Explore all community members")}
-                                    className="text-xs font-bold text-[#1E3A23] hover:underline cursor-pointer"
-                                >
-                                    View All
-                                </button>
                             </div>
 
                             <div className="space-y-3">
@@ -1025,17 +1079,20 @@ export default function Community() {
                                         key={exp.id}
                                         className="flex items-center justify-between"
                                     >
-                                        <div className="flex items-center gap-2.5">
+                                        <div
+                                            onClick={() => setActiveProfileExplorer(exp)}
+                                            className="flex items-center gap-2.5 cursor-pointer group"
+                                        >
                                             <img
                                                 src={exp.avatar}
                                                 alt={exp.name}
-                                                className="h-8 w-8 rounded-full object-cover border border-[#1E3A23]/30"
+                                                className="h-8 w-8 rounded-full object-cover border border-[#1E3A23]/30 group-hover:border-[#2F7D4D]"
                                             />
-                                            <div>
-                                                <h4 className="text-xs font-bold text-[#1E3A23]">
+                                            <div className="min-w-0">
+                                                <h4 className="text-xs font-bold text-[#1E3A23] group-hover:text-[#2F7D4D] truncate">
                                                     {exp.name}
                                                 </h4>
-                                                <p className="text-[10px] text-[#6D7A6F]">
+                                                <p className="text-[10px] text-[#6D7A6F] truncate">
                                                     {exp.handle}
                                                 </p>
                                             </div>
@@ -1061,167 +1118,64 @@ export default function Community() {
 
             {/* DYNAMIC CREATE POST MODAL */}
             {isCreateOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-                    <div className="w-full max-w-lg overflow-hidden rounded-2xl bg-white shadow-2xl border border-[#E6E4D9]">
-                        <div className="flex items-center justify-between border-b border-[#F0EFE8] px-5 py-3.5 bg-[#FAF9F5]">
-                            <h3 className="font-serif text-base font-bold text-[#1E3A23]">
-                                Create Community Post
-                            </h3>
-                            <button
-                                onClick={() => setIsCreateOpen(false)}
-                                className="rounded-full p-1 text-[#6D7A6F] hover:bg-[#EFEFE6]"
-                            >
-                                <X size={18} />
-                            </button>
-                        </div>
+                <CreatePostModal
+                    currentUser={currentUser}
+                    initialType={createModalType}
+                    initialTitle={createModalTitle}
+                    initialTag={createModalTag}
+                    onSubmit={handlePublishPost}
+                    onClose={() => setIsCreateOpen(false)}
+                />
+            )}
 
-                        <form onSubmit={handleCreatePost} className="p-5 space-y-4">
-                            {/* Category Picker */}
-                            <div>
-                                <label className="block text-xs font-bold text-[#4A554B] mb-1.5">
-                                    Category
-                                </label>
-                                <div className="grid grid-cols-4 gap-2">
-                                    {[
-                                        { id: "text", label: "Text", icon: FileText },
-                                        { id: "hybrid", label: "Hybrid", icon: Dna },
-                                        { id: "photo", label: "Photo", icon: ImageIcon },
-                                        { id: "fossil", label: "Fossil", icon: Target },
-                                    ].map(({ id, label, icon: Icon }) => (
-                                        <button
-                                            type="button"
-                                            key={id}
-                                            onClick={() => setPostType(id)}
-                                            className={`flex items-center justify-center gap-1.5 rounded-xl border p-2 text-xs font-bold transition ${
-                                                postType === id
-                                                    ? "border-[#1E3A23] bg-[#1E3A23] text-white"
-                                                    : "border-[#E1DEC9] bg-white text-[#687A6C] hover:bg-[#F7F6F0]"
-                                            }`}
-                                        >
-                                            <Icon size={14} />
-                                            <span>{label}</span>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
+            {/* DYNAMIC EXPLORER PROFILE PASSPORT MODAL */}
+            {activeProfileExplorer && (
+                <ExplorerProfileModal
+                    explorer={activeProfileExplorer}
+                    currentUser={currentUser}
+                    posts={posts}
+                    onFollow={handleFollow}
+                    onClose={() => setActiveProfileExplorer(null)}
+                />
+            )}
 
-                            {/* Title */}
-                            <div>
-                                <label className="block text-xs font-bold text-[#4A554B] mb-1">
-                                    Title (Optional)
-                                </label>
-                                <input
-                                    type="text"
-                                    value={formTitle}
-                                    onChange={(e) => setFormTitle(e.target.value)}
-                                    placeholder="Enter a title for your discovery..."
-                                    className="w-full rounded-xl border border-[#E1DEC9] bg-[#FAF9F5] p-2.5 text-xs text-[#2C352E] focus:border-[#1E3A23] focus:bg-white focus:outline-none"
-                                />
-                            </div>
+            {/* DYNAMIC HYBRID BATTLE COMPARISON MODAL */}
+            {activeBattleHybrid && (
+                <HybridBattleModal
+                    hybrid={activeBattleHybrid}
+                    allPosts={posts}
+                    onClose={() => setActiveBattleHybrid(null)}
+                />
+            )}
 
-                            {/* Content */}
-                            <div>
-                                <label className="block text-xs font-bold text-[#4A554B] mb-1">
-                                    Content
-                                </label>
-                                <textarea
-                                    rows={3}
-                                    value={formText}
-                                    onChange={(e) => setFormText(e.target.value)}
-                                    placeholder="Describe your prehistoric find, hybrid traits, or journal notes..."
-                                    className="w-full rounded-xl border border-[#E1DEC9] bg-[#FAF9F5] p-3 text-xs text-[#2C352E] focus:border-[#1E3A23] focus:bg-white focus:outline-none"
-                                />
-                            </div>
-
-                            {/* Image URL */}
-                            <div>
-                                <label className="block text-xs font-bold text-[#4A554B] mb-1">
-                                    Image URL (Optional)
-                                </label>
-                                <input
-                                    type="text"
-                                    value={formImageUrl}
-                                    onChange={(e) => setFormImageUrl(e.target.value)}
-                                    placeholder="https://... or leave empty for default preview"
-                                    className="w-full rounded-xl border border-[#E1DEC9] bg-[#FAF9F5] p-2.5 text-xs text-[#2C352E] focus:border-[#1E3A23] focus:bg-white focus:outline-none"
-                                />
-                            </div>
-
-                            {/* Hybrid Stats */}
-                            {postType === "hybrid" && (
-                                <div className="grid grid-cols-2 gap-3 rounded-xl bg-[#FAF9F5] p-3 border border-[#E1DEC9]">
-                                    <div>
-                                        <div className="flex justify-between text-[11px] font-bold text-[#C53030]">
-                                            <span>Attack</span>
-                                            <span>{formAttack}</span>
-                                        </div>
-                                        <input
-                                            type="range"
-                                            min="50"
-                                            max="100"
-                                            value={formAttack}
-                                            onChange={(e) => setFormAttack(Number(e.target.value))}
-                                            className="w-full accent-[#C53030]"
-                                        />
-                                    </div>
-                                    <div>
-                                        <div className="flex justify-between text-[11px] font-bold text-[#2B6CB0]">
-                                            <span>Defense</span>
-                                            <span>{formDefense}</span>
-                                        </div>
-                                        <input
-                                            type="range"
-                                            min="50"
-                                            max="100"
-                                            value={formDefense}
-                                            onChange={(e) => setFormDefense(Number(e.target.value))}
-                                            className="w-full accent-[#2B6CB0]"
-                                        />
-                                    </div>
-                                </div>
-                            )}
-
-                            <div className="flex justify-end gap-3 pt-2">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsCreateOpen(false)}
-                                    className="rounded-xl border border-[#E1DEC9] px-4 py-2 text-xs font-bold text-[#556358] hover:bg-[#F7F6F0]"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="rounded-xl bg-[#1E3A23] px-6 py-2 text-xs font-bold text-white shadow-xs hover:bg-[#162D1B] cursor-pointer"
-                                >
-                                    Publish Post
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+            {/* DYNAMIC NOTIFICATIONS MODAL */}
+            {isNotificationsOpen && (
+                <NotificationsModal
+                    currentUser={currentUser}
+                    onClose={() => setIsNotificationsOpen(false)}
+                />
             )}
 
             {/* DYNAMIC COMMENT MODAL */}
             {activeCommentPost && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-                    <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl border border-[#E6E4D9]">
+                    <div className="w-full max-w-md overflow-hidden rounded-3xl bg-white shadow-2xl border border-[#E6E4D9]">
                         <div className="flex items-center justify-between border-b border-[#F0EFE8] px-5 py-3.5 bg-[#FAF9F5]">
                             <h3 className="font-serif text-base font-bold text-[#1E3A23]">
-                                Comments ({activeCommentPost.commentsCount || 0})
+                                Discussion ({activeCommentPost.commentsCount || 0})
                             </h3>
                             <button
                                 onClick={() => setActiveCommentPost(null)}
-                                className="rounded-full p-1 text-[#6D7A6F] hover:bg-[#EFEFE6]"
+                                className="rounded-full p-1 text-[#6D7A6F] hover:bg-[#EFEFE6] cursor-pointer"
                             >
                                 <X size={18} />
                             </button>
                         </div>
 
-                        {/* Existing Comments List */}
                         <div className="max-h-64 overflow-y-auto p-4 space-y-3">
                             {activeCommentPost.comments?.length > 0 ? (
                                 activeCommentPost.comments.map((c) => (
-                                    <div key={c.id} className="rounded-xl bg-[#FAF9F5] p-3 border border-[#F0ECE1]">
+                                    <div key={c.id} className="rounded-2xl bg-[#FAF9F5] p-3 border border-[#F0ECE1]">
                                         <div className="flex justify-between">
                                             <p className="text-xs font-bold text-[#1E3A23]">{c.user}</p>
                                             <span className="text-[10px] text-[#8A968C]">{c.timestamp || "Just now"}</span>
@@ -1234,18 +1188,17 @@ export default function Community() {
                             )}
                         </div>
 
-                        {/* Add Comment Input */}
                         <form onSubmit={handleAddComment} className="flex items-center gap-2 border-t border-[#F0EFE8] p-3 bg-[#FAF9F5]">
                             <input
                                 type="text"
                                 value={newCommentText}
                                 onChange={(e) => setNewCommentText(e.target.value)}
-                                placeholder="Write a comment..."
-                                className="flex-1 rounded-xl border border-[#E1DEC9] bg-white px-3 py-1.5 text-xs text-[#2C352E] focus:border-[#1E3A23] focus:outline-none"
+                                placeholder={`Comment as ${currentUser.name}...`}
+                                className="flex-1 rounded-xl border border-[#E1DEC9] bg-white px-3.5 py-2 text-xs text-[#2C352E] focus:border-[#1E3A23] focus:outline-none"
                             />
                             <button
                                 type="submit"
-                                className="rounded-xl bg-[#1E3A23] px-4 py-1.5 text-xs font-bold text-white hover:bg-[#162D1B]"
+                                className="rounded-xl bg-[#1E3A23] px-4 py-2 text-xs font-bold text-white hover:bg-[#162D1B] cursor-pointer"
                             >
                                 Send
                             </button>
@@ -1257,7 +1210,7 @@ export default function Community() {
             {/* DYNAMIC REMIX MODAL */}
             {activeRemixPost && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-                    <div className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl border border-[#E6E4D9]">
+                    <div className="w-full max-w-md overflow-hidden rounded-3xl bg-white shadow-2xl border border-[#E6E4D9]">
                         <div className="flex items-center justify-between border-b border-[#F0EFE8] px-5 py-3.5 bg-[#FAF9F5]">
                             <div className="flex items-center gap-2">
                                 <Sparkles size={18} className="text-[#D97706]" />
@@ -1267,7 +1220,7 @@ export default function Community() {
                             </div>
                             <button
                                 onClick={() => setActiveRemixPost(null)}
-                                className="rounded-full p-1 text-[#6D7A6F] hover:bg-[#EFEFE6]"
+                                className="rounded-full p-1 text-[#6D7A6F] hover:bg-[#EFEFE6] cursor-pointer"
                             >
                                 <X size={18} />
                             </button>
@@ -1275,7 +1228,7 @@ export default function Community() {
 
                         <div className="p-5 space-y-4">
                             <p className="text-xs text-[#4A554B]">
-                                Adjust the genetic attributes of this hybrid to generate your custom variant!
+                                Re-engineer {activeRemixPost.title} with custom attributes. Output will be published as a new specimen created by <strong className="text-[#1E3A23]">{currentUser.name}</strong>!
                             </p>
 
                             <div>
@@ -1321,7 +1274,7 @@ export default function Community() {
 
             {/* TOAST NOTIFICATION */}
             {toastMessage && (
-                <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-xl bg-[#1E3A23] px-4 py-3 text-xs font-bold text-white shadow-xl border border-white/20">
+                <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-2xl bg-[#1E3A23] px-4 py-3 text-xs font-bold text-white shadow-2xl border border-white/20">
                     <Check size={16} className="text-[#A3E635]" />
                     <span>{toastMessage}</span>
                 </div>
