@@ -61,7 +61,7 @@ export default function GameHub({ initialGame = "hub" }) {
                     </h1>
 
                     <p className="text-base sm:text-lg text-emerald-200/90 font-medium">
-                        Test your memory, unearth fossilized dinosaur bones, or escape dangerous volcanic trails!
+                        Choose your challenge level: Easy, Moderate, or Hard across all 3 Jurassic games!
                     </p>
                 </div>
 
@@ -87,6 +87,13 @@ export default function GameHub({ initialGame = "hub" }) {
                                 <p className="text-xs text-gray-300 mt-1 leading-relaxed">
                                     Flip 3D prehistoric cards, match species pairs, unlock dinosaur trivia facts, and beat the clock!
                                 </p>
+
+                                {/* Difficulty Tags */}
+                                <div className="flex gap-1.5 mt-3">
+                                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Easy (12)</span>
+                                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">Moderate (16)</span>
+                                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30">Hard (20)</span>
+                                </div>
                             </div>
                         </div>
 
@@ -127,6 +134,13 @@ export default function GameHub({ initialGame = "hub" }) {
                                 <p className="text-xs text-gray-300 mt-1 leading-relaxed">
                                     Dig up ancient buried dinosaur bones, assemble full skeletons, and avoid solid bedrock hazards.
                                 </p>
+
+                                {/* Difficulty Tags */}
+                                <div className="flex gap-1.5 mt-3">
+                                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Easy (20 Digs)</span>
+                                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">Moderate (15)</span>
+                                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30">Hard (10)</span>
+                                </div>
                             </div>
                         </div>
 
@@ -160,6 +174,13 @@ export default function GameHub({ initialGame = "hub" }) {
                                 <p className="text-xs text-gray-300 mt-1 leading-relaxed">
                                     Run through volcanic landscapes, jump over lava rocks, dodge Pterodactyls, and collect Amber Gems!
                                 </p>
+
+                                {/* Difficulty Tags */}
+                                <div className="flex gap-1.5 mt-3">
+                                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Easy (3 Shields)</span>
+                                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">Moderate</span>
+                                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30">Hard</span>
+                                </div>
                             </div>
                         </div>
 
