@@ -4,8 +4,21 @@ import { useState, useEffect } from "react";
 import { Menu, Search, X, Bell, ChevronDown, ChevronRight, Sparkles, BookOpen, Gamepad2, Globe } from "lucide-react";
 import UserMenu from "../UserMenu";
 import SearchBar from "../../search/SearchBar";
-import { Home, Compass, Clock3, PlusSquare, CircleHelp, Brain, Map, Users } from "lucide-react";
+import { 
+    Home, 
+    Compass, 
+    Clock3, 
+    PlusSquare, 
+    CircleHelp, 
+    Brain, 
+    Map, 
+    Users, 
+    Gamepad2, 
+    GraduationCap, 
+    Sparkles 
+} from "lucide-react";
 import NavbarLink from "./NavbarLinks";
+import NavDropdown from "./NavDropdown";
 
 function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -26,7 +39,57 @@ function Navbar() {
         };
     }, [menuOpen, searchOpen]);
 
+    const exploreDropdownItems = [
+        {
+            to: "/explorer",
+            label: "Explore Dinosaurs",
+            icon: Compass,
+            desc: "Browse full prehistoric database",
+        },
+        {
+            to: "/map",
+            label: "Fossil Map",
+            icon: Map,
+            desc: "Locate dinosaur fossils globally",
+        },
+    ];
+
+    const createDropdownItems = [
+        {
+            to: "/create",
+            label: "Create Dinosaur",
+            icon: PlusSquare,
+            desc: "Design and submit your species",
+        },
+        {
+            to: "/community",
+            label: "Community Hybrids",
+            icon: Users,
+            desc: "View community creations & finds",
+        },
+    ];
+
+    const learnDropdownItems = [
+        {
+            to: "/quiz",
+            label: "Interactive Quiz",
+            icon: CircleHelp,
+        },
+        {
+            to: "/games",
+            label: "Games",
+            icon: Gamepad2,
+        },
+    ];
+
     const mobileLinks = [
+        {
+            to: "/games",
+            icon: Gamepad2,
+            label: "Games (Memory Match)",
+            desc: "Flip cards and match dinosaur pairs",
+            badge: "NEW",
+        },
         {
             to: "/explorer",
             icon: Compass,
@@ -51,6 +114,8 @@ function Navbar() {
             label: "Create Your Dinosaur",
             desc: "Contribute a new species",
         },
+<<<<<<< HEAD
+=======
         {
             to: "/quiz",
             icon: CircleHelp,
@@ -63,6 +128,7 @@ function Navbar() {
             label: "Community Page",
             desc: "Connect, share hybrids and fossil finds",
         },
+>>>>>>> 327963855d7b81f258d458e499c15b428bead804
         {
             to: "/professor",
             icon: Brain,
@@ -148,6 +214,25 @@ function Navbar() {
                                 Home
                             </NavbarLink>
 
+<<<<<<< HEAD
+                            <NavDropdown
+                                label="Explore"
+                                icon={Compass}
+                                items={exploreDropdownItems}
+                            />
+
+                            <NavDropdown
+                                label="Create"
+                                icon={PlusSquare}
+                                items={createDropdownItems}
+                            />
+
+                            <NavDropdown
+                                label="Learn"
+                                icon={GraduationCap}
+                                items={learnDropdownItems}
+                            />
+=======
                             {/* Explore Dropdown */}
                             <div className="relative group">
                                 <button className={`flex items-center gap-1.5 rounded-full border border-transparent px-3 xl:px-4 py-1.5 xl:py-2 text-xs xl:text-sm font-medium transition-all duration-200 cursor-pointer ${
@@ -214,6 +299,7 @@ function Navbar() {
                                     <span>Create</span>
                                     <ChevronDown size={14} className="transition-transform duration-200 group-hover:rotate-180 opacity-70" />
                                 </button>
+>>>>>>> 327963855d7b81f258d458e499c15b428bead804
 
                                 <div className="absolute top-full left-0 mt-2 w-56 rounded-2xl border border-[#e3d7c2] bg-white p-2 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 z-50">
                                     <Link
@@ -375,14 +461,16 @@ function Navbar() {
                         {/* Navigation */}
                         <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-6 py-8 sm:px-8">
                             {mobileLinks.map(
-                                ({ to, icon: Icon, label, desc }) => (
+                                ({ to, icon: Icon, label, desc, badge }) => (
                                     <Link
                                         key={to}
                                         to={to}
                                         onClick={() => setMenuOpen(false)}
                                         className={`group flex items-center gap-4 rounded-2xl px-5 py-4 transition
                                         ${
-                                            label === "Ask Professor Ross"
+                                            label.includes("Games")
+                                                ? "border border-[#52B788]/40 bg-[#1F5C38]/30 shadow-[0_0_20px_rgba(34,197,94,0.2)]"
+                                                : label === "Ask Professor Ross"
                                                 ? "border border-[#52B788]/30 bg-gradient-to-r from-[#1F5C38]/40 to-[#2F7D4D]/20 shadow-[0_0_20px_rgba(34,197,94,0.15)]"
                                                 : "border border-white/5 bg-white/5 hover:border-[#36593D]/40 hover:bg-[#36593D]/15"
                                         }`}
@@ -390,27 +478,25 @@ function Navbar() {
                                         <div
                                             className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition
                                             ${
-                                                label === "Ask Professor Ross"
+                                                label.includes("Games") || label === "Ask Professor Ross"
                                                     ? "bg-[#36593D] text-white shadow-[0_0_15px_rgba(34,197,94,0.4)]"
                                                     : "bg-[#36593D]/20 text-[#8FBA97] group-hover:bg-[#36593D] group-hover:text-white"
                                             }`}
-                                        >                                            <Icon size={20} />
+                                        >
+                                            <Icon size={20} />
                                         </div>
 
                                         <div className="flex-1">
-                                            {label === "Ask Professor Ross" && (
-                                                <div className="mb-1 flex items-center gap-2 text-xs text-green-300">
-                                                    <span className="relative flex h-2 w-2">
-                                                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
-                                                        <span className="relative inline-flex h-2 w-2 rounded-full bg-green-300"></span>
-                                                    </span>
-                                                    Online
-                                                </div>
-                                            )}
                                             <div className="flex items-center gap-2">
                                                 <p className="text-lg font-semibold text-white">
                                                     {label}
                                                 </p>
+
+                                                {badge && (
+                                                    <span className="rounded-full bg-[#52B788] px-2 py-0.5 text-[10px] font-bold tracking-wider text-slate-950 uppercase">
+                                                        {badge}
+                                                    </span>
+                                                )}
 
                                                 {label === "Ask Professor Ross" && (
                                                     <span className="rounded-full bg-green-400/20 px-2 py-0.5 text-[10px] font-bold tracking-wider text-green-300">
