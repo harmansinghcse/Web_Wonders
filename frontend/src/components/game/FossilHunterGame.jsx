@@ -160,8 +160,22 @@ export default function FossilHunterGame({ onBackToHub }) {
     };
 
     return (
-        <div className="relative min-h-screen bg-[#111a14] text-[#e4dac6] font-sans selection:bg-[#52B788] selection:text-black">
+        <div className="relative min-h-screen bg-[#111a14] text-[#e4dac6] font-sans selection:bg-[#52B788] selection:text-black overflow-x-hidden">
             
+            {/* DISTINCT EXCAVATION BACKGROUND */}
+            <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+                <img
+                    src="/jurassic_realistic_game_bg.jpg"
+                    alt="Jurassic Fossil Excavator Background"
+                    className="h-full w-full object-cover object-center filter brightness-90 contrast-110"
+                    onError={(e) => {
+                        e.target.style.display = 'none';
+                    }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-amber-950/80 via-stone-950/85 to-[#111a14]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#d97706_0%,transparent_60%)] opacity-15" />
+            </div>
+
             {/* Navigation Header */}
             {gameState === "landing" && (
                 <div className="relative z-50">
@@ -176,7 +190,7 @@ export default function FossilHunterGame({ onBackToHub }) {
                     {onBackToHub && (
                         <button
                             onClick={onBackToHub}
-                            className="inline-flex items-center gap-2 self-start bg-white/10 hover:bg-white/20 text-emerald-200 px-4 py-2 rounded-xl text-xs font-bold shadow-md transition-all cursor-pointer"
+                            className="inline-flex items-center gap-2 self-start bg-white/10 hover:bg-white/20 text-emerald-200 px-4 py-2 rounded-xl text-xs font-bold shadow-md transition-all cursor-pointer backdrop-blur-md"
                         >
                             <ArrowLeft size={16} />
                             <span>Back to Game Hub</span>
@@ -184,19 +198,19 @@ export default function FossilHunterGame({ onBackToHub }) {
                     )}
 
                     <div className="space-y-3">
-                        <div className="inline-flex items-center gap-2 bg-[#1b3827]/80 border border-[#52B788]/40 px-4 py-1 rounded-full text-xs font-serif font-bold text-[#52B788] uppercase">
+                        <div className="inline-flex items-center gap-2 bg-[#1b3827]/80 border border-[#52B788]/40 px-4 py-1 rounded-full text-xs font-serif font-bold text-[#52B788] uppercase backdrop-blur-md">
                             <span>⛏️ EXCAVATION GAME</span>
                         </div>
-                        <h1 className="text-4xl sm:text-6xl font-black font-serif text-white uppercase tracking-wider">
+                        <h1 className="text-4xl sm:text-6xl font-black font-serif text-white uppercase tracking-wider drop-shadow-md">
                             JURASSIC FOSSIL EXCAVATOR
                         </h1>
-                        <p className="text-sm sm:text-base text-emerald-200/90 max-w-lg mx-auto">
+                        <p className="text-sm sm:text-base text-emerald-200/90 max-w-lg mx-auto font-medium">
                             Unearth ancient dinosaur bones, avoid dense bedrock hazards, and assemble complete prehistoric skeletons!
                         </p>
                     </div>
 
                     {/* Difficulty Selection */}
-                    <div className="w-full max-w-md bg-[#18291c] border border-[#2b4c34] p-5 rounded-3xl shadow-2xl space-y-4">
+                    <div className="w-full max-w-md bg-[#18291c]/95 border border-[#2b4c34] p-5 rounded-3xl shadow-2xl space-y-4 backdrop-blur-md">
                         <h3 className="text-xs font-serif font-bold text-amber-300 uppercase tracking-widest">
                             SELECT DIFFICULTY LEVEL
                         </h3>
@@ -240,7 +254,7 @@ export default function FossilHunterGame({ onBackToHub }) {
                 <main className="relative z-10 max-w-5xl mx-auto pt-8 pb-12 px-4 sm:px-6 flex flex-col space-y-6">
                     
                     {/* Top HUD Header */}
-                    <div className="flex items-center justify-between bg-[#192b1e] border border-[#2b4c34] rounded-2xl p-4 shadow-xl">
+                    <div className="flex items-center justify-between bg-[#192b1e]/95 border border-[#2b4c34] rounded-2xl p-4 shadow-xl backdrop-blur-md">
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={() => setGameState("landing")}
@@ -288,7 +302,7 @@ export default function FossilHunterGame({ onBackToHub }) {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                         
                         {/* Left: Dig Site Grid */}
-                        <div className="lg:col-span-8 bg-[#18291c] border border-[#2b4c34] rounded-2xl p-6 shadow-2xl flex flex-col items-center">
+                        <div className="lg:col-span-8 bg-[#18291c]/90 border border-[#2b4c34] rounded-2xl p-6 shadow-2xl flex flex-col items-center backdrop-blur-md">
                             <h2 className="text-sm font-serif font-bold text-amber-300 tracking-wider uppercase mb-4 flex items-center gap-2">
                                 <Compass size={18} />
                                 <span>EXCAVATION GRID (CLICK TILE TO DIG)</span>
@@ -327,7 +341,7 @@ export default function FossilHunterGame({ onBackToHub }) {
                         </div>
 
                         {/* Right: Excavation Log & Actions */}
-                        <div className="lg:col-span-4 bg-[#18291c] border border-[#2b4c34] rounded-2xl p-5 shadow-2xl flex flex-col justify-between space-y-4">
+                        <div className="lg:col-span-4 bg-[#18291c]/90 border border-[#2b4c34] rounded-2xl p-5 shadow-2xl flex flex-col justify-between space-y-4 backdrop-blur-md">
                             <div>
                                 <h3 className="text-sm font-serif font-bold text-amber-300 uppercase tracking-wider mb-3">
                                     EXCAVATION LOG
@@ -367,7 +381,7 @@ export default function FossilHunterGame({ onBackToHub }) {
 
                     {/* GAME OVER MODAL */}
                     {gameState === "gameover" && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
                             <div className="w-full max-w-md bg-[#122317] border-2 border-[#52B788] rounded-3xl p-6 shadow-2xl text-center space-y-4 text-white">
                                 <div className="text-5xl mb-2">
                                     {fossilsFound >= totalFossils ? "🦖" : "🦴"}

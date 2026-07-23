@@ -241,8 +241,22 @@ export default function DinoRunnerGame({ onBackToHub }) {
     };
 
     return (
-        <div className="relative min-h-screen bg-[#0e1711] text-[#e4dac6] font-sans select-none">
+        <div className="relative min-h-screen bg-[#0e1711] text-[#e4dac6] font-sans select-none overflow-x-hidden">
             
+            {/* DISTINCT VOLCANIC RUNNER BACKGROUND */}
+            <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+                <img
+                    src="/jurassic_game_vibe_bg.jpg"
+                    alt="Jurassic Dino Escape Background"
+                    className="h-full w-full object-cover object-center filter brightness-85 contrast-115 scale-105"
+                    onError={(e) => {
+                        e.target.style.display = 'none';
+                    }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-red-950/60 via-stone-950/80 to-[#0e1711]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,#ef4444_0%,transparent_60%)] opacity-20" />
+            </div>
+
             {/* Header only on start */}
             {gameState === "start" && (
                 <div className="relative z-50">
@@ -257,7 +271,7 @@ export default function DinoRunnerGame({ onBackToHub }) {
                     {onBackToHub && (
                         <button
                             onClick={onBackToHub}
-                            className="inline-flex items-center gap-2 self-start bg-white/10 hover:bg-white/20 text-emerald-200 px-4 py-2 rounded-xl text-xs font-bold shadow-md transition-all cursor-pointer"
+                            className="inline-flex items-center gap-2 self-start bg-white/10 hover:bg-white/20 text-emerald-200 px-4 py-2 rounded-xl text-xs font-bold shadow-md transition-all cursor-pointer backdrop-blur-md"
                         >
                             <ArrowLeft size={16} />
                             <span>Back to Game Hub</span>
@@ -266,16 +280,16 @@ export default function DinoRunnerGame({ onBackToHub }) {
 
                     <div className="space-y-3">
                         <span className="text-6xl animate-bounce inline-block">🦖</span>
-                        <h1 className="text-4xl sm:text-6xl font-black font-serif text-white uppercase tracking-wider">
+                        <h1 className="text-4xl sm:text-6xl font-black font-serif text-white uppercase tracking-wider drop-shadow-md">
                             JURASSIC DINO ESCAPE
                         </h1>
-                        <p className="text-sm sm:text-base text-emerald-200/90 max-w-lg mx-auto">
+                        <p className="text-sm sm:text-base text-emerald-200/90 max-w-lg mx-auto font-medium">
                             Jump over volcanic rocks and dodge flying Pterodactyls! Collect Amber Gems for extra score.
                         </p>
                     </div>
 
                     {/* Difficulty Selection Card */}
-                    <div className="w-full max-w-md bg-[#142418] border border-[#2b4c34] p-5 rounded-3xl shadow-2xl space-y-4">
+                    <div className="w-full max-w-md bg-[#142418]/95 border border-[#2b4c34] p-5 rounded-3xl shadow-2xl space-y-4 backdrop-blur-md">
                         <h3 className="text-xs font-serif font-bold text-[#52B788] uppercase tracking-widest">
                             SELECT DIFFICULTY LEVEL
                         </h3>
@@ -319,7 +333,7 @@ export default function DinoRunnerGame({ onBackToHub }) {
                 <main className="relative z-10 max-w-5xl mx-auto pt-8 pb-12 px-4 sm:px-6 flex flex-col space-y-6">
                     
                     {/* HUD Header */}
-                    <div className="flex items-center justify-between bg-[#18291c] border border-[#2b4c34] rounded-2xl p-4 shadow-xl">
+                    <div className="flex items-center justify-between bg-[#18291c]/95 border border-[#2b4c34] rounded-2xl p-4 shadow-xl backdrop-blur-md">
                         <div className="flex items-center gap-3">
                             <button
                                 onClick={() => setGameState("start")}
