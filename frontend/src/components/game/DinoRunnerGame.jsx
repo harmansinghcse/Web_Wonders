@@ -242,20 +242,55 @@ export default function DinoRunnerGame({ onBackToHub }) {
     };
 
     return (
-        <div className="game-page relative min-h-screen bg-[#0e1711] text-[#e4dac6] font-sans select-none overflow-x-hidden">
+        <div className="game-page relative min-h-screen bg-[#0d0303] text-[#fce8e8] font-sans select-none overflow-x-hidden">
             <Cursor />
-            {/* DISTINCT VOLCANIC RUNNER BACKGROUND */}
-            <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+            {/* DISTINCT VISIBLE RUNNING DINOSAUR & VOLCANIC SPEED BACKGROUND */}
+            <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none select-none">
+                {/* Background Image - Highly Visible & Vibrant */}
                 <img
                     src="/jurassic_game_vibe_bg.jpg"
                     alt="Jurassic Dino Escape Background"
-                    className="h-full w-full object-cover object-center filter brightness-85 contrast-115 scale-105"
+                    className="h-full w-full object-cover object-center scale-105 filter brightness-85 contrast-120 saturate-120 opacity-85"
                     onError={(e) => {
-                        e.target.style.display = 'none';
+                        e.currentTarget.style.display = 'none';
                     }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-red-950/60 via-stone-950/80 to-[#0e1711]" />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,#ef4444_0%,transparent_60%)] opacity-20" />
+
+                {/* Translucent Fiery Crimson/Magma Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-b from-[#380b0b]/60 via-[#1f0505]/40 to-[#0c0202]/75 backdrop-brightness-95" />
+
+                {/* Running Dinosaur Silhouette & Volcanic Lava Artwork Overlay (No Dashes or Dots) */}
+                <svg className="absolute inset-0 w-full h-full opacity-50" xmlns="http://www.w3.org/2000/svg">
+                    {/* Smooth Motion & Atmospheric Heat Trails */}
+                    <g stroke="rgba(239, 68, 68, 0.25)" strokeWidth="2">
+                        <path d="M 0 180 Q 700 150 1600 200" />
+                        <path d="M 0 280 Q 800 250 1600 300" />
+                        <path d="M 0 420 Q 700 400 1600 440" />
+                    </g>
+
+                    {/* Dynamic Running T-Rex Silhouette (Center Right) */}
+                    <g fill="rgba(239, 68, 68, 0.2)" stroke="rgba(239, 68, 68, 0.7)" strokeWidth="3.5">
+                        {/* Running Dino Head & Open Jaws */}
+                        <path d="M 780 220 C 820 180 880 170 940 190 C 970 200 990 230 960 250 L 920 250 C 950 275 920 290 890 280 L 840 270 Z" />
+                        {/* Dino Eye */}
+                        <circle cx="880" cy="210" r="6" fill="rgba(255, 200, 0, 0.95)" />
+                        {/* Body & Tail */}
+                        <path d="M 840 270 C 760 300 680 320 580 290 C 520 270 460 230 400 210 L 490 280 C 590 350 720 360 800 330 Z" />
+                        {/* Strong Running Legs */}
+                        <path d="M 750 330 L 720 440 L 770 480 L 800 480" strokeWidth="5.5" />
+                        <path d="M 680 320 L 630 410 L 590 450 L 560 450" strokeWidth="5.5" />
+                        {/* Small Raptor Arms */}
+                        <path d="M 830 290 L 860 320 L 875 315" strokeWidth="4.5" />
+                    </g>
+
+                    {/* Lava Mountain Ridges & Cracks */}
+                    <path d="M 0 650 L 200 580 L 400 640 L 650 560 L 900 660 L 1200 570 L 1600 680 L 1600 900 L 0 900 Z" fill="rgba(35, 7, 7, 0.7)" stroke="rgba(249, 115, 22, 0.7)" strokeWidth="3" />
+                    <path d="M 150 630 L 250 720 M 420 650 L 500 780 M 680 580 L 760 700 M 950 670 L 1020 800" stroke="rgba(239, 68, 68, 0.85)" strokeWidth="3" />
+                </svg>
+
+                {/* Fiery Lava Glowing Layers */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_center,rgba(239,68,68,0.4)_0%,transparent_65%)] animate-pulse" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_30%,rgba(249,115,22,0.25)_0%,transparent_50%)]" />
             </div>
 
             {/* Header only on start */}

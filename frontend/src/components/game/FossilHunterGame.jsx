@@ -161,20 +161,48 @@ export default function FossilHunterGame({ onBackToHub }) {
     };
 
     return (
-        <div className="game-page relative min-h-screen bg-[#111a14] text-[#e4dac6] font-sans selection:bg-[#52B788] selection:text-black overflow-x-hidden">
+        <div className="game-page relative min-h-screen bg-[#140b04] text-[#fbf0da] font-sans select-none overflow-x-hidden">
             <Cursor />
-            {/* DISTINCT EXCAVATION BACKGROUND */}
-            <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+            {/* REALISTIC VISIBLE FOSSIL BONES & EXCAVATION SITE BACKGROUND */}
+            <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none select-none">
+                {/* Realistic Excavation Background Image - High Clarity & Vibrancy */}
                 <img
                     src="/jurassic_realistic_game_bg.jpg"
                     alt="Jurassic Fossil Excavator Background"
-                    className="h-full w-full object-cover object-center filter brightness-90 contrast-110"
+                    className="h-full w-full object-cover object-center scale-105 filter brightness-90 contrast-110 saturate-110 opacity-90"
                     onError={(e) => {
-                        e.target.style.display = 'none';
+                        e.currentTarget.style.display = 'none';
                     }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-amber-950/80 via-stone-950/85 to-[#111a14]" />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#d97706_0%,transparent_60%)] opacity-15" />
+                
+                {/* Natural Translucent Warm Earth & Torchlight Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-b from-[#2a1708]/50 via-transparent to-[#0c0602]/80 backdrop-brightness-95" />
+                
+                {/* Organic Realistic Fossil Skull & Bones Artwork Overlay - Smooth & Natural */}
+                <svg className="absolute inset-0 w-full h-full opacity-40" xmlns="http://www.w3.org/2000/svg">
+                    {/* Realistic Fossil Skull & Bones Silhouettes (No Synthetic Dots or Dashes) */}
+                    <g stroke="rgba(245, 158, 11, 0.45)" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        {/* T-Rex Skull Contour Top-Right */}
+                        <path d="M700 80 Q760 40 820 90 Q880 130 920 120 Q950 150 920 190 Q850 220 780 200 Q730 180 700 130 Z" fill="rgba(245, 158, 11, 0.08)" />
+                        <circle cx="760" cy="110" r="14" fill="rgba(0,0,0,0.5)" stroke="rgba(245, 158, 11, 0.5)" />
+                        <path d="M720 140 L740 180 M760 145 L780 185 M800 145 L820 185 M840 140 L860 180" strokeWidth="3" />
+                        
+                        {/* Spine & Ribs Contour Bottom-Left */}
+                        <path d="M50 600 Q150 550 250 620 T450 580" strokeWidth="4" />
+                        <path d="M100 580 Q120 500 80 440" />
+                        <path d="M160 570 Q190 490 150 430" />
+                        <path d="M220 590 Q260 510 220 450" />
+                        <path d="M280 600 Q330 520 290 460" />
+                        <path d="M340 590 Q390 510 350 450" />
+                        
+                        {/* Ancient Shell / Ammonite Fossil Top-Left */}
+                        <path d="M120 150 A50 50 0 0 1 220 150 A40 40 0 0 1 140 150 A30 30 0 0 1 200 150 A20 20 0 0 1 160 150" strokeWidth="2.5" />
+                    </g>
+                </svg>
+
+                {/* Warm Natural Torchlight Glow Layers */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_25%,rgba(245,158,11,0.25)_0%,transparent_60%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_75%,rgba(180,83,9,0.18)_0%,transparent_50%)] animate-pulse" />
             </div>
 
             {/* Navigation Header */}
