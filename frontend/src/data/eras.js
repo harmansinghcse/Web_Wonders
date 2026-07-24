@@ -12,10 +12,10 @@ export const eras = [
             name: "Volcanic Arid Desert",
             primary: "#C9AA5B",
             accent: "#D97706",
-            bgGlow: "rgba(201, 170, 91, 0.15)",
-            border: "rgba(201, 170, 91, 0.3)",
-            badgeBg: "rgba(201, 170, 91, 0.1)",
-            cardBg: "rgba(35, 25, 10, 0.6)"
+            bgGlow: "rgba(201, 170, 91, 0.25)",
+            border: "rgba(201, 170, 91, 0.4)",
+            badgeBg: "rgba(201, 170, 91, 0.15)",
+            cardBg: "rgba(35, 25, 10, 0.7)"
         },
         climate: {
             temp: "22°C",
@@ -82,10 +82,10 @@ export const eras = [
             name: "Lush Conifer Jungle",
             primary: "#10B981",
             accent: "#059669",
-            bgGlow: "rgba(16, 185, 129, 0.15)",
-            border: "rgba(16, 185, 129, 0.3)",
-            badgeBg: "rgba(16, 185, 129, 0.1)",
-            cardBg: "rgba(10, 30, 20, 0.6)"
+            bgGlow: "rgba(16, 185, 129, 0.25)",
+            border: "rgba(16, 185, 129, 0.4)",
+            badgeBg: "rgba(16, 185, 129, 0.15)",
+            cardBg: "rgba(10, 30, 20, 0.7)"
         },
         climate: {
             temp: "20°C",
@@ -152,10 +152,10 @@ export const eras = [
             name: "Fiery Extinction Sunset",
             primary: "#EF4444",
             accent: "#DC2626",
-            bgGlow: "rgba(239, 68, 68, 0.15)",
-            border: "rgba(239, 68, 68, 0.3)",
-            badgeBg: "rgba(239, 68, 68, 0.1)",
-            cardBg: "rgba(35, 10, 10, 0.6)"
+            bgGlow: "rgba(239, 68, 68, 0.25)",
+            border: "rgba(239, 68, 68, 0.4)",
+            badgeBg: "rgba(239, 68, 68, 0.15)",
+            cardBg: "rgba(35, 10, 10, 0.7)"
         },
         climate: {
             temp: "24°C",

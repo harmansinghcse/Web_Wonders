@@ -8,14 +8,13 @@ import { motion } from "framer-motion";
  * --------------------------------------------
  * Component: DinosaurList
  * Purpose:
- * Displays a list of dinosaur cards based on
- * the current search and filter results.
- * It also handles loading and empty states.
+ * Displays a list of dinosaur cards with equal height stretching
+ * based on search and filter results.
  * --------------------------------------------
  */
 
 export default function DinosaurList({ loading, dinosaurs }) {
-      // Display loading animation while dinosaur data is being fetched
+    // Display loading animation while dinosaur data is being fetched
     if (loading) {
         return <LoadingState />;
     }
@@ -27,10 +26,10 @@ export default function DinosaurList({ loading, dinosaurs }) {
     return (
         // Container with layout animation for smooth UI transitions
         <motion.div layout className="space-y-6">
-            <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid items-stretch gap-8 md:grid-cols-2 xl:grid-cols-3">
                 <AnimatePresence mode="wait">
                     {dinosaurs.map((dinosaur) => (
-                        <DinosaurCard key={dinosaur._id} dinosaur={dinosaur} />
+                        <DinosaurCard key={dinosaur._id || dinosaur.id || dinosaur.slug} dinosaur={dinosaur} />
                     ))}
                 </AnimatePresence>
             </div>

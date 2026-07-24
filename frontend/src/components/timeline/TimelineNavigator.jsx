@@ -2,18 +2,146 @@ import { useState, useEffect } from "react";
 import { eras } from "../../data/eras";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Sparkles, MapPin, Thermometer, Wind, Globe, Trees, Columns, ChevronRight } from "lucide-react";
+import {
+    ArrowLeft,
+    Sparkles,
+    MapPin,
+    Thermometer,
+    Wind,
+    Globe,
+    Trees,
+    Columns,
+    ChevronRight,
+    Flame,
+    X,
+    ExternalLink
+} from "lucide-react";
+import Navbar from "../home_components/hero/Navbar";
+import { getExplorerDinosaurs } from "../../services/explorerService";
+
+// Framer motion animation constants
+const balancedSmoothSpring = { type: "spring", stiffness: 300, damping: 25 };
+const ultraBezier = [0.4, 0, 0.2, 1];
+
+// Safe API Lookup Helper
+const fetchExplorerDinosaurs = async (params) => {
+    if (typeof getExplorerDinosaurs === "function") {
+        return await getExplorerDinosaurs(params);
+    }
+    return { data: [] };
+};
+
+// Asteroid Impact Modal Component
+function AsteroidImpactModal({ onClose }) {
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 backdrop-blur-md">
+            <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                transition={{ duration: 0.4, ease: ultraBezier }}
+                className="relative w-full max-w-lg rounded-3xl border border-red-500/30 bg-[#0d0707] p-6 text-white shadow-[0_0_50px_rgba(239,68,68,0.2)] space-y-4"
+            >
+                <button
+                    onClick={onClose}
+                    className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition cursor-pointer"
+                >
+                    <X size={18} />
+                </button>
+
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-red-400">
+                    <Flame size={16} className="animate-pulse text-red-500" />
+                    <span>Cretaceous-Paleogene Extinction Event</span>
+                </div>
+
+                <h3 className="font-serif text-3xl font-extrabold text-red-100">
+                    Asteroid Impact Simulation
+                </h3>
+
+                <p className="text-xs text-stone-300 leading-relaxed">
+                    Approximately 66 million years ago, a massive asteroid roughly 10 to 15 kilometers in diameter struck Earth near Chicxulub, Mexico, triggering extreme climate changes and ending the Mesozoic Era.
+                </p>
+
+                <div className="grid grid-cols-2 gap-3 pt-2 text-xs">
+                    <div className="rounded-xl border border-red-500/20 bg-red-950/30 p-3">
+                        <span className="text-[10px] font-bold text-red-400 uppercase block">Impact Velocity</span>
+                        <span className="text-base font-extrabold text-white">20 km/s (45,000 mph)</span>
+                    </div>
+                    <div className="rounded-xl border border-red-500/20 bg-red-950/30 p-3">
+                        <span className="text-[10px] font-bold text-red-400 uppercase block">Crater Diameter</span>
+                        <span className="text-base font-extrabold text-white">180 km (110 miles)</span>
+                    </div>
+                </div>
+
+                <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={onClose}
+                    className="w-full rounded-xl bg-red-600 hover:bg-red-500 py-3 text-xs font-bold text-white shadow-lg transition cursor-pointer"
+                >
+                    Close Simulation
+                </motion.button>
+            </motion.div>
+        </div>
+    );
+}
 
 export default function TimelineNavigator() {
     const [activeEra, setActiveEra] = useState(0); // 0 = Triassic, 1 = Jurassic, 2 = Cretaceous
     const [compareMode, setCompareMode] = useState(false);
+    const [comparisonEra, setComparisonEra] = useState(1);
+    const [eraDinosaurs, setEraDinosaurs] = useState([]);
+    const [loadingDinosaurs, setLoadingDinosaurs] = useState(false);
+    const [selectedSpecimen, setSelectedSpecimen] = useState(null);
+    const [isAsteroidModalOpen, setIsAsteroidModalOpen] = useState(false);
+
     const navigate = useNavigate();
-    const currentEra = eras[activeEra];
+    const currentEra = eras[activeEra] || eras[0];
+    const compEra = comparisonEra !== null && eras[comparisonEra] ? eras[comparisonEra] : null;
+    const theme = currentEra.theme;
+
+    // Fetch approved dinosaurs from system API for current era
+    useEffect(() => {
+        const fetchEraDinosaurs = async () => {
+            setLoadingDinosaurs(true);
+            try {
+                const res = await fetchExplorerDinosaurs({
+                    period: currentEra.name,
+                    limit: 4,
+                });
+                if (res && res.data && Array.isArray(res.data)) {
+                    setEraDinosaurs(res.data);
+                } else {
+                    setEraDinosaurs([]);
+                }
+            } catch (err) {
+                console.log("System API lookup for era dinosaurs:", err.message);
+                setEraDinosaurs([]);
+            } finally {
+                setLoadingDinosaurs(false);
+            }
+        };
+        fetchEraDinosaurs();
+    }, [activeEra, currentEra.name]);
+
+    // Ensure comparisonEra is always one of the OTHER two eras
+    useEffect(() => {
+        if (comparisonEra === activeEra || comparisonEra === null) {
+            const nextComp = (activeEra + 1) % eras.length;
+            setComparisonEra(nextComp);
+        }
+    }, [activeEra, comparisonEra]);
+
+    // Available comparison options (only the OTHER two timelines)
+    const availableCompareEras = eras
+        .map((er, idx) => ({ ...er, index: idx }))
+        .filter((er) => er.index !== activeEra);
 
     // Preload & decode all background and dinosaur images on mount to eliminate latency when changing timelines
     useEffect(() => {
+        if (!Array.isArray(eras)) return;
         eras.forEach((era) => {
-            const imagesToPreload = [era.background, era.dinosaur];
+            const imagesToPreload = [era.background, era.dinosaur].filter(Boolean);
             if (era.dinosaurs) {
                 era.dinosaurs.forEach((dino) => {
                     if (dino.image) imagesToPreload.push(dino.image);
@@ -30,7 +158,7 @@ export default function TimelineNavigator() {
     }, []);
 
     return (
-        <section className="relative min-h-screen overflow-hidden bg-[#0a0c0a] font-sans selection:bg-[#C9AA5B]/30 selection:text-white pb-16">
+        <section className="relative min-h-screen overflow-hidden bg-[#0A0C0A] font-sans selection:bg-[#C9AA5B]/30 selection:text-white pb-20">
             
             {/* Hidden image preloader to force immediate browser caching */}
             <div className="hidden" aria-hidden="true">
@@ -50,9 +178,9 @@ export default function TimelineNavigator() {
                 <motion.div
                     key={currentEra.background}
                     initial={{ opacity: 0, scale: 1.03 }}
-                    animate={{ opacity: 0.45, scale: 1 }}
+                    animate={{ opacity: 0.55, scale: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.4, ease: "easeOut" }}
+                    transition={{ duration: 0.45, ease: "easeOut" }}
                     className="absolute inset-0 h-full w-full bg-cover bg-center pointer-events-none"
                     style={{ backgroundImage: `url(${currentEra.background})` }}
                 />
@@ -66,34 +194,51 @@ export default function TimelineNavigator() {
                 transition={{ duration: 0.5 }}
                 className="absolute inset-0 pointer-events-none"
                 style={{
-                    background: `radial-gradient(circle at center, ${currentEra.theme.bgGlow} 0%, rgba(10, 12, 10, 0.85) 75%)`
+                    background: `radial-gradient(circle at 50% 20%, ${currentEra.theme.bgGlow} 0%, rgba(10, 12, 10, 0.85) 75%)`
                 }}
             />
 
             {/* Premium Vignettes & Gradients */}
-            <div className="absolute inset-0 bg-linear-to-b from-black/80 via-transparent to-[#0a0c0a] pointer-events-none" />
-            <div className="absolute inset-0 bg-linear-to-r from-[#0a0c0a]/90 via-transparent to-[#0a0c0a]/90 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-transparent to-[#0A0C0A] pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0A0C0A]/90 via-transparent to-[#0A0C0A]/90 pointer-events-none" />
 
-            <div className="relative mx-auto flex min-h-screen max-w-6xl flex-col justify-between px-4 sm:px-6 py-8">
+            {/* SITE NAVIGATION HEADER */}
+            <header className="relative z-50 pt-2 pb-2">
+                <Navbar />
+            </header>
+
+            <div className="relative mx-auto flex min-h-screen max-w-6xl flex-col justify-between px-4 sm:px-6 pt-16">
                 
                 {/* Header Section */}
                 <header className="relative z-50 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
-                    <button
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                         onClick={() => navigate("/")}
-                        className="group flex w-fit items-center gap-2 rounded-full border border-white/10 bg-black/40 px-5 py-2.5 text-sm font-semibold text-gray-300 backdrop-blur-xl transition hover:border-white/30 hover:bg-black/60 hover:text-white"
+                        className="group flex w-fit items-center gap-2 rounded-full border border-white/10 bg-black/50 px-5 py-2.5 text-xs font-bold text-gray-300 backdrop-blur-xl transition hover:border-white/30 hover:bg-black/70 hover:text-white cursor-pointer shadow-lg"
                     >
                         <ArrowLeft size={16} className="transition-transform duration-300 group-hover:-translate-x-1" />
-                        Back to Expedition
-                    </button>
+                        <span>Back to Expedition</span>
+                    </motion.button>
 
                     <div className="flex flex-wrap items-center gap-3">
                         <button
                             onClick={() => setCompareMode(!compareMode)}
-                            className="flex items-center gap-2 rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs font-semibold text-gray-200 backdrop-blur-xl hover:border-white/40 hover:text-white transition"
+                            className="flex items-center gap-2 rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs font-bold text-gray-200 backdrop-blur-xl hover:border-white/40 hover:text-white transition cursor-pointer shadow-md"
                         >
                             <Columns size={14} />
                             <span>{compareMode ? "Single Era View" : "Compare Eras Side-by-Side"}</span>
                         </button>
+
+                        {activeEra === 2 && (
+                            <button
+                                onClick={() => setIsAsteroidModalOpen(true)}
+                                className="flex items-center gap-1.5 rounded-full border border-red-500/30 bg-red-950/40 px-4 py-2 text-xs font-bold text-red-300 backdrop-blur-xl hover:bg-red-900/50 hover:text-white transition cursor-pointer shadow-md"
+                            >
+                                <Flame size={14} className="text-red-400 animate-pulse" />
+                                <span>Simulate Extinction</span>
+                            </button>
+                        )}
 
                         <div className="rounded-full border border-white/10 bg-black/40 px-4 py-2 text-xs font-semibold backdrop-blur-xl">
                             <span className="text-gray-400">Atmosphere Theme:</span>{" "}
@@ -106,50 +251,79 @@ export default function TimelineNavigator() {
 
                 {/* Compare Mode View or Main Showcase View */}
                 {compareMode ? (
-                    <div className="my-6 grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
-                        {eras.map((era, index) => (
+                    <div className="my-6 grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
+                        {[currentEra, compEra].filter(Boolean).map((eraItem, idx) => (
                             <div
-                                key={`compare-${era.id}`}
-                                onClick={() => setActiveEra(index)}
-                                className={`cursor-pointer rounded-3xl border p-6 backdrop-blur-2xl transition-all duration-300 ${
-                                    activeEra === index
-                                        ? "ring-2 scale-[1.02]"
-                                        : "opacity-80 hover:opacity-100"
-                                }`}
+                                key={`compare-card-${eraItem.id}-${idx}`}
+                                className="rounded-[32px] border p-6 backdrop-blur-2xl space-y-5 shadow-2xl transition-all duration-300"
                                 style={{
-                                    borderColor: era.theme.border,
-                                    backgroundColor: era.theme.cardBg,
-                                    ringColor: era.theme.primary
+                                    borderColor: eraItem.theme.border,
+                                    backgroundColor: eraItem.theme.cardBg
                                 }}
                             >
-                                <div
-                                    className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider mb-3"
-                                    style={{ backgroundColor: era.theme.badgeBg, color: era.theme.primary }}
-                                >
-                                    <Sparkles size={10} />
-                                    {era.theme.name}
-                                </div>
-                                <h3 className="font-serif text-3xl font-extrabold text-white">{era.name}</h3>
-                                <p className="text-xs font-semibold text-gray-300 mt-1">{era.tagline}</p>
-                                <p className="text-xs text-gray-400 mt-3 leading-relaxed line-clamp-3">{era.description}</p>
-                                
-                                <div className="mt-4 pt-3 border-t border-white/10 text-xs text-gray-300">
-                                    <span className="text-gray-400">Span:</span> <strong>{era.start}</strong> to <strong>{era.end}</strong>
+                                <div className="flex flex-wrap items-center justify-between gap-2">
+                                    <span
+                                        className="rounded-full px-3 py-1 text-xs font-bold uppercase"
+                                        style={{
+                                            backgroundColor: eraItem.theme.badgeBg,
+                                            color: eraItem.theme.primary
+                                        }}
+                                    >
+                                        Era {idx + 1}: {eraItem.name}
+                                    </span>
+                                    {idx === 1 && (
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-[11px] text-gray-400 font-bold">Compare with:</span>
+                                            <select
+                                                value={comparisonEra !== null ? comparisonEra : 1}
+                                                onChange={(e) => setComparisonEra(Number(e.target.value))}
+                                                className="rounded-xl border border-white/30 bg-black/90 px-3 py-1 text-xs font-extrabold text-white focus:outline-none cursor-pointer"
+                                            >
+                                                {availableCompareEras.map((er) => (
+                                                    <option key={er.id} value={er.index} className="bg-black text-white">
+                                                        {er.name} ({er.start} - {er.end})
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    )}
                                 </div>
 
-                                <div className="mt-4 rounded-xl bg-black/40 p-3 text-xs space-y-1.5 border border-white/5">
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-400">Temp:</span>
-                                        <span className="font-bold text-white">{era.climate.temp}</span>
+                                <div>
+                                    <h2 className="font-serif text-3xl font-extrabold text-white">
+                                        {eraItem.name}
+                                    </h2>
+                                    <p className="text-xs font-bold" style={{ color: eraItem.theme.primary }}>
+                                        {eraItem.tagline}
+                                    </p>
+                                    <p className="mt-2 text-xs text-gray-300 leading-relaxed">
+                                        {eraItem.description}
+                                    </p>
+                                </div>
+
+                                {/* Climate Stats */}
+                                <div className="grid grid-cols-2 gap-2 text-xs">
+                                    <div className="rounded-xl bg-white/5 p-2.5 border border-white/10">
+                                        <span className="text-[10px] uppercase text-gray-400 font-bold block">Avg Temp</span>
+                                        <span className="text-sm font-extrabold text-white">{eraItem.climate.temp}</span>
                                     </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-400">Oxygen:</span>
-                                        <span className="font-bold text-white">{era.climate.oxygen}</span>
+                                    <div className="rounded-xl bg-white/5 p-2.5 border border-white/10">
+                                        <span className="text-[10px] uppercase text-gray-400 font-bold block">Oxygen O₂</span>
+                                        <span className="text-sm font-extrabold text-emerald-300">{eraItem.climate.oxygen}</span>
                                     </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-400">Drift:</span>
-                                        <span className="font-semibold text-gray-300 truncate max-w-[140px]">{era.climate.drift}</span>
-                                    </div>
+                                </div>
+
+                                <div className="relative h-48 w-full overflow-hidden rounded-2xl border border-white/10 bg-black/40 flex items-center justify-center">
+                                    <img
+                                        src={eraItem.dinosaur}
+                                        alt={eraItem.name}
+                                        onError={(e) => {
+                                            if (eraItem.id === "triassic") e.currentTarget.src = "/triassic-dino.webp";
+                                            else if (eraItem.id === "jurassic") e.currentTarget.src = "/jurassic-dino.webp";
+                                            else e.currentTarget.src = "/trex-dino.webp";
+                                        }}
+                                        className="h-full w-full object-contain p-2 drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)]"
+                                    />
                                 </div>
                             </div>
                         ))}
@@ -219,6 +393,11 @@ export default function TimelineNavigator() {
                                         key={currentEra.dinosaur}
                                         src={currentEra.dinosaur}
                                         alt={`${currentEra.name} dinosaur`}
+                                        onError={(e) => {
+                                            if (currentEra.id === "triassic") e.currentTarget.src = "/triassic-dino.webp";
+                                            else if (currentEra.id === "jurassic") e.currentTarget.src = "/jurassic-dino.webp";
+                                            else e.currentTarget.src = "/trex-dino.webp";
+                                        }}
                                         initial={{ opacity: 0, x: 40, scale: 0.95 }}
                                         animate={{ 
                                             opacity: 1, 
@@ -277,7 +456,7 @@ export default function TimelineNavigator() {
 
                                 {/* Oxygen */}
                                 <div className="rounded-2xl border border-white/10 bg-black/40 p-4 flex items-start gap-3">
-                                    <div className="rounded-xl p-2.5 bg-white/5 className=text-emerald-400">
+                                    <div className="rounded-xl p-2.5 bg-white/5 text-emerald-400">
                                         <Wind size={20} />
                                     </div>
                                     <div>
@@ -326,7 +505,7 @@ export default function TimelineNavigator() {
                                 </h3>
                                 <button
                                     onClick={() => navigate("/explorer")}
-                                    className="flex items-center gap-1 text-xs font-bold text-[#E7D3A7] hover:text-white transition"
+                                    className="flex items-center gap-1 text-xs font-bold text-[#E7D3A7] hover:text-white transition cursor-pointer"
                                 >
                                     <span>Browse Dinosaur Encyclopedia</span>
                                     <ChevronRight size={14} />
@@ -337,12 +516,17 @@ export default function TimelineNavigator() {
                                 {currentEra.dinosaurs.map((dino, idx) => (
                                     <div
                                         key={`dino-${idx}`}
-                                        className="group rounded-2xl border border-white/10 bg-black/50 overflow-hidden hover:border-white/30 transition-all duration-300"
+                                        onClick={() => setSelectedSpecimen(dino)}
+                                        className="group rounded-2xl border border-white/10 bg-black/50 overflow-hidden hover:border-white/30 transition-all duration-300 cursor-pointer"
                                     >
-                                        <div className="relative h-36 w-full overflow-hidden bg-black/60">
+                                        <div className="relative h-44 w-full overflow-hidden bg-black/60">
                                             <img
                                                 src={dino.image}
                                                 alt={dino.name}
+                                                onError={(e) => {
+                                                    e.currentTarget.onerror = null;
+                                                    e.currentTarget.src = currentEra.dinosaur;
+                                                }}
                                                 className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
                                             />
                                             <div className="absolute top-3 left-3 rounded-full bg-black/60 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold text-[#E7D3A7] border border-white/10">
@@ -414,7 +598,7 @@ export default function TimelineNavigator() {
 
                     {/* Timeline Slider Track */}
                     <div className="relative mt-6 px-4">
-                        <div className="h-1 w-full rounded-full bg-white/15" />
+                        <div className="h-1.5 w-full rounded-full bg-white/15" />
 
                         {/* Active Progress Segment */}
                         <motion.div
@@ -428,8 +612,9 @@ export default function TimelineNavigator() {
                             }}
                             transition={{
                                 type: "spring",
-                                stiffness: 100,
-                                damping: 18,
+                                mass: 0.5,
+                                stiffness: 180,
+                                damping: 21,
                             }}
                             className="absolute left-4 top-0 h-1 rounded-full"
                             style={{ backgroundColor: currentEra.theme.primary }}
@@ -443,7 +628,7 @@ export default function TimelineNavigator() {
                                     <button
                                         key={era.id}
                                         onClick={() => setActiveEra(index)}
-                                        className="group relative flex h-8 w-8 items-center justify-center outline-none focus:outline-none"
+                                        className="group relative flex h-8 w-8 items-center justify-center outline-none focus:outline-none cursor-pointer"
                                     >
                                         {/* Golden/Theme Pulsing Halo for active node */}
                                         {isActive && (
@@ -467,7 +652,6 @@ export default function TimelineNavigator() {
                                                 transform: isActive ? "scale(1.25)" : "scale(1)"
                                             }}
                                         >
-                                            {/* Inner Dot */}
                                             <div
                                                 className="h-2.5 w-2.5 rounded-full transition-all duration-300"
                                                 style={{
@@ -486,8 +670,11 @@ export default function TimelineNavigator() {
                         {eras.map((era, index) => {
                             const isActive = activeEra === index;
                             return (
-                                <button
+                                <motion.button
                                     key={era.id}
+                                    whileHover={{ y: -3, scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    transition={balancedSmoothSpring}
                                     onClick={() => setActiveEra(index)}
                                     className={`group rounded-2xl p-3 text-center transition-all duration-300 border ${
                                         isActive 
@@ -510,12 +697,111 @@ export default function TimelineNavigator() {
                                     <p className="mt-1 text-[9px] font-semibold text-gray-400 sm:text-[10px] md:text-xs">
                                         {era.start} – {era.end}
                                     </p>
-                                </button>
+                                </motion.button>
                             );
                         })}
                     </div>
                 </footer>
             </div>
+
+            {/* SPECIMEN DETAILS MODAL OVERLAY */}
+            {selectedSpecimen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.94, y: 15 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.94, y: 15 }}
+                        transition={{ duration: 0.35, ease: ultraBezier }}
+                        className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-white/15 bg-black/90 p-6 text-white shadow-2xl space-y-4"
+                        style={{
+                            borderColor: theme?.border || "rgba(255,255,255,0.2)"
+                        }}
+                    >
+                        <button
+                            onClick={() => setSelectedSpecimen(null)}
+                            className="absolute right-4 top-4 rounded-full bg-white/10 p-1.5 text-white transition hover:bg-white/20 cursor-pointer z-10"
+                        >
+                            <X size={18} />
+                        </button>
+
+                        <div className="flex items-center gap-3">
+                            <div 
+                                className="rounded-xl px-3 py-1 text-xs font-bold"
+                                style={{
+                                    backgroundColor: theme?.badgeBg || "rgba(255,255,255,0.1)",
+                                    color: theme?.primary || "#E7D3A7"
+                                }}
+                            >
+                                {selectedSpecimen.diet || "Fossil Specimen"}
+                            </div>
+                            <span className="text-xs text-gray-400">{selectedSpecimen.period || currentEra.name}</span>
+                        </div>
+
+                        <h3 
+                            className="font-serif text-2xl font-bold"
+                            style={{ color: theme?.primary || "#ffffff" }}
+                        >
+                            {selectedSpecimen.name}
+                        </h3>
+                        {selectedSpecimen.scientificName && (
+                            <p className="text-xs font-bold italic" style={{ color: theme?.primary || "#E7D3A7" }}>
+                                {selectedSpecimen.scientificName}
+                            </p>
+                        )}
+
+                        {selectedSpecimen.image && (
+                            <img
+                                src={selectedSpecimen.image}
+                                alt={selectedSpecimen.name}
+                                onError={(e) => {
+                                    e.currentTarget.onerror = null;
+                                    e.currentTarget.src = currentEra.dinosaur;
+                                }}
+                                className="h-48 w-full rounded-2xl object-cover border border-white/10 bg-black/40"
+                            />
+                        )}
+
+                        {selectedSpecimen.desc && (
+                            <p className="text-xs text-stone-300 leading-relaxed">{selectedSpecimen.desc}</p>
+                        )}
+
+                        <div className="grid grid-cols-2 gap-3 text-xs pt-2">
+                            <div className="rounded-xl bg-white/5 p-2.5 border border-white/10">
+                                <span className="text-[10px] text-gray-400 font-bold block uppercase">Length</span>
+                                <span className="font-extrabold text-white">{selectedSpecimen.length || "N/A"}</span>
+                            </div>
+                            <div className="rounded-xl bg-white/5 p-2.5 border border-white/10">
+                                <span className="text-[10px] text-gray-400 font-bold block uppercase">Weight</span>
+                                <span className="font-extrabold text-white">{selectedSpecimen.weight || "N/A"}</span>
+                            </div>
+                        </div>
+
+                        <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            transition={balancedSmoothSpring}
+                            onClick={() => {
+                                setSelectedSpecimen(null);
+                                navigate("/explorer");
+                            }}
+                            className="w-full flex items-center justify-center gap-2 rounded-xl border py-3 text-xs font-extrabold shadow-md transition cursor-pointer"
+                            style={{
+                                borderColor: theme?.border || "rgba(255,255,255,0.2)",
+                                backgroundColor: theme?.badgeBg || "rgba(255,255,255,0.1)",
+                                color: theme?.primary || "#ffffff"
+                            }}
+                        >
+                            <span>Inspect in Dinosaur Explorer</span>
+                            <ExternalLink size={14} />
+                        </motion.button>
+                    </motion.div>
+                </div>
+            )}
+
+            {/* ASTEROID IMPACT SIMULATION MODAL */}
+            {isAsteroidModalOpen && (
+                <AsteroidImpactModal onClose={() => setIsAsteroidModalOpen(false)} />
+            )}
         </section>
     );
 }

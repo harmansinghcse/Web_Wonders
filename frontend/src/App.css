@@ -1,0 +1,4 @@
+.game-page,
+.game-page * {
+    cursor: none !important;
+}

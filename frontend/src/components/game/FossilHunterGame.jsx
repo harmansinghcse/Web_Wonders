@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Navbar from "../home_components/hero/Navbar";
 import { ArrowLeft, RefreshCw, Volume2, VolumeX, Compass, Play, Award } from "lucide-react";
+import Cursor from "./Cursor";
 
 // Synthesized sound effects for Fossil Hunter
 const playSound = (type, enabled = true) => {
@@ -160,8 +161,8 @@ export default function FossilHunterGame({ onBackToHub }) {
     };
 
     return (
-        <div className="relative min-h-screen bg-[#111a14] text-[#e4dac6] font-sans selection:bg-[#52B788] selection:text-black overflow-x-hidden">
-            
+        <div className="game-page relative min-h-screen bg-[#111a14] text-[#e4dac6] font-sans selection:bg-[#52B788] selection:text-black overflow-x-hidden">
+            <Cursor />
             {/* DISTINCT EXCAVATION BACKGROUND */}
             <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
                 <img

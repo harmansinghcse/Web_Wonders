@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../home_components/hero/Navbar";
+import Cursor from "./Cursor";
 import { 
     Play, 
     RotateCcw, 
@@ -387,8 +388,8 @@ export default function MemoryMatchGame({ onBackToHub }) {
     };
 
     return (
-        <div className="relative min-h-screen font-sans text-slate-900 selection:bg-[#52B788] selection:text-black overflow-x-hidden">
-            
+        <div className="game-page relative min-h-screen font-sans text-slate-900 selection:bg-[#52B788] selection:text-black overflow-x-hidden">
+            <Cursor />
             {/* BACKGROUND */}
             <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
                 <img
