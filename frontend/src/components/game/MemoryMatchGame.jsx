@@ -388,22 +388,60 @@ export default function MemoryMatchGame({ onBackToHub }) {
     };
 
     return (
-        <div className="game-page relative min-h-screen font-sans text-slate-900 selection:bg-[#52B788] selection:text-black overflow-x-hidden">
+        <div className="game-page relative min-h-screen font-sans text-slate-100 selection:bg-[#52B788] selection:text-black overflow-x-hidden bg-[#04120b]">
             <Cursor />
-            {/* BACKGROUND */}
-            <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+            {/* DISTINCT VISIBLE MYSTICAL PREHISTORIC CARDS & JUNGLE RELICS BACKGROUND */}
+            <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none select-none">
+                {/* Background Image - Highly Visible & Vibrant */}
                 <img
                     src="/jurassic_memory_match_bg.jpg"
                     alt="Jurassic Memory Match Background"
-                    className="h-full w-full object-cover object-center scale-100 filter brightness-100 contrast-105"
+                    className="h-full w-full object-cover object-center scale-105 filter brightness-85 contrast-115 saturate-110 opacity-85"
                     onError={(e) => {
-                        e.target.style.display = 'none';
+                        e.currentTarget.style.display = 'none';
                     }}
                 />
-                
-                {/* Soft ambient golden light overlay */}
-                <div className="absolute inset-0 bg-gradient-to-r from-stone-950/80 via-stone-900/40 to-stone-950/70" />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#52B788_0%,transparent_70%)] opacity-10" />
+
+                {/* Translucent Jungle Emerald & Gold Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-b from-[#062015]/60 via-[#09291b]/40 to-[#04120b]/75 backdrop-brightness-95" />
+
+                {/* Prehistoric Relic Cards & Jungle Leaves SVG Overlay - Vivid Accent */}
+                <svg className="absolute inset-0 w-full h-full opacity-55" xmlns="http://www.w3.org/2000/svg">
+                    {/* Floating Mystical Card Outlines */}
+                    <g fill="none" stroke="rgba(82, 183, 136, 0.55)" strokeWidth="2.5">
+                        <rect x="100" y="120" width="90" height="130" rx="12" transform="rotate(-15 145 185)" fill="rgba(82, 183, 136, 0.1)" />
+                        <rect x="220" y="90" width="90" height="130" rx="12" transform="rotate(10 265 155)" fill="rgba(251, 191, 36, 0.1)" stroke="rgba(251, 191, 36, 0.55)" />
+                        <rect x="1100" y="150" width="100" height="140" rx="14" transform="rotate(20 1150 220)" fill="rgba(82, 183, 136, 0.1)" />
+                        <rect x="980" y="200" width="100" height="140" rx="14" transform="rotate(-10 1030 270)" fill="rgba(251, 191, 36, 0.1)" stroke="rgba(251, 191, 36, 0.55)" />
+                    </g>
+
+                    {/* Prehistoric Fern Leaf Motifs */}
+                    <g stroke="rgba(82, 183, 136, 0.5)" fill="none" strokeWidth="2.5">
+                        <path d="M 0 500 Q 200 450 350 550" />
+                        <path d="M 50 490 Q 70 440 110 470" />
+                        <path d="M 120 480 Q 150 420 190 460" />
+                        <path d="M 190 490 Q 230 430 270 480" />
+                        <path d="M 260 510 Q 300 450 330 510" />
+
+                        <path d="M 1400 400 Q 1250 480 1100 420" />
+                        <path d="M 1360 410 Q 1330 360 1290 390" />
+                        <path d="M 1290 430 Q 1250 370 1220 410" />
+                        <path d="M 1210 440 Q 1170 380 1140 430" />
+                    </g>
+
+                    {/* Floating Glowing Sparkles / Runes */}
+                    <g fill="rgba(251, 191, 36, 0.9)">
+                        <circle cx="200" cy="300" r="4" />
+                        <circle cx="850" cy="150" r="5" />
+                        <circle cx="1050" cy="450" r="4" />
+                        <circle cx="450" cy="200" r="4.5" />
+                        <polygon points="600,100 604,112 616,112 606,120 610,132 600,124 590,132 594,120 584,112 596,112" fill="rgba(82, 183, 136, 0.85)" />
+                    </g>
+                </svg>
+
+                {/* Mystical Emerald & Gold Ambient Lighting Layers */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(82,183,136,0.3)_0%,transparent_65%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_80%,rgba(251,191,36,0.2)_0%,transparent_50%)] animate-pulse" />
             </div>
 
             {/* Navigation Header (only on landing page) */}
