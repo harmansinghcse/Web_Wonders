@@ -4,6 +4,7 @@ import { Play, Trophy, Sparkles, Gamepad2, Award, Zap, Compass, Star } from "luc
 import MemoryMatchGame from "./MemoryMatchGame";
 import FossilHunterGame from "./FossilHunterGame";
 import DinoRunnerGame from "./DinoRunnerGame";
+import Cursor from "./Cursor";
 
 export default function GameHub({ initialGame = "hub" }) {
     const [activeGame, setActiveGame] = useState(initialGame);
@@ -24,8 +25,8 @@ export default function GameHub({ initialGame = "hub" }) {
     }
 
     return (
-        <div className="relative min-h-screen bg-[#0e1711] text-[#e4dac6] font-sans selection:bg-[#52B788] selection:text-black">
-            
+        <div className="game-page relative min-h-screen bg-[#0e1711] text-[#e4dac6] font-sans selection:bg-[#52B788] selection:text-black">
+            <Cursor />
             {/* Background Image */}
             <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
                 <img

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import Navbar from "../home_components/hero/Navbar";
 import { ArrowLeft, Play, RotateCcw, Volume2, VolumeX, Shield, Heart } from "lucide-react";
+import Cursor from "./Cursor";
 
 export default function DinoRunnerGame({ onBackToHub }) {
     const [gameState, setGameState] = useState("start"); // 'start' | 'playing' | 'gameover'
@@ -241,8 +242,8 @@ export default function DinoRunnerGame({ onBackToHub }) {
     };
 
     return (
-        <div className="relative min-h-screen bg-[#0e1711] text-[#e4dac6] font-sans select-none overflow-x-hidden">
-            
+        <div className="game-page relative min-h-screen bg-[#0e1711] text-[#e4dac6] font-sans select-none overflow-x-hidden">
+            <Cursor />
             {/* DISTINCT VOLCANIC RUNNER BACKGROUND */}
             <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
                 <img
