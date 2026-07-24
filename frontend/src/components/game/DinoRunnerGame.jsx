@@ -15,6 +15,7 @@ export default function DinoRunnerGame({ onBackToHub }) {
     const [gems, setGems] = useState([]);
     const [shields, setShields] = useState(1);
     const [soundEnabled, setSoundEnabled] = useState(true);
+    const [selectedBg, setSelectedBg] = useState("/jurassic_game_vibe_bg.jpg");
 
     const gameLoopRef = useRef(null);
     const frameCountRef = useRef(0);
@@ -244,53 +245,24 @@ export default function DinoRunnerGame({ onBackToHub }) {
     return (
         <div className="game-page relative min-h-screen bg-[#0d0303] text-[#fce8e8] font-sans select-none overflow-x-hidden">
             <Cursor />
-            {/* DISTINCT VISIBLE RUNNING DINOSAUR & VOLCANIC SPEED BACKGROUND */}
+            {/* HIGH-OCTANE PREHISTORIC ARCADE GAME BACKGROUND VIBE */}
             <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none select-none">
-                {/* Background Image - Highly Visible & Vibrant */}
+                {/* Arcade Game Background Image - High Contrast & Vibrancy */}
                 <img
-                    src="/jurassic_game_vibe_bg.jpg"
-                    alt="Jurassic Dino Escape Background"
-                    className="h-full w-full object-cover object-center scale-105 filter brightness-85 contrast-120 saturate-120 opacity-85"
+                    src={selectedBg}
+                    alt="Jurassic Arcade Game Background"
+                    className="h-full w-full object-cover object-center scale-105 filter brightness-90 contrast-120 saturate-125 opacity-85 transition-all duration-700"
                     onError={(e) => {
-                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = "/jurassic_game_bg.jpg";
                     }}
                 />
 
-                {/* Translucent Fiery Crimson/Magma Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-b from-[#380b0b]/60 via-[#1f0505]/40 to-[#0c0202]/75 backdrop-brightness-95" />
-
-                {/* Running Dinosaur Silhouette & Volcanic Lava Artwork Overlay (No Dashes or Dots) */}
-                <svg className="absolute inset-0 w-full h-full opacity-50" xmlns="http://www.w3.org/2000/svg">
-                    {/* Smooth Motion & Atmospheric Heat Trails */}
-                    <g stroke="rgba(239, 68, 68, 0.25)" strokeWidth="2">
-                        <path d="M 0 180 Q 700 150 1600 200" />
-                        <path d="M 0 280 Q 800 250 1600 300" />
-                        <path d="M 0 420 Q 700 400 1600 440" />
-                    </g>
-
-                    {/* Dynamic Running T-Rex Silhouette (Center Right) */}
-                    <g fill="rgba(239, 68, 68, 0.2)" stroke="rgba(239, 68, 68, 0.7)" strokeWidth="3.5">
-                        {/* Running Dino Head & Open Jaws */}
-                        <path d="M 780 220 C 820 180 880 170 940 190 C 970 200 990 230 960 250 L 920 250 C 950 275 920 290 890 280 L 840 270 Z" />
-                        {/* Dino Eye */}
-                        <circle cx="880" cy="210" r="6" fill="rgba(255, 200, 0, 0.95)" />
-                        {/* Body & Tail */}
-                        <path d="M 840 270 C 760 300 680 320 580 290 C 520 270 460 230 400 210 L 490 280 C 590 350 720 360 800 330 Z" />
-                        {/* Strong Running Legs */}
-                        <path d="M 750 330 L 720 440 L 770 480 L 800 480" strokeWidth="5.5" />
-                        <path d="M 680 320 L 630 410 L 590 450 L 560 450" strokeWidth="5.5" />
-                        {/* Small Raptor Arms */}
-                        <path d="M 830 290 L 860 320 L 875 315" strokeWidth="4.5" />
-                    </g>
-
-                    {/* Lava Mountain Ridges & Cracks */}
-                    <path d="M 0 650 L 200 580 L 400 640 L 650 560 L 900 660 L 1200 570 L 1600 680 L 1600 900 L 0 900 Z" fill="rgba(35, 7, 7, 0.7)" stroke="rgba(249, 115, 22, 0.7)" strokeWidth="3" />
-                    <path d="M 150 630 L 250 720 M 420 650 L 500 780 M 680 580 L 760 700 M 950 670 L 1020 800" stroke="rgba(239, 68, 68, 0.85)" strokeWidth="3" />
-                </svg>
-
-                {/* Fiery Lava Glowing Layers */}
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_center,rgba(239,68,68,0.4)_0%,transparent_65%)] animate-pulse" />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_30%,rgba(249,115,22,0.25)_0%,transparent_50%)]" />
+                {/* Translucent Fiery Crimson Arcade Magma Horizon */}
+                <div className="absolute inset-0 bg-gradient-to-b from-[#2d0808]/50 via-transparent to-[#0d0202]/85 backdrop-brightness-95" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_center,rgba(239,68,68,0.42)_0%,transparent_65%)] animate-pulse" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(249,115,22,0.25)_0%,transparent_50%)]" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_80%,rgba(239,68,68,0.2)_0%,transparent_40%)]" />
             </div>
 
             {/* Header only on start */}
@@ -324,7 +296,7 @@ export default function DinoRunnerGame({ onBackToHub }) {
                         </p>
                     </div>
 
-                    {/* Difficulty Selection Card */}
+                    {/* Difficulty & Background Environment Selection Card */}
                     <div className="w-full max-w-md bg-[#142418]/95 border border-[#2b4c34] p-5 rounded-3xl shadow-2xl space-y-4 backdrop-blur-md">
                         <h3 className="text-xs font-serif font-bold text-[#52B788] uppercase tracking-widest">
                             SELECT DIFFICULTY LEVEL
@@ -350,6 +322,35 @@ export default function DinoRunnerGame({ onBackToHub }) {
                                     <span className="text-[9px] opacity-70">{diff.shields}</span>
                                 </button>
                             ))}
+                        </div>
+
+                        {/* Photorealistic Environment Picker */}
+                        <div className="pt-2 space-y-2 border-t border-white/10">
+                            <h4 className="text-[11px] font-serif font-bold text-amber-300 uppercase tracking-wider text-left">
+                                PHOTOREALISTIC ENVIRONMENT BACKGROUND
+                            </h4>
+                            <div className="grid grid-cols-3 gap-2 text-[10px]">
+                                {[
+                                    { id: "/dino-info-page.png", label: "Cretaceous Land" },
+                                    { id: "/jurassic-bg.webp", label: "Jurassic Jungle" },
+                                    { id: "/create-bg.png", label: "Volcanic Valley" },
+                                    { id: "/login-bg.jpg", label: "Atmospheric Dawn" },
+                                    { id: "/map-soft-bg.jpg", label: "Soft Terrain" },
+                                    { id: "/jurrasic-home-bg.jpg", label: "Forest Wilds" },
+                                ].map((bg) => (
+                                    <button
+                                        key={bg.id}
+                                        onClick={() => setSelectedBg(bg.id)}
+                                        className={`py-1.5 px-2 rounded-xl font-bold transition-all cursor-pointer border ${
+                                            selectedBg === bg.id
+                                                ? "bg-amber-400 text-slate-950 border-amber-400 font-extrabold shadow-md scale-105"
+                                                : "bg-white/5 text-stone-300 border-white/10 hover:bg-white/15"
+                                        }`}
+                                    >
+                                        {bg.label}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
 
                         <button
