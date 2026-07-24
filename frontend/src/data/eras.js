@@ -7,51 +7,67 @@ export const eras = [
         start: "252 Ma",
         end: "201 Ma",
         background: "/triassic-bg.webp",
-        dinosaur: "/triassic-dino.png",
+        dinosaur: "/triassic-dino.webp",
         theme: {
             name: "Volcanic Arid Desert",
-            primaryAccent: "#E67E22",
-            secondaryAccent: "#D35400",
-            badgeBg: "bg-amber-950/80 border-amber-500/50 text-amber-300",
-            glowColor: "rgba(230, 126, 34, 0.35)",
-            glowBg: "from-amber-950/60 via-orange-950/40 to-[#0A0C0A]",
-            cardBorder: "border-amber-500/40 bg-gradient-to-b from-amber-950/40 via-[#140D08]/80 to-[#0A0C0A]",
-            heroBorder: "border-amber-500/40 shadow-amber-950/50",
-            titleGradient: "from-amber-200 via-orange-300 to-amber-500",
-            accentText: "text-amber-400",
-            accentBorder: "border-amber-500/40",
-            accentBg: "bg-amber-500",
-            iconColor: "text-amber-400",
-            tabActive: "bg-amber-500/20 border-amber-500/60 text-amber-300 shadow-amber-500/20",
+            primary: "#C9AA5B",
+            accent: "#D97706",
+            bgGlow: "rgba(201, 170, 91, 0.25)",
+            border: "rgba(201, 170, 91, 0.4)",
+            badgeBg: "rgba(201, 170, 91, 0.15)",
+            cardBg: "rgba(35, 25, 10, 0.7)"
         },
         climate: {
             temp: "22°C",
-            tempDelta: "+8°C vs Today",
+            tempSub: "+8°C vs Today",
             oxygen: "16%",
-            co2: "1750 ppm",
-            continents: "Pangaea Supercontinent",
-            flora: "Ferns, Cycads, Ginkgos & Seed Ferns",
+            co2: "CO₂: 1750 ppm",
+            drift: "Pangaea Supercontinent",
+            flora: "Ferns, Cycads, Ginkgos & Seed Ferns"
         },
+        dinosaurs: [
+            {
+                name: "Coelophysis",
+                scientificName: "Coelophysis bauri",
+                diet: "Carnivore",
+                length: "2.7–3.1 m",
+                weight: "15–5 KG",
+                image: "/coelophysis.jpg"
+            },
+            {
+                name: "EORAPTOR",
+                scientificName: "EORAPTOR Lunensis",
+                diet: "Carnivore",
+                length: "1–1.5 m",
+                weight: "8–12 kg",
+                image: "/eoraptor.jpg"
+            },
+            {
+                name: "Ichthyosaurus",
+                scientificName: "Ichthyosaurus communis",
+                diet: "Carnivore",
+                length: "3–10 m",
+                weight: "250–2,000 kg",
+                image: "/ichthyosaurus.jpg"
+            }
+        ],
         milestones: [
             {
-                year: "252 Ma",
+                ma: "252 Ma",
                 title: "Permian-Triassic Extinction",
-                type: "extinction",
-                desc: "The 'Great Dying' wiped out 96% of marine life and 70% of land species, clearing ecological niches for dinosaurs.",
+                desc: "The 'Great Dying' wiped out 96% of marine life and 70% of land species, clearing ecological niches for dinosaurs."
             },
             {
-                year: "233 Ma",
+                ma: "233 Ma",
                 title: "Carnian Pluvial Episode",
-                type: "climate",
-                desc: "2 million years of intense global rainfall that transformed dry Pangaea and triggered rapid dinosaur radiation.",
+                desc: "2 million years of intense global rainfall that transformed dry Pangaea and triggered rapid dinosaur radiation."
             },
             {
-                year: "201 Ma",
+                ma: "201 Ma",
                 title: "Triassic-Jurassic Extinction",
-                type: "extinction",
-                desc: "Volcanic eruptions associated with Pangaea rift opening eliminated competing pseudosuchians.",
-            },
-        ],
+                desc: "Volcanic eruptions associated with Pangaea rift opening eliminated competing pseudosuchians."
+            }
+        ]
     },
     {
         id: "jurassic",
@@ -63,49 +79,65 @@ export const eras = [
         background: "/jurassic-bg.webp",
         dinosaur: "/jurassic-dino.webp",
         theme: {
-            name: "Lush Tropical Rainforest",
-            primaryAccent: "#52B788",
-            secondaryAccent: "#2F7D4D",
-            badgeBg: "bg-emerald-950/80 border-emerald-500/50 text-emerald-300",
-            glowColor: "rgba(82, 183, 136, 0.35)",
-            glowBg: "from-emerald-950/60 via-teal-950/40 to-[#0A0C0A]",
-            cardBorder: "border-emerald-500/40 bg-gradient-to-b from-emerald-950/40 via-[#0B1710]/80 to-[#0A0C0A]",
-            heroBorder: "border-emerald-500/40 shadow-emerald-950/50",
-            titleGradient: "from-emerald-200 via-teal-300 to-emerald-400",
-            accentText: "text-emerald-400",
-            accentBorder: "border-emerald-500/40",
-            accentBg: "bg-emerald-500",
-            iconColor: "text-emerald-400",
-            tabActive: "bg-emerald-500/20 border-emerald-500/60 text-emerald-300 shadow-emerald-500/20",
+            name: "Lush Conifer Jungle",
+            primary: "#10B981",
+            accent: "#059669",
+            bgGlow: "rgba(16, 185, 129, 0.25)",
+            border: "rgba(16, 185, 129, 0.4)",
+            badgeBg: "rgba(16, 185, 129, 0.15)",
+            cardBg: "rgba(10, 30, 20, 0.7)"
         },
         climate: {
-            temp: "26°C",
-            tempDelta: "+12°C vs Today",
+            temp: "20°C",
+            tempSub: "+6°C vs Today",
             oxygen: "26%",
-            co2: "1950 ppm",
-            continents: "Laurasia & Gondwana Rift",
-            flora: "Conifers, Tree Ferns, Cycads & Horsetails",
+            co2: "CO₂: 1950 ppm",
+            drift: "Laurasia & Gondwana Separation",
+            flora: "Conifer Forests, Ferns & Cycads"
         },
+        dinosaurs: [
+            {
+                name: "Brachiosaurus",
+                scientificName: "Brachiosaurus altithorax",
+                diet: "Herbivore",
+                length: "23–26 m",
+                weight: "30–58 tonnes",
+                image: "/brachiosaurus.jpg"
+            },
+            {
+                name: "Allosaurus",
+                scientificName: "Allosaurus fragilis",
+                diet: "Carnivore",
+                length: "8.5–12 m",
+                weight: "2–2.3 tonnes",
+                image: "/allosaurus.jpg"
+            },
+            {
+                name: "Stegosaurus",
+                scientificName: "Stegosaurus stenops",
+                diet: "Herbivore",
+                length: "9 m",
+                weight: "5.3–7 tonnes",
+                image: "/stegosaurus.jpg"
+            }
+        ],
         milestones: [
             {
-                year: "180 Ma",
-                title: "Pangaea Rifting Split",
-                type: "geology",
-                desc: "Pangaea split into Laurasia in the north and Gondwana in the south, creating new epicontinental seaways.",
+                ma: "201 Ma",
+                title: "Pangaea Breakup Accelerates",
+                desc: "Tethys Ocean opens, separating Laurasia in the north from Gondwana in the south."
             },
             {
-                year: "155 Ma",
-                title: "Golden Age of Sauropods",
-                type: "evolution",
-                desc: "Giant sauropods reached record population densities across North America and Africa.",
+                ma: "170 Ma",
+                title: "Sauropod Gigantism Peak",
+                desc: "Warm humid climates and vast conifer forests support the evolution of massive long-necked sauropods."
             },
             {
-                year: "150 Ma",
-                title: "First Avian Flight (Archaeopteryx)",
-                type: "evolution",
-                desc: "The emergence of feathered theropods marking the evolutionary bridge between dinosaurs and modern birds.",
-            },
-        ],
+                ma: "150 Ma",
+                title: "First Avian Evolution",
+                desc: "Archaeopteryx emerges, marking the evolutionary transition from feathered theropods to early birds."
+            }
+        ]
     },
     {
         id: "cretaceous",
@@ -115,50 +147,66 @@ export const eras = [
         start: "145 Ma",
         end: "66 Ma",
         background: "/cretaceous-bg.webp",
-        dinosaur: "/trex-dino.png",
+        dinosaur: "/trex-dino.webp",
         theme: {
             name: "Fiery Extinction Sunset",
-            primaryAccent: "#EF4444",
-            secondaryAccent: "#F97316",
-            badgeBg: "bg-red-950/80 border-red-500/50 text-red-300",
-            glowColor: "rgba(239, 68, 68, 0.35)",
-            glowBg: "from-red-950/60 via-amber-950/40 to-[#0A0C0A]",
-            cardBorder: "border-red-500/40 bg-gradient-to-b from-red-950/40 via-[#190B0B]/80 to-[#0A0C0A]",
-            heroBorder: "border-red-500/40 shadow-red-950/50",
-            titleGradient: "from-red-200 via-amber-300 to-orange-400",
-            accentText: "text-red-400",
-            accentBorder: "border-red-500/40",
-            accentBg: "bg-red-500",
-            iconColor: "text-red-400",
-            tabActive: "bg-red-500/20 border-red-500/60 text-red-300 shadow-red-500/20",
+            primary: "#EF4444",
+            accent: "#DC2626",
+            bgGlow: "rgba(239, 68, 68, 0.25)",
+            border: "rgba(239, 68, 68, 0.4)",
+            badgeBg: "rgba(239, 68, 68, 0.15)",
+            cardBg: "rgba(35, 10, 10, 0.7)"
         },
         climate: {
             temp: "24°C",
-            tempDelta: "+10°C vs Today",
+            tempSub: "+10°C vs Today",
             oxygen: "30%",
-            co2: "1400 ppm",
-            continents: "Fragmenting Modern Continents",
-            flora: "Flowering Plants (Angiosperms), Magnolias & Palms",
+            co2: "CO₂: 1400 ppm",
+            drift: "Fragmenting Modern Continents",
+            flora: "Flowering Plants (Angiosperms), Magnolias & Palms"
         },
+        dinosaurs: [
+            {
+                name: "Tyrannosaurus Rex",
+                scientificName: "Tyrannosaurus rex",
+                diet: "Carnivore",
+                length: "12–13 m",
+                weight: "8–9 tonnes",
+                image: "/trex-dino.webp"
+            },
+            {
+                name: "Triceratops",
+                scientificName: "Triceratops horridus",
+                diet: "Herbivore",
+                length: "8–9 m",
+                weight: "6–12 tonnes",
+                image: "/triceratops.jpg"
+            },
+            {
+                name: "Velociraptor",
+                scientificName: "Velociraptor mongoliensis",
+                diet: "Carnivore",
+                length: "2 m",
+                weight: "15–20 kg",
+                image: "/velociraptor.jpg"
+            }
+        ],
         milestones: [
             {
-                year: "130 Ma",
-                title: "Angiosperm Flower Explosion",
-                type: "evolution",
-                desc: "Flowering plants evolved and rapidly co-developed with pollinating insects and herbivorous dinosaurs.",
+                ma: "125 Ma",
+                title: "Angiosperm Radiation",
+                desc: "Flowering plants evolve and diversify rapidly, transforming terrestrial ecosystems and dinosaur diets."
             },
             {
-                year: "90 Ma",
-                title: "Mid-Cretaceous Thermal Maximum",
-                type: "climate",
-                desc: "Peak global temperatures with ice-free poles and sea levels 170 meters higher than present day.",
+                ma: "90 Ma",
+                title: "Western Interior Seaway",
+                desc: "A vast inland sea divides North America into Laramidia and Appalachia, fostering unique endemic species."
             },
             {
-                year: "66 Ma",
-                title: "Chicxulub Asteroid Impact",
-                type: "extinction",
-                desc: "A 10-km asteroid struck Chicxulub, Mexico, triggering global fires, mega-tsunamis, nuclear winter, and K-Pg extinction.",
-            },
-        ],
-    },
+                ma: "66 Ma",
+                title: "Chicxulub Asteroid Extinction",
+                desc: "A 10km asteroid impact triggers catastrophic global darkness, ending the 165-million-year Reign of Dinosaurs."
+            }
+        ]
+    }
 ];
