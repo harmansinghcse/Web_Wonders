@@ -3,6 +3,7 @@ import MarkerClusterGroup from "react-leaflet-cluster";
 import L from "leaflet";
 import { useEffect } from "react";
 import DinosaurMarker from "./DinosaurMarker";
+import Cursor from "./Cursor";
 
 // Import Leaflet and Cluster CSS files directly
 import "leaflet/dist/leaflet.css";
@@ -55,7 +56,8 @@ const DinosaurMap = ({ dinosaurs, activeDinosaurId, setActiveDinosaurId, fitBoun
     const zoom = 2.5;
 
     return (
-        <div className="relative h-full w-full overflow-hidden rounded-3xl border border-[#C9A14A]/20 shadow-2xl bg-[#171613] dark:border-stone-850">
+        <div className="game-page relative h-full w-full overflow-hidden rounded-3xl border border-[#C9A14A]/20 shadow-2xl bg-[#171613] dark:border-stone-850">
+            <Cursor />
             <MapContainer
                 center={center}
                 zoom={zoom}

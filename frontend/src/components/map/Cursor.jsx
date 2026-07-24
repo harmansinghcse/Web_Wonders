@@ -27,7 +27,7 @@ export default function JurassicCursor() {
             className="fixed pointer-events-none z-99999 -translate-x-1/2 -translate-y-1/2 transition-transform duration-100"
         >
         <img
-            src="/gamecursor.png"
+            src="/mapcursor.png"
             alt="cursor"
             className="w-10 h-10 object-contain"
         />
