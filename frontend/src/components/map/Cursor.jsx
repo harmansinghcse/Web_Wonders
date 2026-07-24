@@ -3,24 +3,36 @@ import { useEffect, useRef } from "react";
 export default function JurassicCursor() {
     const cursorRef = useRef(null);
 
-    useEffect(() => {
-        document.body.style.cursor = "none";
+useEffect(() => {
+    const map = document.querySelector(".leaflet-container");
 
-        const moveCursor = (e) => {
-            if (cursorRef.current) {
-                cursorRef.current.style.left = `${e.clientX}px`;
-                cursorRef.current.style.top = `${e.clientY}px`;
-            }
-        };
+    if (!map) return;
 
-        window.addEventListener("mousemove", moveCursor);
+    const moveCursor = (e) => {
+        if (cursorRef.current) {
+            cursorRef.current.style.left = `${e.clientX}px`;
+            cursorRef.current.style.top = `${e.clientY}px`;
+        }
+    };
 
-        return () => {
-            document.body.style.cursor = "auto";
-            window.removeEventListener("mousemove", moveCursor);
-        };
-    }, []);
+    const show = () => {
+        cursorRef.current.style.display = "block";
+    };
 
+    const hide = () => {
+        cursorRef.current.style.display = "none";
+    };
+
+    map.addEventListener("mousemove", moveCursor);
+    map.addEventListener("mouseenter", show);
+    map.addEventListener("mouseleave", hide);
+
+    return () => {
+        map.removeEventListener("mousemove", moveCursor);
+        map.removeEventListener("mouseenter", show);
+        map.removeEventListener("mouseleave", hide);
+    };
+}, []);
     return (
         <div
             ref={cursorRef}
