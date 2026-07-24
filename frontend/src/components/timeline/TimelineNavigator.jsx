@@ -273,7 +273,13 @@ export default function TimelineNavigator() {
                                     <img
                                         src={e.dinosaur}
                                         alt={e.name}
-                                        className="h-44 w-full object-contain drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)]"
+                                        onError={(evt) => {
+                                            evt.currentTarget.onerror = null;
+                                            if (e.id === "triassic") evt.currentTarget.src = "/triassic-dino.png";
+                                            else if (e.id === "cretaceous") evt.currentTarget.src = "/trex-dino.png";
+                                            else evt.currentTarget.src = "/jurassic-dino.png";
+                                        }}
+                                        className="h-44 w-full object-cover rounded-2xl border border-white/10 drop-shadow-[0_10px_30px_rgba(0,0,0,0.8)]"
                                     />
                                 </motion.div>
                             ))}
@@ -325,31 +331,41 @@ export default function TimelineNavigator() {
                             </AnimatePresence>
                         </div>
 
-                        {/* Right: Breathing Dinosaur Representation */}
-                        <div className="relative flex h-60 items-center justify-center sm:h-72 lg:h-80">
+                        {/* Right: Floating Dinosaur Representation */}
+                        <div className="relative flex h-60 w-full items-center justify-center sm:h-72 lg:h-80">
                             <div
-                                className="absolute h-40 w-60 rounded-full blur-3xl transition-all duration-700 opacity-60"
+                                className="absolute h-48 w-64 rounded-full blur-3xl transition-all duration-700 opacity-60 pointer-events-none"
                                 style={{ backgroundColor: theme.primaryAccent }}
                             />
 
                             <AnimatePresence mode="wait">
                                 <motion.img
-                                    key={currentEra.dinosaur}
+                                    key={`${currentEra.id}-${currentEra.dinosaur}`}
                                     src={currentEra.dinosaur}
                                     alt={`${currentEra.name} dinosaur`}
-                                    initial={{ opacity: 0, scale: 0.92, y: 15 }}
+                                    onError={(e) => {
+                                        e.currentTarget.onerror = null;
+                                        if (currentEra.id === "triassic") {
+                                            e.currentTarget.src = "/triassic-dino.png";
+                                        } else if (currentEra.id === "cretaceous") {
+                                            e.currentTarget.src = "/trex-dino.png";
+                                        } else {
+                                            e.currentTarget.src = "/jurassic-dino.webp";
+                                        }
+                                    }}
+                                    initial={{ opacity: 0, scale: 0.9, y: 15 }}
                                     animate={{
                                         opacity: 1,
                                         scale: 1,
-                                        y: [0, -12, 0]
+                                        y: [0, -14, 0]
                                     }}
-                                    exit={{ opacity: 0, scale: 0.92, y: -15 }}
+                                    exit={{ opacity: 0, scale: 0.9, y: -15 }}
                                     transition={{
                                         opacity: { duration: 0.35, ease: ultraBezier },
                                         scale: { duration: 0.35, ease: ultraBezier },
-                                        y: { duration: 5.5, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }
+                                        y: { duration: 4.5, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" }
                                     }}
-                                    className="absolute z-10 max-h-full max-w-full object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.85)] will-change-transform transform-gpu"
+                                    className="relative z-10 h-full w-full max-h-full max-w-full object-contain drop-shadow-[0_25px_60px_rgba(0,0,0,0.9)] will-change-transform transform-gpu"
                                 />
                             </AnimatePresence>
                         </div>

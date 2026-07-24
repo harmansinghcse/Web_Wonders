@@ -7,7 +7,7 @@ export const eras = [
         start: "252 Ma",
         end: "201 Ma",
         background: "/triassic-bg.webp",
-        dinosaur: "/triassic-dino.webp",
+        dinosaur: "/triassic-dino.png",
         theme: {
             name: "Volcanic Arid Desert",
             primaryAccent: "#E67E22",
@@ -115,7 +115,7 @@ export const eras = [
         start: "145 Ma",
         end: "66 Ma",
         background: "/cretaceous-bg.webp",
-        dinosaur: "/trex-dino.webp",
+        dinosaur: "/trex-dino.png",
         theme: {
             name: "Fiery Extinction Sunset",
             primaryAccent: "#EF4444",

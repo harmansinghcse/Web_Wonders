@@ -6,9 +6,8 @@ import { motion } from "framer-motion";
  * --------------------------------------------
  * Component: DinosaurCard
  * Purpose:
- * Displays a single dinosaur card with its
- * image, basic information, statistics,
- * and a link to the detailed page.
+ * Displays a single dinosaur card with uniform card sizing,
+ * equal heights across grid items, and overflow protection.
  * --------------------------------------------
  */
 
@@ -23,96 +22,100 @@ export default function DinosaurCard({ dinosaur }) {
                 duration: 0.3,
                 ease: "easeOut",
             }}
+            className="h-full"
         >
-            <Link to={`/dinosaur/${dinosaur.slug}`} className="group block">
+            <Link to={`/dinosaur/${dinosaur.slug}`} className="group block h-full">
                 <div className="group flex h-full flex-col overflow-hidden rounded-3xl border border-[#D8D2C5] bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-                    {/* Image */}
-                    <div className="relative aspect-16/10 overflow-hidden">
+                    
+                    {/* Dinosaur Image Container */}
+                    <div className="relative aspect-16/10 overflow-hidden shrink-0">
                         <img
-                            src={dinosaur.images.heroBackground}
+                            src={dinosaur.images?.heroBackground || dinosaur.images?.main}
                             alt={dinosaur.name}
                             className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
                         />
 
-                        <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/20 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
 
-                        <div className="absolute bottom-5 left-5">
-                            <h2 className="text-3xl font-bold text-white">
+                        <div className="absolute bottom-4 left-5 right-5">
+                            <h2 className="text-2xl sm:text-3xl font-bold text-white truncate" title={dinosaur.name}>
                                 {dinosaur.name}
                             </h2>
 
-                            <p className="italic text-white/80">
+                            <p className="italic text-white/80 text-xs sm:text-sm truncate" title={dinosaur.scientificName}>
                                 {dinosaur.scientificName}
                             </p>
                         </div>
                     </div>
 
-                    {/* Body */}
-                    <div className="flex flex-1 flex-col p-6">
-                        {/* Meta */}
-                        <div className="mt-5 grid grid-cols-2 gap-x-4 gap-y-3 text-sm text-gray-600">
-                            <div className="flex min-w-0 items-center gap-2">
-                                <Calendar size={16} className="shrink-0" />
-                                <span className="wrap-break-words">
-                                    {dinosaur.stats.period}
-                                </span>
+                    {/* Card Body - Uniform Height Distribution */}
+                    <div className="flex flex-1 flex-col justify-between p-5 sm:p-6">
+                        <div>
+                            {/* Meta Details Grid (Period, Location, Diet) */}
+                            <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 text-xs sm:text-sm text-gray-600">
+                                <div className="flex min-w-0 items-center gap-2" title={dinosaur.stats?.period}>
+                                    <Calendar size={15} className="shrink-0 text-[#47613F]" />
+                                    <span className="truncate">
+                                        {dinosaur.stats?.period || "Unknown Era"}
+                                    </span>
+                                </div>
+
+                                <div className="flex min-w-0 items-center gap-2" title={dinosaur.stats?.location}>
+                                    <MapPin size={15} className="shrink-0 text-[#47613F]" />
+                                    <span className="truncate">
+                                        {dinosaur.stats?.location || "Global"}
+                                    </span>
+                                </div>
+
+                                <div className="flex min-w-0 items-center gap-2" title={dinosaur.stats?.diet}>
+                                    <Beef size={15} className="shrink-0 text-[#47613F]" />
+                                    <span className="truncate">
+                                        {dinosaur.stats?.diet || "Specimen"}
+                                    </span>
+                                </div>
                             </div>
 
-                            <div className="flex min-w-0 items-center gap-2">
-                                <MapPin size={16} className="shrink-0" />
-                                <span className="wrap-break-words">
-                                    {dinosaur.stats.location}
-                                </span>
-                            </div>
+                            {/* Stat Boxes Grid - Fixed Uniform Min Height & Overflow Bounding */}
+                            <div className="mt-5 grid grid-cols-3 gap-2.5">
+                                <div className="rounded-xl bg-[#F7F5EF] p-2.5 sm:p-3 text-center flex flex-col justify-center min-h-[76px] overflow-hidden border border-[#EBE7DD]">
+                                    <p className="text-[10px] uppercase font-bold tracking-wider text-gray-500 truncate">
+                                        Length
+                                    </p>
 
-                            <div className="flex min-w-0 items-center gap-2">
-                                <Beef size={16} className="shrink-0" />
-                                <span className="wrap-break-words">
-                                    {dinosaur.stats.diet}
-                                </span>
+                                    <p className="mt-1 font-extrabold text-[#2E4A37] text-xs sm:text-sm leading-tight line-clamp-2" title={dinosaur.stats?.length}>
+                                        {dinosaur.stats?.length || "N/A"}
+                                    </p>
+                                </div>
+
+                                <div className="rounded-xl bg-[#F7F5EF] p-2.5 sm:p-3 text-center flex flex-col justify-center min-h-[76px] overflow-hidden border border-[#EBE7DD]">
+                                    <p className="text-[10px] uppercase font-bold tracking-wider text-gray-500 truncate">
+                                        Weight
+                                    </p>
+
+                                    <p className="mt-1 font-extrabold text-[#2E4A37] text-xs sm:text-sm leading-tight line-clamp-2" title={dinosaur.stats?.weight}>
+                                        {dinosaur.stats?.weight || "N/A"}
+                                    </p>
+                                </div>
+
+                                <div className="rounded-xl bg-[#F7F5EF] p-2.5 sm:p-3 text-center flex flex-col justify-center min-h-[76px] overflow-hidden border border-[#EBE7DD]">
+                                    <p className="text-[10px] uppercase font-bold tracking-wider text-gray-500 truncate">
+                                        Speed
+                                    </p>
+
+                                    <p className="mt-1 font-extrabold text-[#2E4A37] text-xs sm:text-sm leading-tight line-clamp-2" title={dinosaur.stats?.speed}>
+                                        {dinosaur.stats?.speed || "N/A"}
+                                    </p>
+                                </div>
                             </div>
                         </div>
 
-                        {/* Stats */}
-                        <div className="mt-6 grid grid-cols-3 gap-4">
-                            <div className="rounded-xl bg-[#F7F5EF] p-4 text-center">
-                                <p className="text-xs uppercase tracking-wide text-gray-500">
-                                    Length
-                                </p>
-
-                                <p className="mt-2 font-bold text-[#2E4A37]">
-                                    {dinosaur.stats.length}
-                                </p>
-                            </div>
-
-                            <div className="rounded-xl bg-[#F7F5EF] p-4 text-center">
-                                <p className="text-xs uppercase tracking-wide text-gray-500">
-                                    Weight
-                                </p>
-
-                                <p className="mt-2 font-bold text-[#2E4A37]">
-                                    {dinosaur.stats.weight}
-                                </p>
-                            </div>
-
-                            <div className="rounded-xl bg-[#F7F5EF] p-4 text-center">
-                                <p className="text-xs uppercase tracking-wide text-gray-500">
-                                    Speed
-                                </p>
-
-                                <p className="mt-2 font-bold text-[#2E4A37]">
-                                    {dinosaur.stats.speed}
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Button */}
-                        <div className="mt-6 flex items-center justify-end text-[#47613F]">
-                            <span className="font-semibold">Explore</span>
+                        {/* Footer Explore Link */}
+                        <div className="mt-5 flex items-center justify-end text-[#47613F] pt-2 border-t border-gray-100">
+                            <span className="font-semibold text-xs sm:text-sm">Explore</span>
 
                             <ChevronRight
-                                size={20}
-                                className="ml-2 transition group-hover:translate-x-1"
+                                size={18}
+                                className="ml-1.5 transition group-hover:translate-x-1"
                             />
                         </div>
                     </div>
