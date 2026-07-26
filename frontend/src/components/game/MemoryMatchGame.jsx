@@ -945,55 +945,57 @@ export default function MemoryMatchGame({ onBackToHub }) {
 
                 {/* GAME OVER / VICTORY MODAL */}
                 {gameState === "gameover" && (
-                    <div className="flex-1 flex items-center justify-center py-6">
-                        <div className="w-full max-w-2xl bg-[#0f2215]/95 border-2 border-[#52B788] rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl text-center relative overflow-hidden text-white">
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fadeIn">
+                        <div className="w-full max-w-2xl bg-gradient-to-b from-[#14261a] to-[#0b160f] border-2 border-emerald-400 rounded-3xl p-6 sm:p-8 shadow-[0_0_50px_rgba(82,183,136,0.3)] text-center relative overflow-hidden text-white space-y-6">
                             
                             {/* Confetti Glow Background */}
                             <div className="absolute -top-24 -left-24 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
                             <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-amber-500/20 rounded-full blur-3xl pointer-events-none" />
 
-                            <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-emerald-500/20 border border-emerald-400/40 text-4xl mb-4">
+                            <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-emerald-500/20 border border-emerald-400/40 text-4xl mx-auto shadow-inner animate-bounce">
                                 🏆
                             </div>
 
-                            <h2 className="text-3xl sm:text-5xl font-extrabold font-serif text-white tracking-tight">
-                                VICTORY UNLOCKED!
-                            </h2>
-                            <p className="text-sm sm:text-base text-emerald-200 mt-1">
-                                You matched all prehistoric dinosaur pairs!
-                            </p>
+                            <div className="space-y-1">
+                                <h2 className="text-3xl sm:text-5xl font-black font-serif text-[#52B788] tracking-tight uppercase drop-shadow">
+                                    LEVEL COMPLETE!
+                                </h2>
+                                <p className="text-sm sm:text-base text-emerald-200/90 font-medium italic">
+                                    Excellent matching! You mastered all prehistoric dinosaur pairs.
+                                </p>
+                            </div>
 
                             {/* Stars Rating */}
-                            <div className="flex justify-center gap-2 my-4 text-3xl">
+                            <div className="flex justify-center gap-2 text-3xl">
                                 <span className="text-amber-400">⭐</span>
                                 <span className="text-amber-400">⭐</span>
                                 <span className="text-amber-400">⭐</span>
                             </div>
 
                             {/* Final Stats Summary Grid */}
-                            <div className="grid grid-cols-3 gap-3 my-6 bg-[#09150d] p-4 rounded-2xl border border-white/10">
-                                <div>
-                                    <span className="text-xs text-gray-400 block uppercase font-medium">Time</span>
-                                    <span className="text-lg font-bold text-white font-mono">{formatTime(timer)}</span>
+                            <div className="grid grid-cols-3 gap-3 bg-[#071109] p-4 rounded-2xl border border-emerald-500/30 shadow-inner">
+                                <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+                                    <span className="text-xs text-gray-400 block uppercase font-bold">Time</span>
+                                    <span className="text-xl font-bold text-white font-mono">{formatTime(timer)}</span>
                                 </div>
-                                <div>
-                                    <span className="text-xs text-gray-400 block uppercase font-medium">Moves</span>
-                                    <span className="text-lg font-bold text-amber-300 font-mono">{moves}</span>
+                                <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+                                    <span className="text-xs text-gray-400 block uppercase font-bold">Moves</span>
+                                    <span className="text-xl font-bold text-amber-300 font-mono">{moves}</span>
                                 </div>
-                                <div>
-                                    <span className="text-xs text-gray-400 block uppercase font-medium">Score</span>
-                                    <span className="text-lg font-bold text-emerald-400 font-mono">{calculateScore()}</span>
+                                <div className="bg-white/5 p-3 rounded-xl border border-white/10">
+                                    <span className="text-xs text-gray-400 block uppercase font-bold">Score</span>
+                                    <span className="text-xl font-bold text-emerald-400 font-mono">{calculateScore()}</span>
                                 </div>
                             </div>
 
                             {/* Unlocked Dinosaur Trivia Gallery */}
                             {unlockedFacts.length > 0 && (
-                                <div className="text-left mb-6">
+                                <div className="text-left">
                                     <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-amber-300 mb-3 flex items-center gap-2">
                                         <BookOpen size={16} />
                                         <span>Unlocked Prehistoric Facts ({unlockedFacts.length})</span>
                                     </h3>
-                                    <div className="max-h-48 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+                                    <div className="max-h-36 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
                                         {unlockedFacts.map((dino) => (
                                             <div key={dino.id} className="bg-white/5 border border-white/10 p-3 rounded-xl flex items-start gap-3">
                                                 <span className="text-xl">🦕</span>
@@ -1007,22 +1009,52 @@ export default function MemoryMatchGame({ onBackToHub }) {
                                 </div>
                             )}
 
-                            {/* Action Buttons */}
-                            <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+                            {/* Action Buttons Grid */}
+                            <div className="space-y-3 pt-2">
+                                {/* Primary Highlighted Button: NEXT LEVEL */}
                                 <button
-                                    onClick={startNewGame}
-                                    className="flex items-center gap-2 bg-[#52B788] text-[#0a180e] hover:bg-[#66d29f] px-6 py-3 rounded-2xl font-bold text-sm uppercase tracking-wider shadow-lg transition-all hover:scale-105 cursor-pointer"
+                                    onClick={() => {
+                                        if (difficulty === "easy") {
+                                            setDifficulty("moderate");
+                                            setTimeout(() => startNewGame(), 100);
+                                        } else if (difficulty === "moderate") {
+                                            setDifficulty("hard");
+                                            setTimeout(() => startNewGame(), 100);
+                                        } else {
+                                            startNewGame();
+                                        }
+                                    }}
+                                    className="w-full py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm uppercase tracking-wider shadow-lg shadow-emerald-950/50 hover:scale-[1.02] transition-all cursor-pointer flex items-center justify-center gap-2"
                                 >
-                                    <RotateCcw size={18} />
-                                    <span>Play Again</span>
+                                    <span>▶</span>
+                                    <span>{difficulty === "hard" ? "PLAY AGAIN (HARD)" : `NEXT LEVEL (${difficulty === "easy" ? "MODERATE" : "HARD"})`}</span>
                                 </button>
-                                <Link
-                                    to="/quiz"
-                                    className="flex items-center gap-2 bg-white/10 text-white hover:bg-white/20 px-6 py-3 rounded-2xl font-bold text-sm uppercase tracking-wider transition-all"
-                                >
-                                    <span>Take a Quiz</span>
-                                    <ChevronRight size={18} />
-                                </Link>
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    {/* Secondary Button: TRY AGAIN */}
+                                    <button
+                                        onClick={startNewGame}
+                                        className="py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-2 border border-white/15"
+                                    >
+                                        <RotateCcw size={16} />
+                                        <span>TRY AGAIN</span>
+                                    </button>
+
+                                    {/* Secondary Button: GAME CENTER */}
+                                    <button
+                                        onClick={() => {
+                                            if (onBackToHub) {
+                                                onBackToHub();
+                                            } else {
+                                                setGameState("landing");
+                                            }
+                                        }}
+                                        className="py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-emerald-300 font-bold text-xs uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-2 border border-white/15"
+                                    >
+                                        <span>▦</span>
+                                        <span>GAME CENTER</span>
+                                    </button>
+                                </div>
                             </div>
 
                         </div>

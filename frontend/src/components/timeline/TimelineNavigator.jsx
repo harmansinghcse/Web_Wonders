@@ -203,51 +203,63 @@ export default function TimelineNavigator() {
             <div className="absolute inset-0 bg-gradient-to-r from-[#0A0C0A]/90 via-transparent to-[#0A0C0A]/90 pointer-events-none" />
 
             {/* SITE NAVIGATION HEADER */}
-            <header className="relative z-50 pt-2 pb-2">
+            <div className="relative z-50">
                 <Navbar />
-            </header>
+            </div>
 
-            <div className="relative mx-auto flex min-h-screen max-w-6xl flex-col justify-between px-4 sm:px-6 pt-16">
+            <div className="relative mx-auto flex min-h-screen max-w-6xl flex-col justify-between px-4 sm:px-6 pt-26 sm:pt-28 lg:pt-30">
                 
-                {/* Header Section */}
-                <header className="relative z-50 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
+                {/* Header Section: Floating Pill Buttons matching exact screenshot layout */}
+                <motion.header 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                    className="relative z-40 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-2"
+                >
                     <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+                        whileHover={{ scale: 1.05, y: -1 }}
+                        whileTap={{ scale: 0.95 }}
                         onClick={() => navigate("/")}
-                        className="group flex w-fit items-center gap-2 rounded-full border border-white/10 bg-black/50 px-5 py-2.5 text-xs font-bold text-gray-300 backdrop-blur-xl transition hover:border-white/30 hover:bg-black/70 hover:text-white cursor-pointer shadow-lg"
+                        className="group flex w-fit items-center gap-2 rounded-full border border-white/20 bg-black/70 px-5 py-2.5 text-xs font-bold text-white backdrop-blur-xl transition hover:border-white/40 hover:bg-black/90 cursor-pointer shadow-lg"
                     >
                         <ArrowLeft size={16} className="transition-transform duration-300 group-hover:-translate-x-1" />
                         <span>Back to Expedition</span>
                     </motion.button>
 
                     <div className="flex flex-wrap items-center gap-3">
-                        <button
+                        <motion.button
+                            whileHover={{ scale: 1.05, y: -1 }}
+                            whileTap={{ scale: 0.95 }}
                             onClick={() => setCompareMode(!compareMode)}
-                            className="flex items-center gap-2 rounded-full border border-white/15 bg-black/40 px-4 py-2 text-xs font-bold text-gray-200 backdrop-blur-xl hover:border-white/40 hover:text-white transition cursor-pointer shadow-md"
+                            className="flex items-center gap-2 rounded-full border border-white/20 bg-black/70 px-5 py-2.5 text-xs font-bold text-white backdrop-blur-xl hover:border-white/40 transition cursor-pointer shadow-lg"
                         >
-                            <Columns size={14} />
+                            <Columns size={15} />
                             <span>{compareMode ? "Single Era View" : "Compare Eras Side-by-Side"}</span>
-                        </button>
+                        </motion.button>
 
                         {activeEra === 2 && (
-                            <button
+                            <motion.button
+                                whileHover={{ scale: 1.05, y: -1 }}
+                                whileTap={{ scale: 0.95 }}
                                 onClick={() => setIsAsteroidModalOpen(true)}
-                                className="flex items-center gap-1.5 rounded-full border border-red-500/30 bg-red-950/40 px-4 py-2 text-xs font-bold text-red-300 backdrop-blur-xl hover:bg-red-900/50 hover:text-white transition cursor-pointer shadow-md"
+                                className="flex items-center gap-2 rounded-full border border-red-500/40 bg-red-950/70 px-5 py-2.5 text-xs font-bold text-red-200 backdrop-blur-xl hover:border-red-400 hover:bg-red-900/90 transition cursor-pointer shadow-lg"
                             >
-                                <Flame size={14} className="text-red-400 animate-pulse" />
+                                <Flame size={15} className="text-red-400 animate-pulse" />
                                 <span>Simulate Extinction</span>
-                            </button>
+                            </motion.button>
                         )}
 
-                        <div className="rounded-full border border-white/10 bg-black/40 px-4 py-2 text-xs font-semibold backdrop-blur-xl">
-                            <span className="text-gray-400">Atmosphere Theme:</span>{" "}
+                        <motion.div 
+                            whileHover={{ scale: 1.02 }}
+                            className="rounded-full border border-white/20 bg-black/70 px-5 py-2.5 text-xs font-semibold backdrop-blur-xl shadow-lg"
+                        >
+                            <span className="text-gray-300">Atmosphere Theme:</span>{" "}
                             <span style={{ color: currentEra.theme.primary }} className="font-bold">
                                 {currentEra.theme.name}
                             </span>
-                        </div>
+                        </motion.div>
                     </div>
-                </header>
+                </motion.header>
 
                 {/* Compare Mode View or Main Showcase View */}
                 {compareMode ? (
@@ -443,7 +455,11 @@ export default function TimelineNavigator() {
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                                 {/* Temp */}
-                                <div className="rounded-2xl border border-white/10 bg-black/40 p-4 flex items-start gap-3">
+                                <motion.div 
+                                    whileHover={{ y: -6, scale: 1.02 }}
+                                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                    className="rounded-2xl border border-white/10 bg-black/40 p-4 flex items-start gap-3 transition-colors duration-300 hover:border-white/30 hover:bg-black/60 shadow-lg cursor-pointer"
+                                >
                                     <div className="rounded-xl p-2.5 bg-white/5" style={{ color: currentEra.theme.primary }}>
                                         <Thermometer size={20} />
                                     </div>
@@ -452,10 +468,14 @@ export default function TimelineNavigator() {
                                         <p className="text-xl font-bold text-white mt-1">{currentEra.climate.temp}</p>
                                         <p className="text-[10px] font-semibold text-emerald-400 mt-0.5">{currentEra.climate.tempSub}</p>
                                     </div>
-                                </div>
+                                </motion.div>
 
                                 {/* Oxygen */}
-                                <div className="rounded-2xl border border-white/10 bg-black/40 p-4 flex items-start gap-3">
+                                <motion.div 
+                                    whileHover={{ y: -6, scale: 1.02 }}
+                                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                    className="rounded-2xl border border-white/10 bg-black/40 p-4 flex items-start gap-3 transition-colors duration-300 hover:border-white/30 hover:bg-black/60 shadow-lg cursor-pointer"
+                                >
                                     <div className="rounded-xl p-2.5 bg-white/5 text-emerald-400">
                                         <Wind size={20} />
                                     </div>
@@ -464,10 +484,14 @@ export default function TimelineNavigator() {
                                         <p className="text-xl font-bold text-white mt-1">{currentEra.climate.oxygen}</p>
                                         <p className="text-[10px] font-semibold text-emerald-400 mt-0.5">{currentEra.climate.co2}</p>
                                     </div>
-                                </div>
+                                </motion.div>
 
                                 {/* Drift */}
-                                <div className="rounded-2xl border border-white/10 bg-black/40 p-4 flex items-start gap-3">
+                                <motion.div 
+                                    whileHover={{ y: -6, scale: 1.02 }}
+                                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                    className="rounded-2xl border border-white/10 bg-black/40 p-4 flex items-start gap-3 transition-colors duration-300 hover:border-white/30 hover:bg-black/60 shadow-lg cursor-pointer"
+                                >
                                     <div className="rounded-xl p-2.5 bg-white/5 text-blue-400">
                                         <Globe size={20} />
                                     </div>
@@ -475,10 +499,14 @@ export default function TimelineNavigator() {
                                         <p className="text-[10px] font-bold tracking-wider text-gray-400 uppercase">CONTINENTAL DRIFT</p>
                                         <p className="text-sm font-bold text-white mt-1 leading-snug">{currentEra.climate.drift}</p>
                                     </div>
-                                </div>
+                                </motion.div>
 
                                 {/* Flora */}
-                                <div className="rounded-2xl border border-white/10 bg-black/40 p-4 flex items-start gap-3">
+                                <motion.div 
+                                    whileHover={{ y: -6, scale: 1.02 }}
+                                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                    className="rounded-2xl border border-white/10 bg-black/40 p-4 flex items-start gap-3 transition-colors duration-300 hover:border-white/30 hover:bg-black/60 shadow-lg cursor-pointer"
+                                >
                                     <div className="rounded-xl p-2.5 bg-white/5 text-green-400">
                                         <Trees size={20} />
                                     </div>
@@ -486,7 +514,7 @@ export default function TimelineNavigator() {
                                         <p className="text-[10px] font-bold tracking-wider text-gray-400 uppercase">DOMINANT FLORA</p>
                                         <p className="text-xs font-bold text-white mt-1 leading-snug">{currentEra.climate.flora}</p>
                                     </div>
-                                </div>
+                                </motion.div>
                             </div>
                         </div>
 
@@ -514,10 +542,13 @@ export default function TimelineNavigator() {
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                                 {currentEra.dinosaurs.map((dino, idx) => (
-                                    <div
+                                    <motion.div
                                         key={`dino-${idx}`}
+                                        whileHover={{ y: -8, scale: 1.03 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        transition={{ type: "spring", stiffness: 300, damping: 22 }}
                                         onClick={() => setSelectedSpecimen(dino)}
-                                        className="group rounded-2xl border border-white/10 bg-black/50 overflow-hidden hover:border-white/30 transition-all duration-300 cursor-pointer"
+                                        className="group rounded-2xl border border-white/10 bg-black/50 overflow-hidden hover:border-white/40 transition-all duration-300 cursor-pointer shadow-xl"
                                     >
                                         <div className="relative h-44 w-full overflow-hidden bg-black/60">
                                             <img
@@ -527,7 +558,7 @@ export default function TimelineNavigator() {
                                                     e.currentTarget.onerror = null;
                                                     e.currentTarget.src = currentEra.dinosaur;
                                                 }}
-                                                className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                className="h-full w-full object-cover group-hover:scale-108 transition-transform duration-500"
                                             />
                                             <div className="absolute top-3 left-3 rounded-full bg-black/60 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold text-[#E7D3A7] border border-white/10">
                                                 {dino.diet}
@@ -547,7 +578,7 @@ export default function TimelineNavigator() {
                                                 <span>Weight: <strong className="text-white">{dino.weight}</strong></span>
                                             </div>
                                         </div>
-                                    </div>
+                                    </motion.div>
                                 ))}
                             </div>
                         </div>
@@ -565,22 +596,53 @@ export default function TimelineNavigator() {
                                 <span>KEY ERA MILESTONES & GEOLOGICAL EVENTS</span>
                             </h3>
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                {currentEra.milestones.map((m, idx) => (
-                                    <div
-                                        key={`m-${idx}`}
-                                        className="rounded-2xl border border-white/10 bg-black/40 p-4 transition hover:border-white/20"
-                                    >
-                                        <span
-                                            className="inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold text-white mb-2"
-                                            style={{ backgroundColor: currentEra.theme.badgeBg, border: `1px solid ${currentEra.theme.border}` }}
+                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                {currentEra.milestones.map((m, idx) => {
+                                    const shades = [
+                                        {
+                                            bg: "bg-gradient-to-br from-[#2b1b0b]/90 via-[#1b1106]/85 to-[#0a0602]/95",
+                                            border: "border-amber-500/40 hover:border-amber-400",
+                                            badgeBg: "bg-amber-500/20 text-amber-300 border-amber-500/50",
+                                            titleColor: "text-amber-100 group-hover:text-amber-300",
+                                            glow: "hover:shadow-[0_0_25px_rgba(245,158,11,0.3)]",
+                                        },
+                                        {
+                                            bg: "bg-gradient-to-br from-[#0b281c]/90 via-[#071a12]/85 to-[#030d08]/95",
+                                            border: "border-emerald-500/40 hover:border-emerald-400",
+                                            badgeBg: "bg-emerald-500/20 text-emerald-300 border-emerald-500/50",
+                                            titleColor: "text-emerald-100 group-hover:text-emerald-300",
+                                            glow: "hover:shadow-[0_0_25px_rgba(16,185,129,0.3)]",
+                                        },
+                                        {
+                                            bg: "bg-gradient-to-br from-[#2c0b0b]/90 via-[#1c0606]/85 to-[#0c0202]/95",
+                                            border: "border-red-500/40 hover:border-red-400",
+                                            badgeBg: "bg-red-500/20 text-red-300 border-red-500/50",
+                                            titleColor: "text-red-100 group-hover:text-red-300",
+                                            glow: "hover:shadow-[0_0_25px_rgba(239,68,68,0.3)]",
+                                        },
+                                    ];
+                                    const shade = shades[idx % shades.length];
+                                    return (
+                                        <motion.div
+                                            key={`m-${idx}`}
+                                            whileHover={{ y: -7, scale: 1.03 }}
+                                            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                            className={`group rounded-2xl border p-4 font-sans transition-all duration-300 backdrop-blur-md cursor-pointer shadow-lg ${shade.bg} ${shade.border} ${shade.glow}`}
                                         >
-                                            {m.ma}
-                                        </span>
-                                        <h4 className="font-serif text-sm font-bold text-white">{m.title}</h4>
-                                        <p className="text-xs text-gray-400 mt-2 leading-relaxed">{m.desc}</p>
-                                    </div>
-                                ))}
+                                            <span
+                                                className={`inline-block rounded-full px-3 py-1 text-[10px] font-extrabold uppercase border mb-3 ${shade.badgeBg}`}
+                                            >
+                                                {m.ma}
+                                            </span>
+                                            <h4 className={`font-serif text-sm font-bold tracking-tight transition-colors ${shade.titleColor}`}>
+                                                {m.title}
+                                            </h4>
+                                            <p className="text-xs text-gray-300/90 mt-2 leading-relaxed font-medium">
+                                                {m.desc}
+                                            </p>
+                                        </motion.div>
+                                    );
+                                })}
                             </div>
                         </div>
                     </>
