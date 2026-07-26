@@ -129,35 +129,37 @@ export default function GameHub({ initialGame = "hub" }) {
                         }`}
                     >
                         <div className="space-y-4">
-                            <div className="w-full h-44 rounded-2xl bg-gradient-to-b from-[#0b291d] to-[#04140c] border border-emerald-500/30 overflow-hidden relative flex items-center justify-center group-hover:border-emerald-400 transition-colors">
-                                <span className="text-6xl group-hover:scale-125 transition-transform duration-500 drop-shadow-[0_0_20px_rgba(82,183,136,0.5)]">
-                                    🎴
-                                </span>
-                                <div className="absolute top-3 right-3 bg-emerald-500/20 border border-emerald-400/50 px-3 py-1 rounded-full text-[10px] font-extrabold text-emerald-300 uppercase tracking-wider backdrop-blur-md">
-                                    Mystical Relic Vibe
+                            <div className="w-full h-52 sm:h-56 rounded-2xl bg-gradient-to-br from-[#0b291c] via-[#071d12] to-[#04140c] border border-emerald-500/30 overflow-hidden relative flex items-center justify-center group-hover:border-emerald-400/80 transition-all duration-500 shadow-xl">
+                                <img 
+                                    src="/game_memory_match.jpg" 
+                                    alt="Jurassic Memory Match Artwork"
+                                    className="w-full h-full object-cover scale-[1.05] group-hover:scale-110 transition-transform duration-500"
+                                />
+                                <div className="absolute top-3 right-3 bg-emerald-950/90 border border-emerald-400/60 px-3 py-1 rounded-full text-xs font-extrabold text-emerald-300 uppercase tracking-wider backdrop-blur-md shadow-md">
+                                    Memory & Logic
                                 </div>
                             </div>
 
                             <div>
-                                <h3 className="text-xl font-serif font-bold text-white group-hover:text-emerald-300 transition-colors">
+                                <h3 className="text-2xl sm:text-3xl font-serif font-black text-white group-hover:text-emerald-300 transition-colors tracking-tight">
                                     Jurassic Memory Match
                                 </h3>
-                                <p className="text-xs text-gray-300 mt-1 leading-relaxed">
+                                <p className="text-sm text-gray-200 mt-2 leading-relaxed font-medium">
                                     Flip 3D prehistoric cards, match species pairs, unlock dinosaur trivia facts, and beat the clock!
                                 </p>
 
                                 {/* Difficulty Tags */}
-                                <div className="flex flex-wrap gap-1.5 mt-3">
-                                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Easy (12)</span>
-                                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">Moderate (16)</span>
-                                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30">Hard (20)</span>
+                                <div className="flex flex-wrap gap-2 mt-4">
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">Easy (12)</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">Moderate (16)</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/40">Hard (20)</span>
                                 </div>
                             </div>
                         </div>
 
                         <div className="pt-6 space-y-3">
                             {memoryBest > 0 && (
-                                <div className="flex items-center justify-between text-xs bg-emerald-950/40 px-3 py-1.5 rounded-xl border border-emerald-500/30 font-mono">
+                                <div className="flex items-center justify-between text-xs sm:text-sm bg-emerald-950/50 px-3.5 py-2 rounded-xl border border-emerald-500/30 font-mono">
                                     <span className="text-gray-300">Best Score</span>
                                     <span className="text-emerald-300 font-bold">{memoryBest} pts</span>
                                 </div>
@@ -165,10 +167,10 @@ export default function GameHub({ initialGame = "hub" }) {
 
                             <button
                                 onClick={() => setActiveGame("memory-match")}
-                                className="w-full py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer group-hover:shadow-[0_0_20px_rgba(82,183,136,0.5)]"
+                                className="w-full py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-xl transition-all cursor-pointer group-hover:shadow-[0_0_25px_rgba(82,183,136,0.6)]"
                             >
-                                <Play size={16} />
-                                <span>Enter Mystical Match</span>
+                                <Play size={20} className="fill-current" />
+                                <span>Play Memory Match</span>
                             </button>
                         </div>
                     </div>
@@ -184,28 +186,30 @@ export default function GameHub({ initialGame = "hub" }) {
                         }`}
                     >
                         <div className="space-y-4">
-                            <div className="w-full h-44 rounded-2xl bg-gradient-to-b from-[#301d0a] to-[#120a03] border border-amber-500/30 overflow-hidden relative flex items-center justify-center group-hover:border-amber-400 transition-colors">
-                                <span className="text-6xl group-hover:scale-125 transition-transform duration-500 drop-shadow-[0_0_20px_rgba(245,158,11,0.5)]">
-                                    ⛏️
-                                </span>
-                                <div className="absolute top-3 right-3 bg-amber-500/20 border border-amber-400/50 px-3 py-1 rounded-full text-[10px] font-extrabold text-amber-300 uppercase tracking-wider backdrop-blur-md">
-                                    Earthy Desert Vibe
+                            <div className="w-full h-52 sm:h-56 rounded-2xl bg-gradient-to-br from-[#42240d] via-[#241306] to-[#120902] border border-amber-500/40 overflow-hidden relative flex items-center justify-center group-hover:border-amber-400 transition-all duration-500 shadow-xl">
+                                <img 
+                                    src="/game_fossil_excavator.jpg" 
+                                    alt="Fossil Excavator Artwork"
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 brightness-90 contrast-95"
+                                />
+                                <div className="absolute top-3 right-3 bg-amber-950/80 border border-amber-400/60 px-3 py-1 rounded-full text-xs font-extrabold text-amber-300 uppercase tracking-wider backdrop-blur-md shadow-md">
+                                    Excavation
                                 </div>
                             </div>
 
                             <div>
-                                <h3 className="text-xl font-serif font-bold text-white group-hover:text-amber-300 transition-colors">
+                                <h3 className="text-2xl sm:text-3xl font-serif font-black text-white group-hover:text-amber-300 transition-colors tracking-tight">
                                     Fossil Excavator
                                 </h3>
-                                <p className="text-xs text-gray-300 mt-1 leading-relaxed">
+                                <p className="text-sm text-gray-200 mt-2 leading-relaxed font-medium">
                                     Dig up ancient buried dinosaur bones, assemble full skeletons, and avoid solid bedrock hazards.
                                 </p>
 
                                 {/* Difficulty Tags */}
-                                <div className="flex flex-wrap gap-1.5 mt-3">
-                                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Easy (20 Digs)</span>
-                                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">Moderate (15)</span>
-                                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30">Hard (10)</span>
+                                <div className="flex flex-wrap gap-2 mt-4">
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">Easy (20 Digs)</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">Moderate (15)</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/40">Hard (10)</span>
                                 </div>
                             </div>
                         </div>
@@ -213,10 +217,10 @@ export default function GameHub({ initialGame = "hub" }) {
                         <div className="pt-6 space-y-3">
                             <button
                                 onClick={() => setActiveGame("fossil-hunter")}
-                                className="w-full py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer group-hover:shadow-[0_0_20px_rgba(245,158,11,0.5)]"
+                                className="w-full py-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-xl transition-all cursor-pointer group-hover:shadow-[0_0_25px_rgba(245,158,11,0.6)]"
                             >
-                                <Compass size={16} />
-                                <span>Enter Dig Site</span>
+                                <Compass size={20} />
+                                <span>Play Excavator</span>
                             </button>
                         </div>
                     </div>
@@ -232,36 +236,37 @@ export default function GameHub({ initialGame = "hub" }) {
                         }`}
                     >
                         <div className="space-y-4">
-                            <div className="w-full h-44 rounded-2xl bg-gradient-to-b from-[#3a0c0c] to-[#120303] border border-red-500/30 overflow-hidden relative flex items-center justify-center group-hover:border-red-400 transition-colors">
-                                <span className="text-6xl group-hover:scale-125 transition-transform duration-500 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)] animate-pulse">
-                                    🏃‍♂️
-                                </span>
-                                <div className="absolute top-3 right-3 bg-red-500/20 border border-red-400/50 px-3 py-1 rounded-full text-[10px] font-extrabold text-red-300 uppercase tracking-wider backdrop-blur-md flex items-center gap-1">
-                                    <Flame size={12} className="animate-bounce" />
-                                    <span>Fiery Magma Vibe</span>
+                            <div className="w-full h-52 sm:h-56 rounded-2xl bg-gradient-to-br from-[#471212] via-[#260909] to-[#120303] border border-red-500/40 overflow-hidden relative flex items-center justify-center group-hover:border-red-400 transition-all duration-500 shadow-xl">
+                                <img 
+                                    src="/game_dino_escape.jpg" 
+                                    alt="Jurassic Dino Escape Artwork"
+                                    className="w-full h-full object-cover scale-[1.05] group-hover:scale-110 transition-transform duration-500"
+                                />
+                                <div className="absolute top-3 right-3 bg-red-950/80 border border-red-400/60 px-3 py-1 rounded-full text-xs font-extrabold text-red-300 uppercase tracking-wider backdrop-blur-md shadow-md">
+                                    Action & Speed
                                 </div>
                             </div>
 
                             <div>
-                                <h3 className="text-xl font-serif font-bold text-white group-hover:text-red-300 transition-colors">
+                                <h3 className="text-2xl sm:text-3xl font-serif font-black text-white group-hover:text-red-300 transition-colors tracking-tight">
                                     Jurassic Dino Escape
                                 </h3>
-                                <p className="text-xs text-gray-300 mt-1 leading-relaxed">
+                                <p className="text-sm text-gray-200 mt-2 leading-relaxed font-medium">
                                     Run through volcanic landscapes, jump over lava rocks, dodge Pterodactyls, and collect Amber Gems!
                                 </p>
 
                                 {/* Difficulty Tags */}
-                                <div className="flex flex-wrap gap-1.5 mt-3">
-                                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Easy (3 Shields)</span>
-                                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">Moderate</span>
-                                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-500/30">Hard</span>
+                                <div className="flex flex-wrap gap-2 mt-4">
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">Easy (5 Shields)</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">Moderate (3)</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/40">Hard (1)</span>
                                 </div>
                             </div>
                         </div>
 
                         <div className="pt-6 space-y-3">
                             {runnerBest > 0 && (
-                                <div className="flex items-center justify-between text-xs bg-red-950/40 px-3 py-1.5 rounded-xl border border-red-500/30 font-mono">
+                                <div className="flex items-center justify-between text-xs sm:text-sm bg-red-950/50 px-3.5 py-2 rounded-xl border border-red-500/30 font-mono">
                                     <span className="text-gray-300">Best Distance</span>
                                     <span className="text-red-300 font-bold">{runnerBest} m</span>
                                 </div>
@@ -269,10 +274,10 @@ export default function GameHub({ initialGame = "hub" }) {
 
                             <button
                                 onClick={() => setActiveGame("dino-runner")}
-                                className="w-full py-3.5 rounded-2xl bg-red-600 hover:bg-red-500 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer group-hover:shadow-[0_0_20px_rgba(239,68,68,0.5)]"
+                                className="w-full py-4 rounded-2xl bg-red-600 hover:bg-red-500 text-white font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-xl transition-all cursor-pointer group-hover:shadow-[0_0_25px_rgba(239,68,68,0.6)]"
                             >
-                                <Zap size={16} />
-                                <span>Enter Volcanic Escape</span>
+                                <Zap size={20} />
+                                <span>Play Dino Escape</span>
                             </button>
                         </div>
                     </div>

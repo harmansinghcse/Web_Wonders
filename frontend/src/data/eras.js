@@ -6,7 +6,7 @@ export const eras = [
         description: "The first dinosaurs appeared during the Triassic period, rising from the ashes of Earth's greatest extinction event. The supercontinent Pangaea began to break apart, creating new climates and ecosystems that allowed early dinosaurs and mammals to emerge.",
         start: "252 Ma",
         end: "201 Ma",
-        background: "/triassic-bg.webp",
+        background: "/jurassic_game_vibe_bg.jpg",
         dinosaur: "/triassic-dino.webp",
         theme: {
             name: "Volcanic Arid Desert",
