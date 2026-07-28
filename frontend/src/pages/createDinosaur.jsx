@@ -213,6 +213,17 @@ const CreateDinosaurContent = () => {
             }
 
             if (data.success) {
+                try {
+                    if (dinosaur?.name) {
+                        await fetch(`${API_URL}/api/dinosaur/update-txt`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ name: dinosaur.name }),
+                        });
+                    }
+                } catch (e) {
+                    console.error("Failed to update txt file:", e);
+                }
                 clearDraft();
                 setSubmitted(true);
                 toast.success(isAdmin ? "Dinosaur published successfully!" : "Dinosaur submitted for review!");
