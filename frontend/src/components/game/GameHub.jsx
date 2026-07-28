@@ -1,9 +1,11 @@
 import { useState } from "react";
 import Navbar from "../home_components/hero/Navbar";
-import { Play, Trophy, Sparkles, Gamepad2, Award, Zap, Compass, Star, Flame } from "lucide-react";
+import { Play, Sparkles, Gamepad2, Zap, Compass, Mic, Palette } from "lucide-react";
 import MemoryMatchGame from "./MemoryMatchGame";
 import FossilHunterGame from "./FossilHunterGame";
 import DinoRunnerGame from "./DinoRunnerGame";
+import DinoVoiceLabGame from "./DinoVoiceLabGame";
+import PaleoPaletteGame from "./PaleoPaletteGame";
 import Cursor from "./Cursor";
 
 export default function GameHub({ initialGame = "hub" }) {
@@ -23,6 +25,14 @@ export default function GameHub({ initialGame = "hub" }) {
 
     if (activeGame === "dino-runner") {
         return <DinoRunnerGame onBackToHub={() => setActiveGame("hub")} />;
+    }
+
+    if (activeGame === "dino-voice-lab") {
+        return <DinoVoiceLabGame onBackToHub={() => setActiveGame("hub")} />;
+    }
+
+    if (activeGame === "paleo-palette") {
+        return <PaleoPaletteGame onBackToHub={() => setActiveGame("hub")} />;
     }
 
     // Dynamic background style based on active/hovered game vibe
@@ -54,11 +64,29 @@ export default function GameHub({ initialGame = "hub" }) {
                 accentColor: "#ef4444"
             };
         }
+        if (hoveredGame === "dino-voice-lab") {
+            return {
+                gradient: "from-[#0c1a26] via-[#0b2438] to-[#040d14]",
+                radial: "radial-gradient(circle at 40% 50%, rgba(6, 182, 212, 0.35) 0%, transparent 60%)",
+                badge: "bg-cyan-500/20 text-cyan-300 border-cyan-500/40",
+                text: "Acoustic Sound Wave Lab Vibe",
+                accentColor: "#06b6d4"
+            };
+        }
+        if (hoveredGame === "paleo-palette") {
+            return {
+                gradient: "from-[#190c26] via-[#281138] to-[#0d0514]",
+                radial: "radial-gradient(circle at 60% 40%, rgba(139, 92, 246, 0.35) 0%, transparent 60%)",
+                badge: "bg-purple-500/20 text-purple-300 border-purple-500/40",
+                text: "Vibrant Paleoart Studio Vibe",
+                accentColor: "#8b5cf6"
+            };
+        }
         return {
             gradient: "from-stone-950 via-[#0e1711] to-black",
             radial: "radial-gradient(circle at 50% 30%, rgba(82, 183, 136, 0.18) 0%, transparent 70%)",
             badge: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-            text: "Prehistoric Arcade Hub",
+            text: "Prehistoric Arcade Hub • 5 Mini-Games",
             accentColor: "#52B788"
         };
     };
@@ -115,7 +143,7 @@ export default function GameHub({ initialGame = "hub" }) {
                     </p>
                 </div>
 
-                {/* Games Grid */}
+                {/* ROW 1: Top 3 Core Games (Exact layout & sizing matching user screenshot) */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-4">
                     
                     {/* Game 1: Jurassic Memory Match */}
@@ -136,7 +164,7 @@ export default function GameHub({ initialGame = "hub" }) {
                                     className="w-full h-full object-cover scale-[1.05] group-hover:scale-110 transition-transform duration-500"
                                 />
                                 <div className="absolute top-3 right-3 bg-emerald-950/90 border border-emerald-400/60 px-3 py-1 rounded-full text-xs font-extrabold text-emerald-300 uppercase tracking-wider backdrop-blur-md shadow-md">
-                                    Memory & Logic
+                                    MEMORY & LOGIC
                                 </div>
                             </div>
 
@@ -150,9 +178,9 @@ export default function GameHub({ initialGame = "hub" }) {
 
                                 {/* Difficulty Tags */}
                                 <div className="flex flex-wrap gap-2 mt-4">
-                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">Easy (12)</span>
-                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">Moderate (16)</span>
-                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/40">Hard (20)</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">EASY (12)</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">MODERATE (16)</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/40">HARD (20)</span>
                                 </div>
                             </div>
                         </div>
@@ -170,7 +198,7 @@ export default function GameHub({ initialGame = "hub" }) {
                                 className="w-full py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-xl transition-all cursor-pointer group-hover:shadow-[0_0_25px_rgba(82,183,136,0.6)]"
                             >
                                 <Play size={20} className="fill-current" />
-                                <span>Play Memory Match</span>
+                                <span>PLAY MEMORY MATCH</span>
                             </button>
                         </div>
                     </div>
@@ -193,7 +221,7 @@ export default function GameHub({ initialGame = "hub" }) {
                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 brightness-90 contrast-95"
                                 />
                                 <div className="absolute top-3 right-3 bg-amber-950/80 border border-amber-400/60 px-3 py-1 rounded-full text-xs font-extrabold text-amber-300 uppercase tracking-wider backdrop-blur-md shadow-md">
-                                    Excavation
+                                    EXCAVATION
                                 </div>
                             </div>
 
@@ -207,9 +235,9 @@ export default function GameHub({ initialGame = "hub" }) {
 
                                 {/* Difficulty Tags */}
                                 <div className="flex flex-wrap gap-2 mt-4">
-                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">Easy (20 Digs)</span>
-                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">Moderate (15)</span>
-                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/40">Hard (10)</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">EASY (20 DIGS)</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">MODERATE (15)</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/40">HARD (10)</span>
                                 </div>
                             </div>
                         </div>
@@ -220,7 +248,7 @@ export default function GameHub({ initialGame = "hub" }) {
                                 className="w-full py-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-xl transition-all cursor-pointer group-hover:shadow-[0_0_25px_rgba(245,158,11,0.6)]"
                             >
                                 <Compass size={20} />
-                                <span>Play Excavator</span>
+                                <span>PLAY EXCAVATOR</span>
                             </button>
                         </div>
                     </div>
@@ -243,7 +271,7 @@ export default function GameHub({ initialGame = "hub" }) {
                                     className="w-full h-full object-cover scale-[1.05] group-hover:scale-110 transition-transform duration-500"
                                 />
                                 <div className="absolute top-3 right-3 bg-red-950/80 border border-red-400/60 px-3 py-1 rounded-full text-xs font-extrabold text-red-300 uppercase tracking-wider backdrop-blur-md shadow-md">
-                                    Action & Speed
+                                    ACTION & SPEED
                                 </div>
                             </div>
 
@@ -257,9 +285,9 @@ export default function GameHub({ initialGame = "hub" }) {
 
                                 {/* Difficulty Tags */}
                                 <div className="flex flex-wrap gap-2 mt-4">
-                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">Easy (5 Shields)</span>
-                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">Moderate (3)</span>
-                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/40">Hard (1)</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">EASY (5 SHIELDS)</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">MODERATE (3)</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/40">HARD (1)</span>
                                 </div>
                             </div>
                         </div>
@@ -277,7 +305,110 @@ export default function GameHub({ initialGame = "hub" }) {
                                 className="w-full py-4 rounded-2xl bg-red-600 hover:bg-red-500 text-white font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-xl transition-all cursor-pointer group-hover:shadow-[0_0_25px_rgba(239,68,68,0.6)]"
                             >
                                 <Zap size={20} />
-                                <span>Play Dino Escape</span>
+                                <span>PLAY DINO ESCAPE</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                {/* ROW 2: 2 New Games (Dino Voice Lab & Paleo Palette) - CENTER ALIGNED BELOW */}
+                <div className="flex flex-col md:flex-row items-stretch justify-center gap-8 pt-4">
+                    
+                    {/* Game 4: Dino Voice Lab */}
+                    <div 
+                        onMouseEnter={() => setHoveredGame("dino-voice-lab")}
+                        onMouseLeave={() => setHoveredGame(null)}
+                        className={`w-full md:w-[calc(33.333%-1.35rem)] max-w-md group relative rounded-3xl p-6 shadow-2xl backdrop-blur-xl flex flex-col justify-between transition-all duration-500 hover:-translate-y-2 border ${
+                            hoveredGame === "dino-voice-lab"
+                                ? "bg-[#0b1d2a]/95 border-cyan-400 shadow-[0_0_40px_rgba(6,182,212,0.35)] scale-[1.02]"
+                                : "bg-[#0e1724]/90 border-[#1f3852] hover:border-cyan-500/60"
+                        }`}
+                    >
+                        <div className="space-y-4">
+                            <div className="w-full h-52 sm:h-56 rounded-2xl bg-gradient-to-br from-[#0c2b42] via-[#091a29] to-[#040c14] border border-cyan-500/40 overflow-hidden relative flex items-center justify-center group-hover:border-cyan-400 transition-all duration-500 shadow-xl">
+                                <img 
+                                    src="/game_dino_voice_lab.jpg" 
+                                    alt="Dino Voice Lab Artwork"
+                                    className="w-full h-full object-cover scale-[1.05] group-hover:scale-110 transition-transform duration-500"
+                                />
+                                <div className="absolute top-3 right-3 bg-cyan-950/80 border border-cyan-400/60 px-3 py-1 rounded-full text-xs font-extrabold text-cyan-300 uppercase tracking-wider backdrop-blur-md shadow-md">
+                                    VOICE & AUDIO
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 className="text-2xl sm:text-3xl font-serif font-black text-white group-hover:text-cyan-300 transition-colors tracking-tight">
+                                    Dino Voice Lab
+                                </h3>
+                                <p className="text-sm text-gray-200 mt-2 leading-relaxed font-medium">
+                                    Record your voice, transform it into roars with pitch & echo effects, and see your dinosaur perform!
+                                </p>
+
+                                <div className="flex flex-wrap gap-2 mt-4">
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">3 DINOSAURS</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">3 EFFECTS</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">1–3 MIN</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="pt-6 space-y-3">
+                            <button
+                                onClick={() => setActiveGame("dino-voice-lab")}
+                                className="w-full py-4 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-xl transition-all cursor-pointer group-hover:shadow-[0_0_25px_rgba(6,182,212,0.6)]"
+                            >
+                                <Mic size={20} />
+                                <span>PLAY VOICE LAB</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Game 5: Paleo Palette */}
+                    <div 
+                        onMouseEnter={() => setHoveredGame("paleo-palette")}
+                        onMouseLeave={() => setHoveredGame(null)}
+                        className={`w-full md:w-[calc(33.333%-1.35rem)] max-w-md group relative rounded-3xl p-6 shadow-2xl backdrop-blur-xl flex flex-col justify-between transition-all duration-500 hover:-translate-y-2 border ${
+                            hoveredGame === "paleo-palette"
+                                ? "bg-[#1c0c28]/95 border-purple-400 shadow-[0_0_40px_rgba(139,92,246,0.35)] scale-[1.02]"
+                                : "bg-[#160c20]/90 border-[#3d1d54] hover:border-purple-500/60"
+                        }`}
+                    >
+                        <div className="space-y-4">
+                            <div className="w-full h-52 sm:h-56 rounded-2xl bg-gradient-to-br from-[#35144f] via-[#1c092b] to-[#0a0312] border border-purple-500/40 overflow-hidden relative flex items-center justify-center group-hover:border-purple-400 transition-all duration-500 shadow-xl">
+                                <img 
+                                    src="/game_paleo_palette.jpg" 
+                                    alt="Paleo Palette Artwork"
+                                    className="w-full h-full object-cover scale-[1.05] group-hover:scale-110 transition-transform duration-500"
+                                />
+                                <div className="absolute top-3 right-3 bg-purple-950/80 border border-purple-400/60 px-3 py-1 rounded-full text-xs font-extrabold text-purple-300 uppercase tracking-wider backdrop-blur-md shadow-md">
+                                    COLOR & CREATIVITY
+                                </div>
+                            </div>
+
+                            <div>
+                                <h3 className="text-2xl sm:text-3xl font-serif font-black text-white group-hover:text-purple-300 transition-colors tracking-tight">
+                                    Paleo Palette
+                                </h3>
+                                <p className="text-sm text-gray-200 mt-2 leading-relaxed font-medium">
+                                    Color prehistoric dinosaur outlines using 8 pigments, custom brushes, and spots or stripes patterns!
+                                </p>
+
+                                <div className="flex flex-wrap gap-2 mt-4">
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/40">8 COLORS</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">3 PATTERNS</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">1–3 MIN</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="pt-6 space-y-3">
+                            <button
+                                onClick={() => setActiveGame("paleo-palette")}
+                                className="w-full py-4 rounded-2xl bg-purple-500 hover:bg-purple-400 text-slate-950 font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-xl transition-all cursor-pointer group-hover:shadow-[0_0_25px_rgba(139,92,246,0.6)]"
+                            >
+                                <Palette size={20} />
+                                <span>PLAY PALEO PALETTE</span>
                             </button>
                         </div>
                     </div>
