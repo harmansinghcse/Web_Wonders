@@ -214,13 +214,13 @@ export default function GameHub({ initialGame = "hub" }) {
                         }`}
                     >
                         <div className="space-y-4">
-                            <div className="w-full h-52 sm:h-56 rounded-2xl bg-gradient-to-br from-[#42240d] via-[#241306] to-[#120902] border border-amber-500/40 overflow-hidden relative flex items-center justify-center group-hover:border-amber-400 transition-all duration-500 shadow-xl">
+                            <div className="w-full h-52 sm:h-56 rounded-2xl bg-gradient-to-br from-[#3b2310] via-[#241307] to-[#0f0702] border border-amber-500/40 overflow-hidden relative flex items-center justify-center group-hover:border-amber-400 transition-all duration-500 shadow-xl">
                                 <img 
                                     src="/game_fossil_excavator.jpg" 
                                     alt="Fossil Excavator Artwork"
-                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 brightness-90 contrast-95"
+                                    className="w-full h-full object-cover scale-[1.05] group-hover:scale-110 transition-transform duration-500"
                                 />
-                                <div className="absolute top-3 right-3 bg-amber-950/80 border border-amber-400/60 px-3 py-1 rounded-full text-xs font-extrabold text-amber-300 uppercase tracking-wider backdrop-blur-md shadow-md">
+                                <div className="absolute top-3 right-3 bg-[#2a170b]/90 border border-amber-500/80 px-3 py-1 rounded-full text-xs font-black text-amber-400 uppercase tracking-wider backdrop-blur-md shadow-md">
                                     EXCAVATION
                                 </div>
                             </div>
