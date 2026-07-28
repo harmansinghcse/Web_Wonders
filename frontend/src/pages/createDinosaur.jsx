@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { ArrowLeft, Save, Eye, EyeOff, Check, RefreshCw, Send, CheckCircle2, AlertOctagon, XOctagon } from "lucide-react";
 import { EditorProvider, useEditor } from "../context/EditorContext";
@@ -32,6 +32,8 @@ const CreateDinosaurContent = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const reviewId = searchParams.get("review");
+    const { id } = useParams();
+    const isEditMode = !!id;
 
     const { user } = useAuth();
     const isAdmin = user?.role === "admin";
@@ -45,6 +47,7 @@ const CreateDinosaurContent = () => {
     // Review Mode state
     const [reviewData, setReviewData] = useState(null);
     const [reviewLoading, setReviewLoading] = useState(false);
+    const [editLoading, setEditLoading] = useState(isEditMode);
     const [feedbackMessage, setFeedbackMessage] = useState("");
     const [showRejectModal, setShowRejectModal] = useState(false);
 
@@ -75,14 +78,21 @@ const CreateDinosaurContent = () => {
         setIsPreviewMode,
         isReviewMode,
         setIsReviewMode,
+        isEditMode: ctxIsEditMode,
+        setIsEditMode,
         loadDraft,
         saveDraft,
         clearDraft,
     } = useEditor();
 
-    // Check for draft on mount (only if not in review mode)
+    // Sync context isEditMode
     useEffect(() => {
-        if (!reviewId) {
+        setIsEditMode(isEditMode);
+    }, [isEditMode, setIsEditMode]);
+
+    // Check for draft on mount (only if not in review mode and not in edit mode)
+    useEffect(() => {
+        if (!reviewId && !isEditMode) {
             const checkDraft = async () => {
                 try {
                     const draft = await loadDraftFromDb();
@@ -96,7 +106,7 @@ const CreateDinosaurContent = () => {
             };
             checkDraft();
         }
-    }, [reviewId]);
+    }, [reviewId, isEditMode]);
 
     // Handle review load
     useEffect(() => {
@@ -132,6 +142,37 @@ const CreateDinosaurContent = () => {
             setIsReviewMode(false);
         }
     }, [reviewId, setIsReviewMode, setDinosaur, navigate]);
+
+    // Handle edit load
+    useEffect(() => {
+        if (isEditMode) {
+            setEditLoading(true);
+            setShowWelcome(false); // Skip welcome message in edit mode
+
+            const fetchDino = async () => {
+                try {
+                    const response = await fetch(`${API_URL}/api/dinosaur/${id}`, {
+                        credentials: "include",
+                    });
+                    const data = await response.json();
+                    if (response.ok && data.success) {
+                        setDinosaur(data.data);
+                    } else {
+                        toast.error(data.message || "Failed to load dinosaur details");
+                        navigate("/admin/dinosaurs");
+                    }
+                } catch (err) {
+                    console.error(err);
+                    toast.error("Network error while loading dinosaur");
+                    navigate("/admin/dinosaurs");
+                } finally {
+                    setEditLoading(false);
+                }
+            };
+
+            fetchDino();
+        }
+    }, [id, isEditMode, setDinosaur, navigate]);
 
     const handleRestore = async () => {
         const success = await loadDraft();
@@ -190,32 +231,43 @@ const CreateDinosaurContent = () => {
             if (files.fossilImage) {
                 formData.append("fossilImage", files.fossilImage);
             }
-            files.featureImages.forEach((file) => {
+            files.featureImages.forEach((file, index) => {
                 if (file) {
                     formData.append("featureImages", file);
+                    formData.append("featureImageIndices", index);
                 }
             });
 
-            const endpoint = isAdmin
+            let endpoint = isAdmin
                 ? `${API_URL}/api/dinosaur`
                 : `${API_URL}/api/dinosaur/submit`;
+            let method = "POST";
+
+            if (isEditMode) {
+                endpoint = `${API_URL}/api/dinosaur/${id}`;
+                method = "PUT";
+            }
 
             const response = await fetch(endpoint, {
-                method: "POST",
+                method,
                 credentials: "include",
                 body: formData,
             });
 
             const data = await response.json();
             if (!response.ok) {
-                toast.error(data.message || "Failed to submit dinosaur.");
+                toast.error(data.message || "Failed to save dinosaur.");
                 return;
             }
 
             if (data.success) {
                 clearDraft();
-                setSubmitted(true);
-                toast.success(isAdmin ? "Dinosaur published successfully!" : "Dinosaur submitted for review!");
+                toast.success(isEditMode ? "Dinosaur updated successfully!" : isAdmin ? "Dinosaur published successfully!" : "Dinosaur submitted for review!");
+                if (isEditMode) {
+                    navigate("/admin/dinosaurs");
+                } else {
+                    setSubmitted(true);
+                }
             }
         } catch (error) {
             console.error("Submission error:", error);
@@ -254,13 +306,15 @@ const CreateDinosaurContent = () => {
         }
     };
 
-    if (reviewLoading) {
+    if (reviewLoading || editLoading) {
         return (
             <div className="relative flex min-h-screen items-center justify-center bg-[#0B1A13] text-white">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#1E3326_0%,transparent_60%)]" />
                 <div className="relative z-10 flex flex-col items-center gap-4">
                     <div className="h-12 w-12 animate-spin rounded-full border-2 border-white/10 border-t-[#C9AA5B]" />
-                    <p className="text-sm font-medium text-gray-400">Loading submission data for review...</p>
+                    <p className="text-sm font-medium text-gray-400">
+                        {editLoading ? "Loading dinosaur details..." : "Loading submission data for review..."}
+                    </p>
                 </div>
             </div>
         );
@@ -345,15 +399,15 @@ const CreateDinosaurContent = () => {
             {/* Sticky Header */}
             <header className="sticky top-0 z-40 flex items-center justify-between border-b border-[#EADFC9] bg-[#F9F7F5]/90 px-6 py-4 backdrop-blur-md">
                 <Link
-                    to={isReviewMode ? "/admin/submissions" : "/"}
+                    to={isReviewMode ? "/admin/submissions" : isEditMode ? "/admin/dinosaurs" : "/"}
                     className="flex items-center gap-2 text-sm font-semibold text-gray-600 transition hover:text-gray-900"
                 >
                     <ArrowLeft size={16} />
-                    {isReviewMode ? "Back to Submissions" : "Back to Home"}
+                    {isReviewMode ? "Back to Submissions" : isEditMode ? "Back to Dinosaurs" : "Back to Home"}
                 </Link>
 
                 <h1 className="text-md font-bold uppercase tracking-widest text-[#2A2A2A]">
-                    {isReviewMode ? "Moderating Submission" : isPreviewMode ? "Editor / Live Preview" : "Dino Editor"}
+                    {isReviewMode ? "Moderating Submission" : isEditMode ? "Edit Dinosaur" : isPreviewMode ? "Editor / Live Preview" : "Dino Editor"}
                 </h1>
 
                 <div className="w-20" />
@@ -537,21 +591,28 @@ const CreateDinosaurContent = () => {
                                 </>
                             )
                         ) : (
-                            // Standard Actions for Creator Mode
+                            // Standard Actions for Creator / Edit Mode
                             <>
-                                <button
-                                    onClick={saveDraft}
-                                    className="flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
-                                >
-                                    <Save size={16} />
-                                    Save Draft
-                                </button>
+                                {!isEditMode && (
+                                    <button
+                                        onClick={saveDraft}
+                                        className="flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                                    >
+                                        <Save size={16} />
+                                        Save Draft
+                                    </button>
+                                )}
                                 <button
                                     onClick={handleSubmit}
                                     disabled={submitting}
                                     className="flex items-center gap-2 rounded-xl bg-[#2D6A4F] px-6 py-2.5 text-sm font-bold text-white transition hover:bg-[#1B4332] disabled:cursor-not-allowed disabled:opacity-75"
                                 >
-                                    {isAdmin ? (
+                                    {isEditMode ? (
+                                        <>
+                                            <CheckCircle2 size={16} />
+                                            {submitting ? "Saving..." : "Save Changes"}
+                                        </>
+                                    ) : isAdmin ? (
                                         <>
                                             <CheckCircle2 size={16} />
                                             {submitting ? "Publishing..." : "Publish Dinosaur"}

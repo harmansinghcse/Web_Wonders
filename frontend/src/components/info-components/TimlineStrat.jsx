@@ -121,15 +121,7 @@ export default function TimelineStrat({ timeline, hunting }) {
                             }}
                             className="group flex gap-4 rounded-xl p-3 transition-colors hover:bg-[#F8F4EC]"
                         >
-                            <motion.div
-                                whileHover={{
-                                    rotate: 10,
-                                    scale: 1.1,
-                                }}
-                                className="flex h-11 w-11 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-full bg-[#EED6A2] text-xl sm:text-2xl"
-                            >
-                                {trait.icon}
-                            </motion.div>
+
 
                             <div>
                                 <h3 className="font-semibold uppercase text-[#2B241C]">

@@ -29,6 +29,7 @@ export const EditorProvider = ({ children }) => {
     const [saveStatus, setSaveStatus] = useState("saved"); // 'unsaved' | 'saving' | 'saved'
     const [isPreviewMode, setIsPreviewMode] = useState(false);
     const [isReviewMode, setIsReviewMode] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(false);
     const autoSaveTimerRef = useRef(null);
 
     // Helper to set nested object properties via path string
@@ -128,7 +129,7 @@ export const EditorProvider = ({ children }) => {
 
     // Auto-save logic
     useEffect(() => {
-        if (!isDirty || isReviewMode) return;
+        if (!isDirty || isReviewMode || isEditMode) return;
 
         if (autoSaveTimerRef.current) {
             clearTimeout(autoSaveTimerRef.current);
@@ -172,6 +173,8 @@ export const EditorProvider = ({ children }) => {
                 setIsPreviewMode,
                 isReviewMode,
                 setIsReviewMode,
+                isEditMode,
+                setIsEditMode,
                 loadDraft,
                 saveDraft,
                 clearDraft,

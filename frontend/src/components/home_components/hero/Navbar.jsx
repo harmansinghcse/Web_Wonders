@@ -5,7 +5,6 @@ import {
     Menu, 
     Search, 
     X, 
-    Bell, 
     ChevronDown, 
     ChevronRight, 
     Sparkles, 
@@ -342,14 +341,7 @@ function Navbar() {
                                 placeholder="Search dinosaurs, fossils..."
                                 className="w-44 xl:w-72 focus-within:w-60 transition-all duration-300"
                             />
-                            {/* Bell icon */}
-                            <button
-                                className="relative rounded-full p-2 text-[#36593D] transition hover:bg-[#36593D]/10 shrink-0"
-                                aria-label="Notifications"
-                            >
-                                <Bell size={18} />
-                                <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-[#B5462F]" />
-                            </button>
+
 
                             <div className="shrink-0">
                                 <UserMenu />

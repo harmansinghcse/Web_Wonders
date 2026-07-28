@@ -51,7 +51,17 @@ router.post(
     ]),
     createDinosaur,
 );
-router.put("/:slug", protect, authorize("admin"), updateDinosaur);
-router.delete("/:slug", protect, authorize("admin"), deleteDinosaur);
+router.put(
+    "/:id",
+    protect,
+    authorize("admin"),
+    upload.fields([
+        { name: "heroBackground", maxCount: 1 },
+        { name: "fossilImage", maxCount: 1 },
+        { name: "featureImages", maxCount: 4 },
+    ]),
+    updateDinosaur,
+);
+router.delete("/:id", protect, authorize("admin"), deleteDinosaur);
 
 module.exports = router;

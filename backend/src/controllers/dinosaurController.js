@@ -1,6 +1,7 @@
 const Dinosaur = require("../models/Dinosaur");
 const DinosaurSubmission = require("../models/DinosaurSubmission");
 const uploadToCloudinary = require("../utils/uploadToCloudiary");
+const dinosaurService = require("../services/dinosaurService");
 
 // i know this getalldinosaur is ugly i will fix its readabilty later
 const getAllDinosaurs = async (req, res, next) => {
@@ -196,9 +197,12 @@ const createDinosaur = async (req, res, next) => {
 
 const getDinosaurBySlug = async (req, res, next) => {
     try {
-        const dinosaur = await Dinosaur.findOne({
-            slug: req.params.slug,
-        });
+        let query = { slug: req.params.slug };
+        if (req.params.slug.match(/^[0-9a-fA-F]{24}$/)) {
+            query = { _id: req.params.slug };
+        }
+
+        const dinosaur = await Dinosaur.findOne(query);
 
         if (!dinosaur) {
             return res.status(404).json({
@@ -218,40 +222,70 @@ const getDinosaurBySlug = async (req, res, next) => {
 
 const updateDinosaur = async (req, res, next) => {
     try {
-        const dinosaur = await Dinosaur.findOneAndUpdate(
-            { slug: req.params.slug },
-            req.body,
-            { new: true, runValidators: true },
-        );
+        const dinosaur = JSON.parse(req.body.dinosaur);
+        const id = req.params.id;
 
-        if (!dinosaur) {
-            return res.status(404).json({
+        // Perform basic validations (reusing existing validation rule logic)
+        if (!dinosaur.name) {
+            return res.status(400).json({
                 success: false,
-                message: "Dinosaur not found",
+                message: "Dinosaur name is required.",
+            });
+        }
+        if (!dinosaur.scientificName) {
+            return res.status(400).json({
+                success: false,
+                message: "Scientific name is required.",
             });
         }
 
-        res.status(200).json({
+        // Upload new images to Cloudinary if they are provided in files
+        if (req.files?.heroBackground?.length > 0) {
+            const heroImage = await uploadToCloudinary(req.files.heroBackground[0]);
+            if (!dinosaur.images) dinosaur.images = {};
+            dinosaur.images.heroBackground = heroImage.secure_url;
+        }
+
+        if (req.files?.fossilImage?.length > 0) {
+            const fossilImage = await uploadToCloudinary(req.files.fossilImage[0]);
+            if (!dinosaur.fossil) dinosaur.fossil = {};
+            dinosaur.fossil.image = fossilImage.secure_url;
+        }
+
+        if (req.files?.featureImages?.length > 0) {
+            let indices = [];
+            if (req.body.featureImageIndices) {
+                indices = Array.isArray(req.body.featureImageIndices)
+                    ? req.body.featureImageIndices.map(Number)
+                    : [Number(req.body.featureImageIndices)];
+            }
+            
+            for (let i = 0; i < req.files.featureImages.length; i++) {
+                const uploadedImage = await uploadToCloudinary(req.files.featureImages[i]);
+                const targetIndex = indices[i];
+                if (dinosaur.physicalFeatures?.features?.[targetIndex]) {
+                    dinosaur.physicalFeatures.features[targetIndex].image = uploadedImage.secure_url;
+                }
+            }
+        }
+
+        const updated = await dinosaurService.updateDinosaur(id, dinosaur);
+
+        return res.status(200).json({
             success: true,
-            data: dinosaur,
+            message: "Dinosaur updated successfully",
+            data: updated,
         });
     } catch (error) {
+        console.error("Update Dinosaur Error:", error);
         next(error);
     }
 };
 
 const deleteDinosaur = async (req, res, next) => {
     try {
-        const dinosaur = await Dinosaur.findOneAndDelete({
-            slug: req.params.slug,
-        });
-
-        if (!dinosaur) {
-            return res.status(404).json({
-                success: false,
-                message: "Dinosaur not found",
-            });
-        }
+        const id = req.params.id;
+        const dinosaur = await dinosaurService.deleteDinosaur(id);
 
         res.status(200).json({
             success: true,

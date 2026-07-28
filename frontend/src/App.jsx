@@ -22,6 +22,9 @@ const AdminSubmissions = lazy(() => import("./pages/AdminSubmissions"));
 const ExploreMap = lazy(() => import("./pages/ExploreMap"));
 const Community = lazy(() => import("./pages/Community"));
 const Games = lazy(() => import("./pages/Games"));
+const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
+const DashboardOverview = lazy(() => import("./components/admin/DashboardOverview"));
+const DinosaurManager = lazy(() => import("./components/admin/DinosaurManager"));
 
 const LoadingFallback = () => (
     <div className="flex h-screen w-screen flex-col items-center justify-center bg-[#F7F6F1]">
@@ -49,7 +52,16 @@ function App() {
                     <Route path="/signup" element={<Signup />} />
 
                     <Route path="/profile" element={<Profile />} />
-                    <Route path="/admin/submissions" element={<AdminSubmissions />} />
+                    
+                    {/* Admin section routes */}
+                    <Route path="/admin" element={<AdminLayout />}>
+                        <Route index element={<DashboardOverview />} />
+                        <Route path="dashboard" element={<DashboardOverview />} />
+                        <Route path="dinosaurs" element={<DinosaurManager />} />
+                        <Route path="dinosaurs/create" element={<CreateDinosaur />} />
+                        <Route path="dinosaurs/:id/edit" element={<CreateDinosaur />} />
+                        <Route path="submissions" element={<AdminSubmissions />} />
+                    </Route>
 
                     {/* Dynamic dinosaur page */}
                     <Route path="/dinosaur/:slug" element={<DinosaurPage />} />
