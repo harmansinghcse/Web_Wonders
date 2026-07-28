@@ -49,6 +49,19 @@ export default function AiGeneratorCard({ onSuccess }) {
                 if (setIsDirty) setIsDirty(true);
                 if (setSaveStatus) setSaveStatus("unsaved");
 
+                // Update dinosaurs.txt
+                try {
+                    const dinoName = data.name || trimmedTopic;
+                    const API_URL = import.meta.env.VITE_BACKEND_URL;
+                    await fetch(`${API_URL}/api/dinosaur/update-txt`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ name: dinoName }),
+                    });
+                } catch (e) {
+                    console.error("Failed to post update-txt:", e);
+                }
+
                 toast.success("AI successfully generated the dinosaur page.");
 
                 if (onSuccess) {

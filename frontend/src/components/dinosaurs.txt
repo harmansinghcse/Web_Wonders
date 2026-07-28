@@ -1,0 +1,18 @@
+Allosaurus
+Brachiosaurus
+Carnotaurus
+Coelophysis
+Dilophosaurus
+Eoraptor
+Halszkaraptor
+Ichthyosaurus
+Liaoningosaurus
+Microraptor
+Mosasaurus
+Ouranosaurus
+Parasaurolophus
+Shunosaurus
+Stegosaurus
+Triceratops
+Tyrannosaurus Rex
+Velociraptor
