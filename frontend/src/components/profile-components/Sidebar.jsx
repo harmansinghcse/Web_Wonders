@@ -14,7 +14,7 @@ import {
 
 import { useNavigate, NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import logo from "../../assets/jurrasic-logo.png";
+import logo from "./favicon.png";
 
 /**
  * --------------------------------------------
