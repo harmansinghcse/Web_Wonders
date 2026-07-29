@@ -31,7 +31,7 @@ const DinosaurManager = lazy(() => import("./components/admin/DinosaurManager"))
 const LoadingFallback = () => (
     <div className="flex h-screen w-screen flex-col items-center justify-center bg-[#F7F6F1]">
         <div className="flex flex-col items-center gap-4">
-            <img src="/favicon.png" alt="Loading" className="h-14 w-14 object-contain animate-bounce" />
+            <span className="text-5xl animate-bounce">🦖</span>
             <div className="h-1.5 w-32 overflow-hidden rounded-full bg-gray-200">
                 <div className="h-full w-full bg-[#6C8E4E] origin-left animate-pulse" />
             </div>
