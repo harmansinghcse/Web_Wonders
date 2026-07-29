@@ -7,12 +7,15 @@ import {
     Settings,
     X,
     ShieldAlert,
+    Gamepad2,
+    Users,
+    Map
 } from "lucide-react";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import logo from "../../assets/jurrasic-logo.png";
 
-import { NavLink } from "react-router-dom";
 /**
  * --------------------------------------------
  * Component: Sidebar
@@ -40,6 +43,16 @@ const links = [
         name: "Quiz",
         icon: Trophy,
         path: "/quiz",
+    },
+    {
+        name: "Games",
+        icon: Gamepad2,
+        path: "/games",
+    },
+    {
+        name: "Community",
+        icon: Users,
+        path: "/community",
     },
     {
         name: "Profile",
@@ -70,13 +83,9 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
               ]
             : []),
     ];
+
     const handleLogout = async () => {
-        console.log("Logout clicked");
-
         await logout();
-
-        console.log("Logout finished");
-
         navigate("/");
     };
 
@@ -96,19 +105,29 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
                 }`}
             >
                 {/* Logo */}
-                <div className="flex items-center justify-between border-b border-[#D8D2C5]/20 p-6 sm:p-8">
-                    <div>
-                        <h1 className="text-2xl font-black uppercase tracking-wider text-white">
-                            Jurassic
-                        </h1>
-                        <p className="text-xs font-semibold uppercase tracking-wider text-[#A3BFA8]">
-                            Explorer Console
-                        </p>
+                <div className="flex items-center justify-between border-b border-[#D8D2C5]/20 p-5 sm:p-6">
+                    <div className="flex items-center gap-3">
+                        <img
+                            src={logo}
+                            alt="Jurassic Explorer"
+                            className="h-9 w-auto object-contain"
+                            onError={(e) => {
+                                e.target.style.display = "none";
+                            }}
+                        />
+                        <div>
+                            <h1 className="text-xl font-black uppercase tracking-wider text-white">
+                                Jurassic
+                            </h1>
+                            <p className="text-[10px] font-semibold uppercase tracking-wider text-[#A3BFA8]">
+                                Explorer Console
+                            </p>
+                        </div>
                     </div>
 
                     <button
                         onClick={onClose}
-                        className="rounded-full p-2 text-[#A3BFA8] transition hover:bg-white/5 hover:text-white lg:hidden"
+                        className="rounded-full p-2 text-[#A3BFA8] transition hover:bg-white/5 hover:text-white lg:hidden cursor-pointer"
                         aria-label="Close menu"
                     >
                         <X size={20} />
@@ -116,7 +135,7 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex-1 space-y-2 overflow-y-auto p-6">
+                <nav className="flex-1 space-y-1.5 overflow-y-auto p-4 sm:p-5 no-scrollbar">
                     {sidebarLinks.map((link) => {
                         const Icon = link.icon;
 
@@ -126,14 +145,14 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
                                 to={link.path}
                                 onClick={onClose}
                                 className={({ isActive }) =>
-                                    `flex items-center gap-4 rounded-xl px-4 py-3 font-semibold transition ${
+                                    `flex items-center gap-3.5 rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
                                         isActive
-                                            ? "bg-white text-[#1E3326] shadow-md scale-[1.02]"
-                                            : "text-gray-300 hover:bg-white/5 hover:text-white"
+                                            ? "bg-white text-[#1E3326] shadow-md scale-[1.01]"
+                                            : "text-gray-300 hover:bg-white/10 hover:text-white"
                                     }`
                                 }
                             >
-                                <Icon size={20} />
+                                <Icon size={19} className="shrink-0" />
                                 <span>{link.name}</span>
                             </NavLink>
                         );
@@ -141,13 +160,13 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
                 </nav>
 
                 {/* Logout */}
-                <div className="border-t border-[#D8D2C5]/20 p-6">
+                <div className="border-t border-[#D8D2C5]/20 p-4 sm:p-5">
                     <button
                         onClick={handleLogout}
-                        className="flex w-full items-center gap-4 rounded-xl px-4 py-3 text-red-300 font-semibold transition hover:bg-red-500/10 hover:text-red-200"
+                        className="flex w-full items-center gap-3.5 rounded-xl px-4 py-2.5 text-sm text-red-300 font-semibold transition-colors hover:bg-red-500/10 hover:text-red-200 cursor-pointer"
                     >
-                        <LogOut size={20} />
-                        Logout
+                        <LogOut size={19} className="shrink-0" />
+                        <span>Logout</span>
                     </button>
                 </div>
             </aside>
