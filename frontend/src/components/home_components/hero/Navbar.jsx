@@ -85,12 +85,6 @@ function Navbar() {
             icon: Users,
             label: "Community",
             desc: "Connect, share hybrids and fossil finds",
-        },
-        {
-            to: "/professor",
-            icon: Brain,
-            label: "Ask Professor Ross",
-            desc: "Learn from the expert",
         }
     ];
 
@@ -164,7 +158,7 @@ function Navbar() {
                         </div>
 
                         {/* Mid-Section (Desktop Navbar matching Screenshot) */}
-                        <div className="hidden items-center gap-1.5 xl:gap-2.5 lg:flex">
+                        <div className="hidden items-center gap-1 xl:gap-1.5 lg:flex">
                             
                             {/* Home Link */}
                             <NavbarLink to="/" icon={Home}>
@@ -173,10 +167,10 @@ function Navbar() {
 
                             {/* Explore Dropdown */}
                             <div className="relative group">
-                                <button className={`flex items-center gap-1.5 rounded-full border border-transparent px-3 xl:px-4 py-1.5 xl:py-2 text-xs xl:text-sm font-medium transition-all duration-200 cursor-pointer ${
+                                <button className={`flex items-center gap-1 xl:gap-1.5 rounded-full border border-transparent px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm font-medium transition-all duration-300 ease-out cursor-pointer ${
                                     location.pathname.startsWith('/explore') || location.pathname === '/map' || location.pathname === '/timeline' || location.pathname === '/explorer'
-                                        ? 'bg-[#E8F0E8] text-[#36593D] border-[#36593D]/20 shadow-[0_4px_12px_rgba(54,89,61,0.15)]'
-                                        : 'text-[#4A4A4A] hover:bg-[#F8F5EF] hover:text-[#36593D] hover:border-[#36593D]/15'
+                                        ? 'bg-[#E2EFE2] text-[#2E4E34] border-[#36593D]/30 shadow-[0_0_18px_rgba(54,89,61,0.22)] font-semibold'
+                                        : 'text-[#4A4A4A] hover:bg-[#EAF3EA] hover:text-[#36593D] hover:border-[#36593D]/25 hover:shadow-[0_0_15px_rgba(54,89,61,0.18)] hover:-translate-y-[1px]'
                                 }`}>
                                     <Compass size={16} />
                                     <span>Explore</span>
@@ -211,10 +205,10 @@ function Navbar() {
 
                             {/* Create Dropdown */}
                             <div className="relative group">
-                                <button className={`flex items-center gap-1.5 rounded-full border border-transparent px-3 xl:px-4 py-1.5 xl:py-2 text-xs xl:text-sm font-medium transition-all duration-200 cursor-pointer ${
+                                <button className={`flex items-center gap-1 xl:gap-1.5 rounded-full border border-transparent px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm font-medium transition-all duration-300 ease-out cursor-pointer ${
                                     location.pathname === '/create'
-                                        ? 'bg-[#E8F0E8] text-[#36593D] border-[#36593D]/20 shadow-[0_4px_12px_rgba(54,89,61,0.15)]'
-                                        : 'text-[#4A4A4A] hover:bg-[#F8F5EF] hover:text-[#36593D] hover:border-[#36593D]/15'
+                                        ? 'bg-[#E2EFE2] text-[#2E4E34] border-[#36593D]/30 shadow-[0_0_18px_rgba(54,89,61,0.22)] font-semibold'
+                                        : 'text-[#4A4A4A] hover:bg-[#EAF3EA] hover:text-[#36593D] hover:border-[#36593D]/25 hover:shadow-[0_0_15px_rgba(54,89,61,0.18)] hover:-translate-y-[1px]'
                                 }`}>
                                     <Sparkles size={16} />
                                     <span>Create</span>
@@ -235,10 +229,10 @@ function Navbar() {
 
                             {/* Learn Dropdown (Matching Screenshot Exactly) */}
                             <div className="relative group">
-                                <button className={`flex items-center gap-1.5 rounded-full border border-transparent px-3 xl:px-4 py-1.5 xl:py-2 text-xs xl:text-sm font-medium transition-all duration-200 cursor-pointer ${
+                                <button className={`flex items-center gap-1 xl:gap-1.5 rounded-full border border-transparent px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm font-medium transition-all duration-300 ease-out cursor-pointer ${
                                     location.pathname === '/quiz' || location.pathname.startsWith('/games')
-                                        ? 'bg-[#E8F0E8] text-[#36593D] border-[#36593D]/20 shadow-[0_4px_12px_rgba(54,89,61,0.15)]'
-                                        : 'text-[#4A4A4A] hover:bg-[#F8F5EF] hover:text-[#36593D] hover:border-[#36593D]/15'
+                                        ? 'bg-[#E2EFE2] text-[#2E4E34] border-[#36593D]/30 shadow-[0_0_18px_rgba(54,89,61,0.22)] font-semibold'
+                                        : 'text-[#4A4A4A] hover:bg-[#EAF3EA] hover:text-[#36593D] hover:border-[#36593D]/25 hover:shadow-[0_0_15px_rgba(54,89,61,0.18)] hover:-translate-y-[1px]'
                                 }`}>
                                     <BookOpen size={16} />
                                     <span>Learn</span>
@@ -281,55 +275,6 @@ function Navbar() {
                             <NavbarLink to="/community" icon={Users}>
                                 Community
                             </NavbarLink>
-
-                            {/* Ask Professor Ross AI Button */}
-                            <Link
-                                to="/professor"
-                                className="
-                                    group flex items-center gap-1.5 xl:gap-2
-                                    rounded-full
-                                    px-3 xl:px-5 py-2 xl:py-3
-                                    bg-gradient-to-r
-                                    from-[#184D30]
-                                    via-[#1F5C38]
-                                    to-[#2F7D4D]
-                                    bg-[length:200%_200%]
-                                    text-white
-                                    shadow-[0_0_18px_rgba(34,197,94,0.18)]
-                                    transition-all duration-300
-                                    hover:scale-105
-                                    hover:shadow-[0_0_30px_rgba(34,197,94,0.35)]
-                                    text-xs xl:text-sm
-                                    whitespace-nowrap
-                                    shrink-0
-                                "
-                            >
-                                {/* AI Status Indicator */}
-                                <span className="relative flex h-2 w-2 xl:h-2.5 xl:w-2.5">
-                                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-300 opacity-75"></span>
-                                    <span className="relative inline-flex h-2 w-2 xl:h-2.5 xl:w-2.5 rounded-full bg-green-200"></span>
-                                </span>
-
-                                <Brain size={16} className="xl:h-4.5 xl:w-4.5 transition-transform duration-300 group-hover:rotate-6" />
-
-                                <span className="font-medium">
-                                    Ask Prof. Ross
-                                </span>
-
-                                <span
-                                    className="
-                                        rounded-full
-                                        bg-white/15
-                                        border border-white/20
-                                        px-1.5 xl:px-2 py-0.5
-                                        text-[9px] xl:text-[10px]
-                                        font-bold
-                                        tracking-wider
-                                    "
-                                >
-                                    AI
-                                </span>
-                            </Link>
                         </div>
 
                         {/* Right-Section (Desktop) */}
@@ -393,7 +338,12 @@ function Navbar() {
                                     <Link
                                         key={to}
                                         to={to}
-                                        onClick={() => setMenuOpen(false)}
+                                        onClick={() => {
+                                            setMenuOpen(false);
+                                            if (to === "/professor") {
+                                                openChat();
+                                            }
+                                        }}
                                         className={`group flex items-center gap-4 rounded-2xl px-5 py-4 transition
                                         ${
                                             label.includes("Games")

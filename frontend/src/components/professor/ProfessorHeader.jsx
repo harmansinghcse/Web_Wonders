@@ -1,3 +1,5 @@
+import { Brain } from "lucide-react";
+
 /**
  * --------------------------------------------
  * Component: ProfessorHeader
@@ -12,14 +14,16 @@ const ProfessorHeader = () => {
   return (
     <section className="relative mx-auto w-full max-w-5xl overflow-hidden rounded-3xl bg-gradient-to-r from-[#23412F] via-[#2E543B] to-[#3A6445] shadow-lg transition-all duration-300">
 
-      {/* Dinosaur Background */}
-      <div className="absolute right-4 md:right-10 top-0 h-full flex items-center opacity-10 text-[120px] md:text-[170px] pointer-events-none select-none">🦖</div>
+      {/* Background Icon Decal */}
+      <div className="absolute right-6 md:right-12 top-1/2 -translate-y-1/2 opacity-15 pointer-events-none select-none">
+        <Brain size={150} className="text-[#B8D768] stroke-1" />
+      </div>
 
       <div className="relative flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 px-6 py-6 md:px-10 md:py-8 text-center sm:text-left">
         {/* Avatar */}
         <img 
           src="/ross-avatar.png" 
-          alt="Professor Rex" 
+          alt="Professor Ross" 
           className="h-16 w-16 sm:h-20 sm:w-20 md:h-24 md:w-24 rounded-full border-4 border-[#B8D768] object-cover shadow-lg transition duration-300 hover:scale-105 shrink-0"
         />
 
