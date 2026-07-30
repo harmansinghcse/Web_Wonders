@@ -26,3 +26,4 @@ Tapejara
 Triceratops
 Tyrannosaurus Rex
 Velociraptor
+Pterodactylus
