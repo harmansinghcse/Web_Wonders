@@ -75,3 +75,11 @@ export const fetchSuggestedUsersService = async () => {
     });
     return response.data;
 };
+
+// Toggle follow/unfollow user
+export const toggleFollowUserService = async (userId) => {
+    const response = await axios.post(`${API_BASE}/api/community/users/${userId}/follow`, {}, {
+        withCredentials: true,
+    });
+    return response.data;
+};

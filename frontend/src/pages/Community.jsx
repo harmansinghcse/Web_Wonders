@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
     Plus,
     Newspaper,
@@ -38,6 +38,7 @@ import {
     deleteCommentService,
     searchUsersService,
     fetchSuggestedUsersService,
+    toggleFollowUserService,
 } from "../services/communityService";
 import { getStoredFollows } from "../services/communityServiceHelpers";
 
@@ -73,6 +74,16 @@ const Avatar = ({ user, className = "h-10 w-10 border border-[#1E3A23]/30" }) =>
 };
 
 export default function Community() {
+    const navigate = useNavigate();
+    const navigateToProfile = (userObj) => {
+        if (!userObj) return;
+        const targetId = userObj.id || userObj._id || userObj;
+        if (!targetId || targetId === "user-default" || targetId === "user-logged" || targetId === currentUser?.id) {
+            navigate("/profile");
+        } else {
+            navigate(`/profile/${targetId}`);
+        }
+    };
     // 1. DYNAMIC CURRENT USER STATE (from AuthContext, backend API /api/profile, or localStorage)
     const { user: authUser } = useAuth();
     const [apiProfile, setApiProfile] = useState(null);
@@ -508,9 +519,49 @@ export default function Community() {
     };
 
     // Dynamic Follow Handler
-    const handleFollow = (expId) => {
+    const handleFollow = async (expId) => {
         if (!ensureAuth()) return;
-        showToast("Follow state toggled!");
+
+        // Optimistic UI updates
+        const prevSuggested = [...suggestedExplorers];
+        const prevResults = [...searchResults];
+        const prevActive = activeProfileExplorer ? { ...activeProfileExplorer } : null;
+
+        // Apply optimistic updates
+        setSuggestedExplorers((prev) =>
+            prev.map((exp) => (exp.id === expId ? { ...exp, isFollowing: !exp.isFollowing } : exp))
+        );
+        setSearchResults((prev) =>
+            prev.map((u) => (u.id === expId ? { ...u, isFollowing: !u.isFollowing } : u))
+        );
+        if (activeProfileExplorer && activeProfileExplorer.id === expId) {
+            setActiveProfileExplorer((prev) => ({ ...prev, isFollowing: !prev.isFollowing }));
+        }
+
+        try {
+            const res = await toggleFollowUserService(expId);
+            if (res.success) {
+                showToast(res.isFollowing ? "Following explorer!" : "Unfollowed explorer.");
+                // Ensure real data matches
+                setSuggestedExplorers((prev) =>
+                    prev.map((exp) => (exp.id === expId ? { ...exp, isFollowing: res.isFollowing } : exp))
+                );
+                setSearchResults((prev) =>
+                    prev.map((u) => (u.id === expId ? { ...u, isFollowing: res.isFollowing } : u))
+                );
+                if (activeProfileExplorer && activeProfileExplorer.id === expId) {
+                    setActiveProfileExplorer((prev) => ({ ...prev, isFollowing: res.isFollowing }));
+                }
+            } else {
+                throw new Error("Failed to follow");
+            }
+        } catch (err) {
+            // Revert on error
+            setSuggestedExplorers(prevSuggested);
+            setSearchResults(prevResults);
+            if (prevActive) setActiveProfileExplorer(prevActive);
+            showToast("Failed to follow explorer.");
+        }
     };
 
     // Filter Posts dynamically by Sidebar Tab, Search, and Tag
@@ -584,7 +635,7 @@ export default function Community() {
                     <aside className="space-y-5 lg:col-span-3">
                         {/* Current User Quick Badge */}
                         <div
-                            onClick={() => setActiveProfileExplorer(currentUser)}
+                            onClick={() => navigateToProfile(currentUser)}
                             className="flex items-center gap-3 rounded-2xl border border-white/60 bg-white/90 p-3.5 shadow-md backdrop-blur-md cursor-pointer transition hover:scale-[1.02] hover:shadow-lg"
                         >
                             <Avatar user={currentUser} className="h-12 w-12 rounded-xl" />
@@ -817,7 +868,7 @@ export default function Community() {
                                     {/* Card Header */}
                                     <div className="flex items-center justify-between p-4 pb-3">
                                         <div
-                                            onClick={() => setActiveProfileExplorer(post.author || currentUser)}
+                                            onClick={() => navigateToProfile(post.author || currentUser)}
                                             className="flex items-center gap-3 cursor-pointer group"
                                         >
                                             {post.author?.avatar ? (
@@ -1245,7 +1296,7 @@ export default function Community() {
                                         searchResults.map((u) => (
                                             <div
                                                 key={u.id}
-                                                onClick={() => setActiveProfileExplorer(u)}
+                                                onClick={() => navigateToProfile(u)}
                                                 className="flex items-center gap-2.5 cursor-pointer group hover:bg-[#FAF9F5] p-1.5 rounded-lg border border-transparent hover:border-[#F0ECE1] transition"
                                             >
                                                 <Avatar user={u} className="h-7 w-7" />
@@ -1284,7 +1335,7 @@ export default function Community() {
                                             className="flex items-center justify-between"
                                         >
                                             <div
-                                                onClick={() => setActiveProfileExplorer(exp)}
+                                                onClick={() => navigateToProfile(exp)}
                                                 className="flex items-center gap-2.5 cursor-pointer group"
                                             >
                                                 <Avatar user={exp} className="h-8 w-8" />
@@ -1379,10 +1430,30 @@ export default function Community() {
                         <div className="max-h-64 overflow-y-auto p-4 space-y-3">
                             {activeCommentPost.comments?.length > 0 ? (
                                 activeCommentPost.comments.map((c) => (
-                                    <div key={c.id} className="rounded-2xl bg-[#FAF9F5] p-3 border border-[#F0ECE1] flex justify-between items-start gap-2">
+                                    <div key={c.id} className="rounded-2xl bg-[#FAF9F5] p-3 border border-[#F0ECE1] flex justify-between items-start gap-3">
+                                        {c.avatar ? (
+                                            <img
+                                                src={c.avatar}
+                                                alt={c.user}
+                                                onClick={() => navigateToProfile(c.userId)}
+                                                className="h-7 w-7 rounded-full object-cover border border-[#1E3A23]/30 cursor-pointer hover:scale-105 transition"
+                                            />
+                                        ) : (
+                                            <div 
+                                                onClick={() => navigateToProfile(c.userId)}
+                                                className="h-7 w-7 rounded-full bg-[#E4ECE3] flex items-center justify-center border border-[#1E3A23]/30 cursor-pointer font-bold text-[10px] text-[#2A5231]"
+                                            >
+                                                {c.user ? c.user[0].toUpperCase() : "E"}
+                                            </div>
+                                        )}
                                         <div className="flex-1 min-w-0">
                                             <div className="flex justify-between">
-                                                <p className="text-xs font-bold text-[#1E3A23]">{c.user}</p>
+                                                <p 
+                                                    onClick={() => navigateToProfile(c.userId)}
+                                                    className="text-xs font-bold text-[#1E3A23] cursor-pointer hover:underline"
+                                                >
+                                                    {c.user}
+                                                </p>
                                                 <span className="text-[10px] text-[#8A968C]">{c.timestamp || "Just now"}</span>
                                             </div>
                                             <p className="mt-0.5 text-xs text-[#4A554B]">{c.text}</p>

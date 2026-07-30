@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
-import { getProfile } from "../api/profileService";
+import { getProfile, getProfileById } from "../api/profileService";
 
 import Sidebar from "../components/profile-components/Sidebar";
 import ProfileHeader from "../components/profile-components/ProfileHeader";
@@ -11,6 +12,7 @@ import ContributionTable from "../components/profile-components/ContributionTabl
 import EditProfileModal from "../components/profile-components/EditProfileModal";
 
 export default function Profile() {
+    const { userId } = useParams();
     const [profile, setProfile] = useState(null);
     const [submissions, setSubmissions] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -20,9 +22,14 @@ export default function Profile() {
     useEffect(() => {
         const fetchProfileData = async () => {
             try {
+                const profileFetch = userId ? getProfileById(userId) : getProfile();
+                const subUrl = userId 
+                    ? `${import.meta.env.VITE_BACKEND_URL}/api/dinosaur/user/${userId}/submissions`
+                    : `${import.meta.env.VITE_BACKEND_URL}/api/dinosaur/my-submissions`;
+
                 const [profileRes, subRes] = await Promise.all([
-                    getProfile(),
-                    fetch(`${import.meta.env.VITE_BACKEND_URL}/api/dinosaur/my-submissions`, {
+                    profileFetch,
+                    fetch(subUrl, {
                         credentials: "include",
                     }),
                 ]);
@@ -41,7 +48,7 @@ export default function Profile() {
         };
 
         fetchProfileData();
-    }, []);
+    }, [userId]);
 
     if (loading) {
         return (
@@ -120,7 +127,7 @@ export default function Profile() {
 
                     <ProfileHeader
                         profile={profile}
-                        onEdit={() => setIsEditOpen(true)}
+                        onEdit={!userId ? () => setIsEditOpen(true) : null}
                     />
 
                     <OverviewCards profile={profile} />

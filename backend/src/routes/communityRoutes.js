@@ -12,6 +12,7 @@ const {
     deleteComment,
     searchUsers,
     getSuggestedUsers,
+    toggleFollowUser,
 } = require("../controllers/communityController");
 
 const router = express.Router();
@@ -42,6 +43,7 @@ const upload = require("../middleware/upload");
 // User operations
 router.get("/users/suggested", optionalProtect, getSuggestedUsers);
 router.get("/users/search", optionalProtect, searchUsers);
+router.post("/users/:id/follow", protect, toggleFollowUser);
 
 // Feed retrieval (Guests welcome)
 router.get("/posts", optionalProtect, getPosts);

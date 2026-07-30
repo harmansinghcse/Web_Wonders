@@ -59,6 +59,7 @@ const transformPost = (post, currentUserId) => {
         comments: Array.isArray(post.comments) 
             ? post.comments.map(c => ({
                 id: c._id,
+                userId: c.author?._id,
                 user: c.author?.name || "Explorer",
                 avatar: c.author?.avatar || "",
                 role: c.author?.role || "Explorer",
@@ -295,6 +296,7 @@ const addComment = async (req, res, next) => {
         // Transform comments list
         const transformedComments = result.comments.map(c => ({
             id: c._id,
+            userId: c.author?._id,
             user: c.author?.name || "Explorer",
             avatar: c.author?.avatar,
             role: c.author?.role,
@@ -328,6 +330,7 @@ const deleteComment = async (req, res, next) => {
 
         const transformedComments = result.comments.map(c => ({
             id: c._id,
+            userId: c.author?._id,
             user: c.author?.name || "Explorer",
             avatar: c.author?.avatar,
             role: c.author?.role,
@@ -367,7 +370,8 @@ const searchUsers = async (req, res, next) => {
             avatar: u.avatar || "",
             role: u.role === "admin" ? "Admin" : "Explorer",
             handle: `@${u.name.toLowerCase().replace(/\s+/g, "")}`,
-            isFollowing: false,
+            bio: u.bio || "",
+            isFollowing: currentUserId && u.followers ? u.followers.some(id => id.toString() === currentUserId.toString()) : false,
         }));
 
         return res.status(200).json({
@@ -393,12 +397,67 @@ const getSuggestedUsers = async (req, res, next) => {
             avatar: u.avatar || "",
             role: u.role === "admin" ? "Admin" : "Explorer",
             handle: `@${u.name.toLowerCase().replace(/\s+/g, "")}`,
-            isFollowing: false,
+            bio: u.bio || "",
+            isFollowing: currentUserId && u.followers ? u.followers.some(id => id.toString() === currentUserId.toString()) : false,
         }));
 
         return res.status(200).json({
             success: true,
             data: transformed,
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+const toggleFollowUser = async (req, res, next) => {
+    try {
+        const targetUserId = req.params.id;
+        const currentUserId = req.user.id;
+
+        if (targetUserId === currentUserId) {
+            return res.status(400).json({
+                success: false,
+                message: "You cannot follow yourself.",
+            });
+        }
+
+        const targetUser = await User.findById(targetUserId);
+        const currentUser = await User.findById(currentUserId);
+
+        if (!targetUser || !currentUser) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found.",
+            });
+        }
+
+        if (!targetUser.followers) targetUser.followers = [];
+        if (!currentUser.following) currentUser.following = [];
+
+        const followerIndex = targetUser.followers.indexOf(currentUserId);
+        let isFollowing = false;
+
+        if (followerIndex > -1) {
+            targetUser.followers.splice(followerIndex, 1);
+            const followingIndex = currentUser.following.indexOf(targetUserId);
+            if (followingIndex > -1) {
+                currentUser.following.splice(followingIndex, 1);
+            }
+        } else {
+            targetUser.followers.push(currentUserId);
+            currentUser.following.push(targetUserId);
+            isFollowing = true;
+        }
+
+        await targetUser.save();
+        await currentUser.save();
+
+        res.status(200).json({
+            success: true,
+            isFollowing,
+            followersCount: targetUser.followers.length,
+            followingCount: currentUser.following.length,
         });
     } catch (err) {
         next(err);
@@ -415,4 +474,5 @@ module.exports = {
     deleteComment,
     searchUsers,
     getSuggestedUsers,
+    toggleFollowUser,
 };

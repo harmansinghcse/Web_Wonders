@@ -43,13 +43,14 @@ export default function ProfileHeader({ profile, onEdit }) {
                             {profile.bio || "No bio yet."}
                         </p>
                     </div>
-                     {/* Opens the edit profile modal */}
-                    <button
-                        onClick={onEdit}
-                        className="rounded-xl bg-[#005611] px-6 py-3 font-bold text-white transition duration-200 hover:bg-[#00400C] hover:scale-[1.02] shadow-md shadow-[#005611]/15"
-                    >
-                        Edit Profile
-                    </button>
+                    {onEdit && (
+                        <button
+                            onClick={onEdit}
+                            className="rounded-xl bg-[#005611] px-6 py-3 font-bold text-white transition duration-200 hover:bg-[#00400C] hover:scale-[1.02] shadow-md shadow-[#005611]/15"
+                        >
+                            Edit Profile
+                        </button>
+                    )}
                 </div>
             </div>
         </section>

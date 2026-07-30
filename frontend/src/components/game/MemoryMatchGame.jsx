@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../home_components/hero/Navbar";
 import Cursor from "./Cursor";
+import { getExplorerDinosaurs } from "../../services/explorerService";
 import { 
     Play, 
     RotateCcw, 
@@ -205,7 +206,7 @@ const DINOSAURS_DATA = [
 export default function MemoryMatchGame({ onBackToHub }) {
     // Game States: 'landing' | 'playing' | 'paused' | 'gameover'
     const [gameState, setGameState] = useState("landing");
-    const [difficulty, setDifficulty] = useState("medium"); // 'easy' (6 pairs / 12 cards), 'medium' (8 pairs / 16 cards), 'hard' (10 pairs / 20 cards)
+    const [difficulty, setDifficulty] = useState("medium"); // 'easy' (6 pairs), 'medium' (8 pairs), 'hard' (10 pairs)
     const [cards, setCards] = useState([]);
     const [flippedIndices, setFlippedIndices] = useState([]);
     const [matchedIds, setMatchedIds] = useState([]);
@@ -215,12 +216,34 @@ export default function MemoryMatchGame({ onBackToHub }) {
     const [soundEnabled, setSoundEnabled] = useState(true);
     const [unlockedFacts, setUnlockedFacts] = useState([]);
     const [recentFact, setRecentFact] = useState(null);
+    const [matchOverlay, setMatchOverlay] = useState(null);
     const [imageErrors, setImageErrors] = useState({});
+    const [dbDinosaurs, setDbDinosaurs] = useState([]);
+    const [isPreloading, setIsPreloading] = useState(false);
+    const [loadingDb, setLoadingDb] = useState(true);
+
     const [bestScore, setBestScore] = useState(() => {
         return parseInt(localStorage.getItem("jurassic_memory_best") || "0", 10);
     });
 
     const timerRef = useRef(null);
+
+    // Fetch dinosaurs from DB on mount
+    useEffect(() => {
+        const loadDinos = async () => {
+            try {
+                const response = await getExplorerDinosaurs({ limit: 100 });
+                if (response && response.data) {
+                    setDbDinosaurs(response.data);
+                }
+            } catch (err) {
+                console.error("Error loading dinosaurs:", err);
+            } finally {
+                setLoadingDb(false);
+            }
+        };
+        loadDinos();
+    }, []);
 
     // Preload background image
     useEffect(() => {
@@ -232,14 +255,55 @@ export default function MemoryMatchGame({ onBackToHub }) {
     const getPairCount = () => {
         if (difficulty === "easy") return 6;
         if (difficulty === "medium") return 8;
-        return 10; // hard (10 pairs / 20 cards)
+        return 10; // hard
     };
 
     // Initialize Game
-    const startNewGame = () => {
+    const startNewGame = async () => {
+        setIsPreloading(true);
         const pairCount = getPairCount();
-        const selectedDinos = DINOSAURS_DATA.slice(0, pairCount);
         
+        let sourceList = dbDinosaurs.length > 0 ? dbDinosaurs : DINOSAURS_DATA;
+        
+        const formattedDinos = sourceList.map(dino => {
+            if (dino.images) {
+                return {
+                    id: dino._id || dino.id || dino.slug,
+                    name: dino.name.toUpperCase(),
+                    tagline: dino.scientificName || dino.stats?.period || "Mesozoic Era",
+                    era: dino.stats?.period || "Mesozoic Era",
+                    diet: dino.stats?.diet || "Specimen",
+                    fact: dino.about?.paragraphs?.[0] || dino.hero?.description || `A fascinating ${dino.stats?.diet || ""} dinosaur from the ${dino.stats?.period || "prehistoric"} period.`,
+                    image: dino.images?.heroBackground || dino.images?.main || dino.fossil?.image || "",
+                    slug: dino.slug,
+                    badgeEmoji: dino.stats?.diet?.toLowerCase().includes("carni") ? "🥩" : "🌿",
+                    badgeLabel: dino.stats?.diet || "Specimen",
+                    accentColor: dino.stats?.diet?.toLowerCase().includes("carni") 
+                        ? "from-red-950 via-[#180a06] to-[#250d06]" 
+                        : "from-emerald-950 via-[#0a180e] to-[#0a2313]",
+                    borderColor: dino.stats?.diet?.toLowerCase().includes("carni") ? "border-red-600/80" : "border-emerald-500/80",
+                };
+            }
+            return dino;
+        });
+
+        // Shuffle source list to pick random specimens
+        const shuffledList = [...formattedDinos].sort(() => 0.5 - Math.random());
+        const selectedDinos = shuffledList.slice(0, pairCount);
+        
+        // Preload only the images needed for the current game
+        const imageUrls = selectedDinos.map(d => d.image).filter(Boolean);
+        await Promise.all(
+            imageUrls.map(url => {
+                return new Promise((resolve) => {
+                    const img = new Image();
+                    img.src = url;
+                    img.onload = () => resolve();
+                    img.onerror = () => resolve();
+                });
+            })
+        );
+
         // Duplicate to create pairs and assign unique card IDs
         const deck = [];
         selectedDinos.forEach((dino) => {
@@ -247,7 +311,7 @@ export default function MemoryMatchGame({ onBackToHub }) {
             deck.push({ ...dino, cardUniqueId: `${dino.id}-b` });
         });
 
-        // Shuffle deck (Fisher-Yates)
+        // Shuffle deck (Fisher-Yates) after images have loaded
         for (let i = deck.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [deck[i], deck[j]] = [deck[j], deck[i]];
@@ -261,14 +325,16 @@ export default function MemoryMatchGame({ onBackToHub }) {
         setHintsRemaining(3);
         setUnlockedFacts([]);
         setRecentFact(null);
+        setMatchOverlay(null);
         setImageErrors({});
+        setIsPreloading(false);
         setGameState("playing");
         playSound("flip", soundEnabled);
     };
 
     // Timer effect during playing state
     useEffect(() => {
-        if (gameState === "playing") {
+        if (gameState === "playing" && !matchOverlay) {
             timerRef.current = setInterval(() => {
                 setTimer((prev) => prev + 1);
             }, 1000);
@@ -278,11 +344,11 @@ export default function MemoryMatchGame({ onBackToHub }) {
         return () => {
             if (timerRef.current) clearInterval(timerRef.current);
         };
-    }, [gameState]);
+    }, [gameState, matchOverlay]);
 
     // Handle Card Click
     const handleCardClick = (index) => {
-        if (gameState !== "playing") return;
+        if (gameState !== "playing" || matchOverlay) return;
 
         // Prevent click if card already flipped or matched or 2 cards already being evaluated
         if (
@@ -306,13 +372,20 @@ export default function MemoryMatchGame({ onBackToHub }) {
                 // Match Found!
                 setTimeout(() => {
                     playSound("match", soundEnabled);
+                    setMatchOverlay(firstCard);
+
+                    // Automatically dismiss educational match overlay after 2 seconds
+                    setTimeout(() => {
+                        setMatchOverlay(null);
+                    }, 2200);
+
                     setMatchedIds((prev) => {
                         const updatedMatches = [...prev, firstCard.id];
                         // Check Win Condition
                         if (updatedMatches.length === getPairCount()) {
                             setTimeout(() => {
                                 handleWin(updatedMatches.length);
-                            }, 500);
+                            }, 2400);
                         }
                         return updatedMatches;
                     });
@@ -341,7 +414,7 @@ export default function MemoryMatchGame({ onBackToHub }) {
 
     // Hint Feature: Briefly reveals an unmatched pair
     const handleUseHint = () => {
-        if (hintsRemaining <= 0 || flippedIndices.length > 0) return;
+        if (hintsRemaining <= 0 || flippedIndices.length > 0 || matchOverlay) return;
         
         // Find an unmatched dinosaur ID
         const unmatchedDino = cards.find(card => !matchedIds.includes(card.id));
@@ -454,8 +527,25 @@ export default function MemoryMatchGame({ onBackToHub }) {
             {/* Main Content Area */}
             <main className={`relative z-10 mx-auto flex flex-col min-h-screen ${gameState === "landing" ? "pt-24 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl" : "p-3 sm:p-6 max-w-[1400px]"}`}>
                 
+                {isPreloading && (
+                    <div className="flex-1 flex flex-col items-center justify-center min-h-[450px] text-center space-y-6">
+                        <div className="relative flex items-center justify-center">
+                            <span className="text-6xl animate-bounce">🦖</span>
+                            <div className="absolute w-24 h-24 rounded-full border-4 border-t-[#52B788] border-r-transparent border-b-transparent border-l-transparent animate-spin"></div>
+                        </div>
+                        <div className="space-y-2">
+                            <h3 className="text-xl font-serif font-black tracking-widest text-[#52B788] uppercase">
+                                Preparing Specimen Tiles
+                            </h3>
+                            <p className="text-xs text-emerald-300 max-w-xs font-semibold uppercase tracking-wider animate-pulse">
+                                Preloading high-definition dinosaur scans...
+                            </p>
+                        </div>
+                    </div>
+                )}
+
                 {/* LANDING / HERO SCREEN */}
-                {gameState === "landing" && (
+                {gameState === "landing" && !isPreloading && (
                     <div className="flex-1 flex flex-col justify-between pt-2">
                         
                         {/* Top Back Nav Button if coming from Hub */}
@@ -639,7 +729,7 @@ export default function MemoryMatchGame({ onBackToHub }) {
                 )}
 
                 {/* ACTIVE GAMEPLAY SCREEN */}
-                {(gameState === "playing" || gameState === "paused") && (
+                {(gameState === "playing" || gameState === "paused") && !isPreloading && (
                     <div className="flex-1 flex flex-col space-y-4">
                         
                         {/* Top HUD Header Bar */}
@@ -944,7 +1034,7 @@ export default function MemoryMatchGame({ onBackToHub }) {
                 )}
 
                 {/* GAME OVER / VICTORY MODAL */}
-                {gameState === "gameover" && (
+                {gameState === "gameover" && !isPreloading && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fadeIn">
                         <div className="w-full max-w-2xl bg-gradient-to-b from-[#14261a] to-[#0b160f] border-2 border-emerald-400 rounded-3xl p-6 sm:p-8 shadow-[0_0_50px_rgba(82,183,136,0.3)] text-center relative overflow-hidden text-white space-y-6">
                             
@@ -995,13 +1085,32 @@ export default function MemoryMatchGame({ onBackToHub }) {
                                         <BookOpen size={16} />
                                         <span>Unlocked Prehistoric Facts ({unlockedFacts.length})</span>
                                     </h3>
-                                    <div className="max-h-36 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+                                    <div className="max-h-48 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
                                         {unlockedFacts.map((dino) => (
-                                            <div key={dino.id} className="bg-white/5 border border-white/10 p-3 rounded-xl flex items-start gap-3">
-                                                <span className="text-xl">🦕</span>
-                                                <div>
-                                                    <h4 className="text-xs font-bold text-white">{dino.name} ({dino.era})</h4>
-                                                    <p className="text-xs text-gray-300 mt-0.5">{dino.fact}</p>
+                                            <div key={dino.id} className="bg-[#0b1b11] border border-emerald-500/30 p-3 rounded-xl flex items-center gap-3">
+                                                {dino.image ? (
+                                                    <img
+                                                        src={dino.image}
+                                                        alt={dino.name}
+                                                        className="w-12 h-12 rounded-lg object-cover border border-emerald-500/25 shrink-0"
+                                                    />
+                                                ) : (
+                                                    <div className="w-12 h-12 rounded-lg bg-emerald-950 flex items-center justify-center text-xl border border-emerald-500/25 shrink-0">
+                                                        🦕
+                                                    </div>
+                                                )}
+                                                <div className="flex-1 min-w-0">
+                                                    <h4 className="text-xs font-bold text-white truncate">{dino.name} ({dino.era})</h4>
+                                                    <p className="text-[11px] text-gray-300 mt-0.5 line-clamp-2">{dino.fact}</p>
+                                                    {dino.slug && (
+                                                        <Link
+                                                            to={`/dinosaur/${dino.slug}`}
+                                                            className="inline-flex items-center gap-1 mt-1 text-[10px] font-black text-[#52B788] hover:underline uppercase tracking-wider"
+                                                        >
+                                                            <span>Learn More</span>
+                                                            <span>➔</span>
+                                                        </Link>
+                                                    )}
                                                 </div>
                                             </div>
                                         ))}
@@ -1057,6 +1166,31 @@ export default function MemoryMatchGame({ onBackToHub }) {
                                 </div>
                             </div>
 
+                        </div>
+                    </div>
+                )}
+
+                {/* EDUCATIONAL MATCH OVERLAY */}
+                {matchOverlay && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-200">
+                        <div className="bg-[#122317] border-2 border-[#52B788] rounded-3xl p-6 shadow-2xl text-center space-y-4 max-w-sm w-full animate-in zoom-in-95 duration-200">
+                            <span className="text-sm font-bold text-[#52B788] uppercase tracking-wider block">🎉 Match Unlocked! 🎉</span>
+                            {matchOverlay.image ? (
+                                <img
+                                    src={matchOverlay.image}
+                                    alt={matchOverlay.name}
+                                    className="w-24 h-24 rounded-2xl object-cover border border-[#52B788]/30 mx-auto shadow-lg"
+                                />
+                            ) : (
+                                <div className="w-24 h-24 rounded-2xl bg-emerald-950 flex items-center justify-center text-4xl border border-[#52B788]/30 mx-auto shadow-lg">
+                                    🦕
+                                </div>
+                            )}
+                            <h3 className="text-2xl font-serif font-black text-amber-300">{matchOverlay.name}</h3>
+                            <p className="text-xs text-emerald-300 font-bold uppercase tracking-wider">{matchOverlay.era} • {matchOverlay.diet}</p>
+                            <p className="text-xs text-slate-300 leading-relaxed italic bg-emerald-950/45 p-3 rounded-xl border border-[#2b4c34]/45">
+                                "{matchOverlay.fact}"
+                            </p>
                         </div>
                     </div>
                 )}

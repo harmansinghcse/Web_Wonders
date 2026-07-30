@@ -55,6 +55,7 @@ function App() {
                         <Route path="/signup" element={<Signup />} />
 
                         <Route path="/profile" element={<Profile />} />
+                        <Route path="/profile/:userId" element={<Profile />} />
                         
                         {/* Admin section routes */}
                         <Route path="/admin" element={<AdminLayout />}>

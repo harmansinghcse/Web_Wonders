@@ -14,6 +14,7 @@ const {
     getPendingSubmissions,
     getSubmissionById,
     reviewSubmission,
+    getUserSubmissions,
 } = require("../controllers/dinosaurController");
 
 const router = express.Router();
@@ -23,6 +24,7 @@ router.get("/search", searchDinosaurs);
 
 // Submissions & Reviews (Must be before /:slug)
 router.get("/my-submissions", protect, getMySubmissions);
+router.get("/user/:userId/submissions", getUserSubmissions);
 router.get("/submissions", protect, authorize("admin"), getPendingSubmissions);
 router.get("/submissions/:id", protect, authorize("admin"), getSubmissionById);
 router.put("/submissions/:id/review", protect, authorize("admin"), reviewSubmission);

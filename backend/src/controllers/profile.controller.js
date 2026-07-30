@@ -54,7 +54,31 @@ const updateProfile = async (req, res, next) => {
     }
 };
 
+const getProfileById = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.params.id)
+            .select("-password")
+            .populate("following", "name avatar role")
+            .populate("followers", "name avatar role");
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            profile: user,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getProfile,
     updateProfile,
+    getProfileById,
 };

@@ -461,6 +461,22 @@ const reviewSubmission = async (req, res, next) => {
     }
 };
 
+const getUserSubmissions = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+        const submissions = await DinosaurSubmission.find({
+            submittedBy: userId,
+        }).sort("-createdAt");
+
+        return res.status(200).json({
+            success: true,
+            data: submissions,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getAllDinosaurs,
     createDinosaur,
@@ -473,4 +489,5 @@ module.exports = {
     getPendingSubmissions,
     getSubmissionById,
     reviewSubmission,
+    getUserSubmissions,
 };

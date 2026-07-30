@@ -226,7 +226,7 @@ const searchUsers = async (query, excludeUserId) => {
     if (excludeUserId) {
         filter._id = { $ne: excludeUserId };
     }
-    return await User.find(filter).select("name avatar role").limit(10).lean();
+    return await User.find(filter).select("name avatar role followers following bio").limit(10).lean();
 };
 
 /**
@@ -234,7 +234,7 @@ const searchUsers = async (query, excludeUserId) => {
  */
 const getSuggestedUsers = async (excludeUserId) => {
     const filter = excludeUserId ? { _id: { $ne: excludeUserId } } : {};
-    return await User.find(filter).select("name avatar role").limit(5).lean();
+    return await User.find(filter).select("name avatar role followers following bio").limit(5).lean();
 };
 
 module.exports = {
