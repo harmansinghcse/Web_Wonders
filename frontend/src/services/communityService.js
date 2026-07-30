@@ -1,116 +1,61 @@
 import axios from "axios";
-import { getStoredPosts, savePostsToStorage, getStoredFollows, saveFollowsToStorage } from "./communityServiceHelpers";
 
 const API_BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
-// Fetch posts (Backend API with local storage sync/fallback)
-export const fetchPostsService = async () => {
-    try {
-        const response = await axios.get(`${API_BASE}/api/community/posts`, { timeout: 3000 });
-        if (response.data && response.data.success && Array.isArray(response.data.data)) {
-            const apiPosts = response.data.data;
-            const localPosts = getStoredPosts();
-            // Merge local user-created posts with API posts
-            const mergedMap = new Map();
-            [...localPosts, ...apiPosts].forEach(p => mergedMap.set(p.id, p));
-            const merged = Array.from(mergedMap.values());
-            savePostsToStorage(merged);
-            return merged;
-        }
-    } catch (e) {
-        console.log("Using local dynamic storage fallback for community posts:", e.message);
-    }
-    return getStoredPosts();
-};
-
-// Create a new post dynamically
-export const createPostService = async (newPostData) => {
-    const localPosts = getStoredPosts();
-    const updated = [newPostData, ...localPosts];
-    savePostsToStorage(updated);
-
-    try {
-        await axios.post(`${API_BASE}/api/community/posts`, newPostData, { timeout: 3000 });
-    } catch (e) {
-        console.log("Post saved locally:", e.message);
-    }
-    return updated;
-};
-
-// Like a post dynamically
-export const likePostService = async (postId, posts) => {
-    const updated = posts.map(post => {
-        if (post.id === postId) {
-            const nextLiked = !post.isLiked;
-            return {
-                ...post,
-                isLiked: nextLiked,
-                likes: nextLiked ? post.likes + 1 : Math.max(0, post.likes - 1)
-            };
-        }
-        return post;
+// Fetch posts (Supports page and limit)
+export const fetchPostsService = async (page = 1, limit = 10) => {
+    const response = await axios.get(`${API_BASE}/api/community/posts?page=${page}&limit=${limit}`, {
+        withCredentials: true,
     });
-    savePostsToStorage(updated);
-
-    try {
-        await axios.post(`${API_BASE}/api/community/posts/${postId}/like`, {}, { timeout: 3000 });
-    } catch (e) {
-        // Fallback handled locally
-    }
-    return updated;
+    return response.data;
 };
 
-// Add comment dynamically
-export const addCommentService = async (postId, commentObj, posts) => {
-    const updated = posts.map(post => {
-        if (post.id === postId) {
-            const newComments = [...(post.comments || []), commentObj];
-            return {
-                ...post,
-                commentsCount: (post.commentsCount || 0) + 1,
-                comments: newComments
-            };
-        }
-        return post;
+// Create a new post (using FormData for file upload support)
+export const createPostService = async (formData) => {
+    const response = await axios.post(`${API_BASE}/api/community/posts`, formData, {
+        withCredentials: true,
+        headers: { "Content-Type": "multipart/form-data" },
     });
-    savePostsToStorage(updated);
-
-    try {
-        await axios.post(`${API_BASE}/api/community/posts/${postId}/comment`, commentObj, { timeout: 3000 });
-    } catch (e) {
-        // Fallback handled locally
-    }
-    return updated;
+    return response.data;
 };
 
-// Save / Bookmark toggle
-export const toggleSaveService = (postId, posts) => {
-    const updated = posts.map(post => {
-        if (post.id === postId) {
-            return { ...post, isSaved: !post.isSaved };
-        }
-        return post;
+// Update an existing post
+export const updatePostService = async (postId, formData) => {
+    const response = await axios.put(`${API_BASE}/api/community/posts/${postId}`, formData, {
+        withCredentials: true,
+        headers: { "Content-Type": "multipart/form-data" },
     });
-    savePostsToStorage(updated);
-    return updated;
+    return response.data;
 };
 
-// Follow toggle
-export const toggleFollowService = (explorerId, explorersList) => {
-    const follows = getStoredFollows();
-    const updatedExplorers = explorersList.map(exp => {
-        if (exp.id === explorerId) {
-            const nextState = !exp.isFollowing;
-            if (nextState) {
-                if (!follows.includes(explorerId)) follows.push(explorerId);
-            } else {
-                const idx = follows.indexOf(explorerId);
-                if (idx > -1) follows.splice(idx, 1);
-            }
-            return { ...exp, isFollowing: nextState };
-        }
-        return exp;
+// Delete a post
+export const deletePostService = async (postId) => {
+    const response = await axios.delete(`${API_BASE}/api/community/posts/${postId}`, {
+        withCredentials: true,
     });
-    saveFollowsToStorage(follows);
-    return { updatedExplorers, follows };
+    return response.data;
+};
+
+// Like/Unlike a post
+export const likePostService = async (postId) => {
+    const response = await axios.post(`${API_BASE}/api/community/posts/${postId}/like`, {}, {
+        withCredentials: true,
+    });
+    return response.data;
+};
+
+// Add comment to a post
+export const addCommentService = async (postId, text) => {
+    const response = await axios.post(`${API_BASE}/api/community/posts/${postId}/comments`, { text }, {
+        withCredentials: true,
+    });
+    return response.data;
+};
+
+// Delete comment from a post
+export const deleteCommentService = async (postId, commentId) => {
+    const response = await axios.delete(`${API_BASE}/api/community/posts/${postId}/comments/${commentId}`, {
+        withCredentials: true,
+    });
+    return response.data;
 };

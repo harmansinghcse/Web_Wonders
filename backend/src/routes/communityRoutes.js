@@ -35,12 +35,14 @@ const optionalProtect = async (req, res, next) => {
     next();
 };
 
+const upload = require("../middleware/upload");
+
 // Feed retrieval (Guests welcome)
 router.get("/posts", optionalProtect, getPosts);
 
 // Post interactions (Authenticated)
-router.post("/posts", protect, createPost);
-router.put("/posts/:id", protect, updatePost);
+router.post("/posts", protect, upload.single("image"), createPost);
+router.put("/posts/:id", protect, upload.single("image"), updatePost);
 router.delete("/posts/:id", protect, deletePost);
 
 // Like system (Authenticated)

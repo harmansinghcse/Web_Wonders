@@ -8,39 +8,7 @@ const User = require("../models/User");
  * @returns {Promise<object>} - Paginated posts and count
  */
 const getPosts = async (page = 1, limit = 10) => {
-    let total = await Post.countDocuments();
-
-    // Lazy seed if database is empty and a user exists
-    if (total === 0) {
-        const defaultUser = await User.findOne();
-        if (defaultUser) {
-            await Post.create([
-                {
-                    author: defaultUser._id,
-                    title: "Tyrastego",
-                    description: "A powerful hybrid of T-Rex and Stegosaurus. Strong armor with a fierce bite!",
-                    category: "Shared a hybrid",
-                    type: "hybrid",
-                    badge: "Hybrid",
-                    image: "/tyrastego_hybrid.jpg",
-                    stats: { attack: 85, defense: 90, speed: 65, size: "Huge" },
-                    tags: ["#Hybrids", "#DinosaurArt"],
-                },
-                {
-                    author: defaultUser._id,
-                    title: "Spinosaurus Skull",
-                    description: "Found this amazing fossil near the river bed during our expedition. #FossilFind",
-                    category: "Fossil Find",
-                    type: "fossil",
-                    badge: "Fossil",
-                    image: "/spinosaurus_skull.jpg",
-                    tags: ["#Fossils", "#FossilFind", "#Paleontology"],
-                }
-            ]);
-            total = await Post.countDocuments();
-        }
-    }
-
+    const total = await Post.countDocuments();
     const skip = (page - 1) * limit;
 
     const posts = await Post.find()
@@ -104,6 +72,7 @@ const updatePost = async (postId, userId, postData) => {
     post.description = postData.description || post.description;
     post.image = postData.image !== undefined ? postData.image : post.image;
     post.category = postData.category || post.category;
+    post.type = postData.type || post.type;
     post.tags = postData.tags || post.tags;
     
     if (postData.stats) {

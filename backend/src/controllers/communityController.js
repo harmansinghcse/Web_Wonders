@@ -1,4 +1,5 @@
 const communityService = require("../services/communityService");
+const uploadToCloudinary = require("../utils/uploadToCloudiary");
 
 /**
  * Format timestamps into human-readable time-ago strings
@@ -10,17 +11,17 @@ const formatTimeAgo = (date) => {
     let interval = Math.floor(seconds / 31536000);
     if (interval >= 1) return interval + " year" + (interval > 1 ? "s" : "") + " ago";
     
-    interval = Math.floor(seconds / 2592000);
-    if (interval >= 1) return interval + " month" + (interval > 1 ? "s" : "") + " ago";
+    let months = Math.floor(seconds / 2592000);
+    if (months >= 1) return months + " month" + (months > 1 ? "s" : "") + " ago";
     
-    interval = Math.floor(seconds / 86400);
-    if (interval >= 1) return interval + " day" + (interval > 1 ? "s" : "") + " ago";
+    let days = Math.floor(seconds / 86400);
+    if (days >= 1) return days + " day" + (days > 1 ? "s" : "") + " ago";
     
-    interval = Math.floor(seconds / 3600);
-    if (interval >= 1) return interval + " hour" + (interval > 1 ? "s" : "") + " ago";
+    let hours = Math.floor(seconds / 3600);
+    if (hours >= 1) return hours + " hour" + (hours > 1 ? "s" : "") + " ago";
     
-    interval = Math.floor(seconds / 60);
-    if (interval >= 1) return interval + " min" + (interval > 1 ? "s" : "") + " ago";
+    let minutes = Math.floor(seconds / 60);
+    if (minutes >= 1) return minutes + " min" + (minutes > 1 ? "s" : "") + " ago";
     
     return "Just now";
 };
@@ -37,7 +38,7 @@ const transformPost = (post, currentUserId) => {
         author: {
             id: post.author?._id,
             name: post.author?.name || "Explorer",
-            avatar: post.author?.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250",
+            avatar: post.author?.avatar || "",
             role: post.author?.role || "Explorer",
             handle: `@${(post.author?.name || "explorer").toLowerCase().replace(/\s+/g, "_")}`,
         },
@@ -59,8 +60,8 @@ const transformPost = (post, currentUserId) => {
             ? post.comments.map(c => ({
                 id: c._id,
                 user: c.author?.name || "Explorer",
-                avatar: c.author?.avatar,
-                role: c.author?.role,
+                avatar: c.author?.avatar || "",
+                role: c.author?.role || "Explorer",
                 text: c.text,
                 timestamp: formatTimeAgo(c.createdAt),
             }))
@@ -100,23 +101,57 @@ const getPosts = async (req, res, next) => {
  */
 const createPost = async (req, res, next) => {
     try {
-        const { title, description, category, type, image, stats, tags } = req.body;
+        const { title, description, image, stats, tags } = req.body;
 
-        if (!description || !description.trim()) {
+        let imageUrl = image || "";
+        if (req.file) {
+            const uploadResult = await uploadToCloudinary(req.file, "community_posts");
+            imageUrl = uploadResult.secure_url;
+        }
+
+        const trimmedDesc = (description || "").trim();
+        if (!trimmedDesc && !imageUrl) {
             return res.status(400).json({
                 success: false,
-                message: "Post description cannot be empty.",
+                message: "Post content cannot be empty. Please provide description text or upload an image.",
             });
         }
 
+        let parsedStats = stats;
+        if (typeof stats === "string" && stats) {
+            try {
+                parsedStats = JSON.parse(stats);
+            } catch (e) {
+                parsedStats = undefined;
+            }
+        }
+        let parsedTags = tags;
+        if (typeof tags === "string" && tags) {
+            try {
+                parsedTags = JSON.parse(tags);
+            } catch (e) {
+                parsedTags = tags.split(",").map(t => t.trim()).filter(Boolean);
+            }
+        }
+
+        let dynamicType = "text";
+        let dynamicCategory = "Explorer Journal";
+        if (parsedStats) {
+            dynamicType = "hybrid";
+            dynamicCategory = "Shared a hybrid";
+        } else if (imageUrl) {
+            dynamicType = "photo";
+            dynamicCategory = "Photo Upload";
+        }
+
         const newPost = await communityService.createPost(req.user.id, {
-            title: title || "Explorer Note",
-            description: description.trim(),
-            category: category || "Explorer Journal",
-            type: type || "text",
-            image: image || "",
-            stats: stats || undefined,
-            tags: tags || [],
+            title: title || (dynamicType === "hybrid" ? "New Hybrid Specimen" : dynamicType === "photo" ? "Expedition Snapshot" : "Explorer Note"),
+            description: trimmedDesc,
+            category: dynamicCategory,
+            type: dynamicType,
+            image: imageUrl,
+            stats: parsedStats || undefined,
+            tags: parsedTags || [],
         });
 
         return res.status(201).json({
@@ -134,22 +169,47 @@ const createPost = async (req, res, next) => {
 const updatePost = async (req, res, next) => {
     try {
         const postId = req.params.id;
-        const { title, description, category, tags, stats, image } = req.body;
+        const { title, description, tags, stats, image } = req.body;
 
-        if (description !== undefined && !description.trim()) {
-            return res.status(400).json({
-                success: false,
-                message: "Post description cannot be empty.",
-            });
+        let imageUrl = image;
+        if (req.file) {
+            const uploadResult = await uploadToCloudinary(req.file, "community_posts");
+            imageUrl = uploadResult.secure_url;
+        }
+
+        let parsedStats = stats;
+        if (typeof stats === "string" && stats) {
+            try {
+                parsedStats = JSON.parse(stats);
+            } catch (e) {}
+        }
+        let parsedTags = tags;
+        if (typeof tags === "string" && tags) {
+            try {
+                parsedTags = JSON.parse(tags);
+            } catch (e) {
+                parsedTags = tags.split(",").map(t => t.trim()).filter(Boolean);
+            }
+        }
+
+        let dynamicType = "text";
+        let dynamicCategory = "Explorer Journal";
+        if (parsedStats) {
+            dynamicType = "hybrid";
+            dynamicCategory = "Shared a hybrid";
+        } else if (imageUrl) {
+            dynamicType = "photo";
+            dynamicCategory = "Photo Upload";
         }
 
         const updated = await communityService.updatePost(postId, req.user.id, {
             title,
-            description: description ? description.trim() : undefined,
-            category,
-            tags,
-            stats,
-            image,
+            description: description !== undefined ? description.trim() : undefined,
+            category: dynamicCategory,
+            type: dynamicType,
+            tags: parsedTags,
+            stats: parsedStats,
+            image: imageUrl,
         });
 
         return res.status(200).json({
