@@ -1,7 +1,7 @@
+import React, { useEffect, useMemo } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import L from "leaflet";
-import { useEffect } from "react";
 import DinosaurMarker from "./DinosaurMarker";
 
 // Import Leaflet and Cluster CSS files directly
@@ -50,8 +50,8 @@ const MapBoundsController = ({ dinosaurs, fitBoundsTrigger }) => {
     return null;
 };
 
-const DinosaurMap = ({ dinosaurs, activeDinosaurId, setActiveDinosaurId, fitBoundsTrigger }) => {
-    const center = [25.0, 10.0];
+const DinosaurMap = React.memo(({ dinosaurs, activeDinosaurId, setActiveDinosaurId, fitBoundsTrigger }) => {
+    const center = useMemo(() => [25.0, 10.0], []);
     const zoom = 2.5;
 
     return (
@@ -84,7 +84,7 @@ const DinosaurMap = ({ dinosaurs, activeDinosaurId, setActiveDinosaurId, fitBoun
                         <DinosaurMarker
                             key={dino.id}
                             dinosaur={dino}
-                            activeDinosaurId={activeDinosaurId}
+                            isActive={activeDinosaurId === dino.id}
                             setActiveDinosaurId={setActiveDinosaurId}
                         />
                     ))}
@@ -92,6 +92,6 @@ const DinosaurMap = ({ dinosaurs, activeDinosaurId, setActiveDinosaurId, fitBoun
             </MapContainer>
         </div>
     );
-};
+});
 
 export default DinosaurMap;
