@@ -114,7 +114,7 @@ const ProfessorFloatingWidget = () => {
     }, [messages.length]);
 
     return (
-        <div className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end pointer-events-auto select-none">
+        <div className="fixed bottom-5 left-5 sm:bottom-6 sm:left-6 z-50 flex flex-col items-start pointer-events-auto select-none">
             {/* Floating Chat Window */}
             {isOpen && (
                 <div 

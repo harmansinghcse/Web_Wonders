@@ -59,3 +59,19 @@ export const deleteCommentService = async (postId, commentId) => {
     });
     return response.data;
 };
+
+// Search users by query
+export const searchUsersService = async (query) => {
+    const response = await axios.get(`${API_BASE}/api/community/users/search?q=${encodeURIComponent(query)}`, {
+        withCredentials: true,
+    });
+    return response.data;
+};
+
+// Fetch suggested explorers
+export const fetchSuggestedUsersService = async () => {
+    const response = await axios.get(`${API_BASE}/api/community/users/suggested`, {
+        withCredentials: true,
+    });
+    return response.data;
+};
