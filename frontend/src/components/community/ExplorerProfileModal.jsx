@@ -37,11 +37,26 @@ export default function ExplorerProfileModal({ explorer, currentUser, posts = []
                 <div className="px-6 pb-6 pt-0 relative">
                     <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 -mt-12 mb-4">
                         <div className="flex items-end gap-4">
-                            <img
-                                src={explorer.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250"}
-                                alt={explorer.name}
-                                className="h-24 w-24 rounded-2xl border-4 border-white object-cover shadow-xl bg-white"
-                            />
+                            {explorer.avatar ? (
+                                <img
+                                    src={explorer.avatar}
+                                    alt={explorer.name}
+                                    className="h-24 w-24 rounded-2xl border-4 border-white object-cover shadow-xl bg-white shrink-0"
+                                    onError={(e) => {
+                                        e.target.style.display = "none";
+                                        e.target.nextSibling.style.display = "flex";
+                                    }}
+                                />
+                            ) : null}
+                            {(!explorer.avatar) ? (
+                                <div className="h-24 w-24 rounded-2xl border-4 border-white shadow-xl bg-[#E4ECE3] flex items-center justify-center text-[#2A5231] font-bold text-3xl shrink-0">
+                                    {explorer.name ? explorer.name[0].toUpperCase() : "E"}
+                                </div>
+                            ) : (
+                                <div style={{ display: "none" }} className="h-24 w-24 rounded-2xl border-4 border-white shadow-xl bg-[#E4ECE3] flex items-center justify-center text-[#2A5231] font-bold text-3xl shrink-0">
+                                    {explorer.name ? explorer.name[0].toUpperCase() : "E"}
+                                </div>
+                            )}
                             <div className="mb-1">
                                 <div className="flex items-center gap-2">
                                     <h3 className="font-serif text-xl font-bold text-[#1E3A23]">

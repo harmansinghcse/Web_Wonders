@@ -31,10 +31,11 @@ import { getProfile } from "../api/profileService";
 import {
     fetchPostsService,
     createPostService,
+    updatePostService,
+    deletePostService,
     likePostService,
     addCommentService,
-    toggleSaveService,
-    toggleFollowService
+    deleteCommentService,
 } from "../services/communityService";
 import { getStoredFollows } from "../services/communityServiceHelpers";
 
@@ -43,6 +44,31 @@ import ExplorerProfileModal from "../components/community/ExplorerProfileModal";
 import HybridBattleModal from "../components/community/HybridBattleModal";
 import NotificationsModal from "../components/community/NotificationsModal";
 import CreatePostModal from "../components/community/CreatePostModal";
+
+const Avatar = ({ user, className = "h-10 w-10 border border-[#1E3A23]/30" }) => {
+    const [hasError, setHasError] = useState(false);
+    
+    // Reset hasError if the user avatar changes
+    React.useEffect(() => {
+        setHasError(false);
+    }, [user?.avatar]);
+
+    if (user?.avatar && !hasError) {
+        return (
+            <img
+                src={user.avatar}
+                alt={user.name || "Explorer"}
+                onError={() => setHasError(true)}
+                className={`${className} rounded-full object-cover shrink-0`}
+            />
+        );
+    }
+    return (
+        <div className={`${className} rounded-full bg-[#E4ECE3] flex items-center justify-center text-[#2A5231] shrink-0`}>
+            <User className="h-1/2 w-1/2" />
+        </div>
+    );
+};
 
 export default function Community() {
     // 1. DYNAMIC CURRENT USER STATE (from AuthContext, backend API /api/profile, or localStorage)
@@ -72,7 +98,7 @@ export default function Community() {
                 name: rawName,
                 handle: `@${rawName.toLowerCase().replace(/\s+/g, "_")}`,
                 role: u.role || u.rank || "Explorer",
-                avatar: u.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250",
+                avatar: u.avatar || "",
                 bio: u.bio || "Dedicated Jurassic Explorer and Prehistoric Geneticist.",
                 id: u._id || u.id || "user-logged",
             };
@@ -86,7 +112,7 @@ export default function Community() {
                     name: rawName,
                     handle: `@${rawName.toLowerCase().replace(/\s+/g, "_")}`,
                     role: parsed.role || parsed.rank || "Explorer",
-                    avatar: parsed.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250",
+                    avatar: parsed.avatar || "",
                     bio: parsed.bio || "Dedicated Jurassic Explorer and Prehistoric Geneticist.",
                     id: parsed._id || parsed.id || "user-logged",
                 };
@@ -98,15 +124,19 @@ export default function Community() {
             name: "Explorer",
             handle: "@explorer",
             role: "Explorer",
-            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250",
+            avatar: "",
             bio: "Dedicated Jurassic Explorer and Prehistoric Geneticist.",
             id: "user-default",
         };
     }, [authUser, apiProfile]);
 
+    const isLoggedIn = !!authUser || !!apiProfile;
+
     // Posts state
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     // Sidebar active navigation tab ('feed', 'hybrids', 'myposts', 'saved')
     const [activeTab, setActiveTab] = useState("feed");
@@ -120,6 +150,8 @@ export default function Community() {
     const [createModalType, setCreateModalType] = useState("text");
     const [createModalTitle, setCreateModalTitle] = useState("");
     const [createModalTag, setCreateModalTag] = useState("");
+    const [postToEdit, setPostToEdit] = useState(null);
+    const [activeMenuPostId, setActiveMenuPostId] = useState(null);
 
     const [activeProfileExplorer, setActiveProfileExplorer] = useState(null);
     const [activeBattleHybrid, setActiveBattleHybrid] = useState(null);
@@ -137,36 +169,25 @@ export default function Community() {
     // Quick Composer Text State
     const [quickPostText, setQuickPostText] = useState("");
 
-    // Suggested Explorers State
-    const [suggestedExplorers, setSuggestedExplorers] = useState([
-        {
-            id: "exp-1",
-            name: "Rohan Explorer",
-            handle: "@rohan_explore",
-            avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=250",
-            role: "Senior Paleontologist",
-            bio: "Specializing in Jurassic sauropod bone structures and fossil excavations.",
-            isFollowing: false,
-        },
-        {
-            id: "exp-2",
-            name: "Palak FossilHunter",
-            handle: "@palak_fossil",
-            avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=250",
-            role: "Fossil Analyst",
-            bio: "Uncovering ancient amber specimens and Cretaceous footprints.",
-            isFollowing: false,
-        },
-        {
-            id: "exp-3",
-            name: "Aarav DinoFan",
-            handle: "@aarav_dinofan",
-            avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=250",
-            role: "Genetic Engineer",
-            bio: "Designing apex predator hybrids with reinforced defensive armor.",
-            isFollowing: false,
-        },
-    ]);
+    // Dynamic suggested explorers based on active posters
+    const suggestedExplorers = useMemo(() => {
+        const list = [];
+        const seen = new Set();
+        posts.forEach(p => {
+            if (p.author && p.author.id && p.author.id !== currentUser.id && !seen.has(p.author.id)) {
+                seen.add(p.author.id);
+                list.push({
+                    id: p.author.id,
+                    name: p.author.name,
+                    handle: p.author.handle,
+                    avatar: p.author.avatar,
+                    role: p.author.role,
+                    isFollowing: false,
+                });
+            }
+        });
+        return list.slice(0, 3);
+    }, [posts, currentUser]);
 
     // Toast Notification
     const [toastMessage, setToastMessage] = useState("");
@@ -176,233 +197,275 @@ export default function Community() {
         setTimeout(() => setToastMessage(""), 3500);
     };
 
-    // Load initial posts & sync stored follows on mount
-    useEffect(() => {
-        const loadInitialData = async () => {
+    // Load initial posts with pagination
+    const loadFeedData = async (pageNum = 1, append = false) => {
+        try {
             setLoading(true);
-            const fetchedPosts = await fetchPostsService();
-            setPosts(fetchedPosts);
-
-            const follows = getStoredFollows();
-            if (follows.length > 0) {
-                setSuggestedExplorers((prev) =>
-                    prev.map((exp) => ({ ...exp, isFollowing: follows.includes(exp.id) }))
-                );
+            const res = await fetchPostsService(pageNum, 10);
+            if (res.success) {
+                if (append) {
+                    setPosts((prev) => {
+                        const mergedMap = new Map();
+                        [...prev, ...res.data].forEach(p => mergedMap.set(p.id, p));
+                        return Array.from(mergedMap.values());
+                    });
+                } else {
+                    setPosts(res.data);
+                }
+                setTotalPages(res.pagination?.totalPages || 1);
+                setPage(pageNum);
             }
+        } catch (err) {
+            console.error("Error loading feed:", err);
+            showToast("Failed to load community feed.");
+        } finally {
             setLoading(false);
-        };
-        loadInitialData();
+        }
+    };
+
+    useEffect(() => {
+        loadFeedData(1, false);
     }, []);
 
     // Dynamic Trending Hybrids
     const trendingHybrids = useMemo(() => {
-        const hybrids = posts.filter(
+        return posts.filter(
             (p) => p.type === "hybrid" || p.badge === "Hybrid" || p.tags?.includes("#Hybrids")
-        );
-
-        const defaultHybrids = [
-            {
-                id: "trend-1",
-                title: "Dracorex",
-                author: { name: "Rohan Explorer", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=250" },
-                likes: 230,
-                image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&q=80&w=100",
-                stats: { attack: 88, defense: 82, speed: 75, size: "Large" }
-            },
-            {
-                id: "trend-2",
-                title: "Velocirhino",
-                author: { name: "Palak FossilHunter", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=250" },
-                likes: 189,
-                image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&q=80&w=100",
-                stats: { attack: 94, defense: 70, speed: 90, size: "Medium" }
-            },
-        ];
-
-        const combinedMap = new Map();
-        [...hybrids, ...defaultHybrids].forEach((item) => {
-            const key = item.title?.trim().toLowerCase() || item.id;
-            if (!combinedMap.has(key)) {
-                combinedMap.set(key, item);
-            } else if ((item.likes || 0) > (combinedMap.get(key).likes || 0)) {
-                combinedMap.set(key, item);
-            }
-        });
-
-        return Array.from(combinedMap.values())
-            .sort((a, b) => (b.likes || 0) - (a.likes || 0))
-            .slice(0, 3);
+        )
+        .sort((a, b) => (b.likes || 0) - (a.likes || 0))
+        .slice(0, 3);
     }, [posts]);
 
     // Dynamic Recent Fossil Finds
     const recentFossils = useMemo(() => {
-        const fossils = posts.filter(
+        return posts.filter(
             (p) =>
                 p.type === "fossil" ||
                 p.badge === "Fossil" ||
                 p.tags?.includes("#Fossils") ||
                 p.tags?.includes("#FossilFind")
-        );
-
-        const defaultFossils = [
-            {
-                id: "fossil-1",
-                title: "Triceratops Horn Fossil",
-                author: { name: "Aarav DinoFan" },
-                likes: 132,
-                image: "/spinosaurus_skull.jpg",
-            },
-            {
-                id: "fossil-2",
-                title: "Ammonite Shell",
-                author: { name: "Palak FossilHunter" },
-                likes: 98,
-                image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=100",
-            },
-        ];
-
-        const combinedMap = new Map();
-        [...fossils, ...defaultFossils].forEach((item) => {
-            const key = item.title?.trim().toLowerCase() || item.id;
-            if (!combinedMap.has(key)) combinedMap.set(key, item);
-        });
-
-        return Array.from(combinedMap.values()).slice(0, 3);
+        ).slice(0, 3);
     }, [posts]);
 
-    // Publish New Post Handler (Attributed dynamically to currentUser)
-    const handlePublishPost = async (newPostData) => {
-        // Ensure author is explicitly current user
-        const postToSave = {
-            ...newPostData,
-            author: currentUser,
-        };
-
-        setPosts((prev) => [postToSave, ...prev]);
-        setActiveTab("feed");
-        setSelectedTag(null);
-        setSearchQuery("");
-        setIsCreateOpen(false);
-
-        showToast(`🎉 Published as ${currentUser.name}!`);
-
+    // Publish/Create/Edit Post Handler
+    const handlePublishPost = async (formData) => {
+        if (!isLoggedIn) {
+            showToast("Please log in to share posts!");
+            return;
+        }
         try {
-            await createPostService(postToSave);
+            if (postToEdit) {
+                const res = await updatePostService(postToEdit.id, formData);
+                if (res.success) {
+                    setPosts((prev) => prev.map((p) => p.id === postToEdit.id ? res.data : p));
+                    setPostToEdit(null);
+                    setIsCreateOpen(false);
+                    showToast("🎉 Post updated successfully!");
+                }
+            } else {
+                const res = await createPostService(formData);
+                if (res.success) {
+                    setPosts((prev) => [res.data, ...prev]);
+                    setIsCreateOpen(false);
+                    showToast("🎉 Published discovery note!");
+                }
+            }
         } catch (err) {
-            console.error("Async save post error:", err);
+            showToast(err.response?.data?.message || "Failed to submit post.");
         }
     };
-
     // Quick Composer Submit
-    const handleQuickPostSubmit = (e) => {
+    const handleQuickPostSubmit = async (e) => {
         e.preventDefault();
         if (!quickPostText.trim()) return;
+        if (!isLoggedIn) {
+            showToast("Please log in to share posts!");
+            return;
+        }
 
-        handlePublishPost({
-            id: `post-${Date.now()}`,
-            author: currentUser,
-            timeAgo: "Just now",
-            category: "Explorer Journal",
-            type: "text",
-            title: "Explorer Note",
-            badge: "Post",
-            description: quickPostText.trim(),
-            likes: 1,
-            commentsCount: 0,
-            isLiked: true,
-            isSaved: false,
-            comments: [],
-            tags: ["#JurassicJourney"],
-        });
+        const formData = new FormData();
+        formData.append("type", "text");
+        formData.append("title", "Explorer Note");
+        formData.append("description", quickPostText.trim());
+        formData.append("category", "Explorer Journal");
+        formData.append("tags", JSON.stringify(["#JurassicJourney"]));
 
-        setQuickPostText("");
+        try {
+            await handlePublishPost(formData);
+            setQuickPostText("");
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     // Dynamic Like Handler
     const handleLike = async (postId) => {
-        const updated = await likePostService(postId, posts);
-        setPosts(updated);
+        if (!isLoggedIn) {
+            showToast("Please log in to like posts!");
+            return;
+        }
+        try {
+            const res = await likePostService(postId);
+            if (res.success) {
+                setPosts((prev) =>
+                    prev.map((p) => {
+                        if (p.id === postId) {
+                            return {
+                                ...p,
+                                likes: res.likesCount,
+                                isLiked: res.isLiked,
+                            };
+                        }
+                        return p;
+                    })
+                );
+            }
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     // Dynamic Comment Handler
     const handleAddComment = async (e) => {
         if (e && e.preventDefault) e.preventDefault();
         if (!newCommentText.trim() || !activeCommentPost) return;
+        if (!isLoggedIn) {
+            showToast("Please log in to comment!");
+            return;
+        }
 
-        const commentObj = {
-            id: `c-${Date.now()}`,
-            user: currentUser.name,
-            text: newCommentText.trim(),
-            timestamp: "Just now",
-        };
+        try {
+            const res = await addCommentService(activeCommentPost.id, newCommentText.trim());
+            if (res.success) {
+                setPosts((prev) =>
+                    prev.map((p) => {
+                        if (p.id === activeCommentPost.id) {
+                            return {
+                                ...p,
+                                commentsCount: res.commentsCount,
+                                comments: res.comments,
+                            };
+                        }
+                        return p;
+                    })
+                );
+                setActiveCommentPost((prev) => ({
+                    ...prev,
+                    commentsCount: res.commentsCount,
+                    comments: res.comments,
+                }));
+                setNewCommentText("");
+                showToast("Comment published!");
+            }
+        } catch (err) {
+            showToast("Failed to add comment.");
+        }
+    };
 
-        const updated = await addCommentService(activeCommentPost.id, commentObj, posts);
-        setPosts(updated);
+    // Delete Comment Handler
+    const handleDeleteComment = async (postId, commentId) => {
+        if (!isLoggedIn) {
+            showToast("Please log in first!");
+            return;
+        }
+        if (!window.confirm("Are you sure you want to delete this comment?")) return;
+        try {
+            const res = await deleteCommentService(postId, commentId);
+            if (res.success) {
+                setPosts((prev) =>
+                    prev.map((p) => {
+                        if (p.id === postId) {
+                            return {
+                                ...p,
+                                commentsCount: res.commentsCount,
+                                comments: res.comments,
+                            };
+                        }
+                        return p;
+                    })
+                );
+                setActiveCommentPost((prev) => ({
+                    ...prev,
+                    commentsCount: res.commentsCount,
+                    comments: res.comments,
+                }));
+                showToast("Comment deleted!");
+            }
+        } catch (err) {
+            showToast("Failed to delete comment.");
+        }
+    };
 
-        setActiveCommentPost((prev) => ({
-            ...prev,
-            commentsCount: (prev.commentsCount || 0) + 1,
-            comments: [...(prev.comments || []), commentObj],
-        }));
-
-        setNewCommentText("");
-        showToast("Comment published!");
+    // Delete Post Handler
+    const handleDeletePost = async (postId) => {
+        if (!isLoggedIn) {
+            showToast("Please log in first!");
+            return;
+        }
+        if (!window.confirm("Are you sure you want to delete this post?")) return;
+        try {
+            const res = await deletePostService(postId);
+            if (res.success) {
+                setPosts((prev) => prev.filter((p) => p.id !== postId));
+                showToast("🗑️ Post deleted successfully.");
+            }
+        } catch (err) {
+            showToast(err.response?.data?.message || "Failed to delete post.");
+        }
     };
 
     // Dynamic Save / Bookmark Handler
     const handleToggleSave = (postId) => {
-        const updated = toggleSaveService(postId, posts);
-        setPosts(updated);
-        const target = updated.find((p) => p.id === postId);
-        showToast(target?.isSaved ? "Saved to your bookmarks!" : "Removed from bookmarks");
+        setPosts((prev) =>
+            prev.map((p) => {
+                if (p.id === postId) {
+                    const nextSaved = !p.isSaved;
+                    showToast(nextSaved ? "Saved to your bookmarks!" : "Removed from bookmarks");
+                    return { ...p, isSaved: nextSaved };
+                }
+                return p;
+            })
+        );
     };
 
     // Dynamic Remix Handler
     const handlePublishRemix = async () => {
         if (!activeRemixPost) return;
+        if (!isLoggedIn) {
+            showToast("Please log in first!");
+            return;
+        }
 
-        const remixedPost = {
-            id: `post-remix-${Date.now()}`,
-            author: currentUser,
-            timeAgo: "Just now",
-            category: "Remixed a hybrid",
-            type: "hybrid",
-            title: `${activeRemixPost.title} Prime`,
-            badge: "Remix",
-            description: `Custom remixed variant engineered by ${currentUser.name}! Attack: ${remixAttack}, Defense: ${remixDefense}.`,
-            image: activeRemixPost.image,
-            stats: {
-                attack: remixAttack,
-                defense: remixDefense,
-                speed: 75,
-                size: "Huge",
-            },
-            likes: 1,
-            commentsCount: 0,
-            isLiked: true,
-            isSaved: false,
-            comments: [],
-            tags: ["#Hybrids", "#Remix"],
-        };
-
-        setPosts((prev) => [remixedPost, ...prev]);
-        setActiveTab("feed");
-        setActiveRemixPost(null);
-        showToast(`🎉 Published ${activeRemixPost.title} Prime remix as ${currentUser.name}!`);
+        const formData = new FormData();
+        formData.append("type", "hybrid");
+        formData.append("title", `${activeRemixPost.title} Prime`);
+        formData.append("description", `Custom remixed variant engineered by ${currentUser.name}! Attack: ${remixAttack}, Defense: ${remixDefense}.`);
+        formData.append("category", "Remixed a hybrid");
+        formData.append("image", activeRemixPost.image || "");
+        formData.append("stats", JSON.stringify({
+            attack: remixAttack,
+            defense: remixDefense,
+            speed: 75,
+            size: "Huge",
+        }));
+        formData.append("tags", JSON.stringify(["#Hybrids", "#Remix"]));
 
         try {
-            await createPostService(remixedPost);
+            const res = await createPostService(formData);
+            if (res.success) {
+                setPosts((prev) => [res.data, ...prev]);
+                setActiveTab("feed");
+                setActiveRemixPost(null);
+                showToast(`🎉 Published ${activeRemixPost.title} Prime remix!`);
+            }
         } catch (err) {
-            console.error("Async remix save error:", err);
+            showToast("Failed to publish remix.");
         }
     };
 
     // Dynamic Follow Handler
     const handleFollow = (expId) => {
-        const { updatedExplorers } = toggleFollowService(expId, suggestedExplorers);
-        setSuggestedExplorers(updatedExplorers);
-        const target = updatedExplorers.find((e) => e.id === expId);
-        showToast(target?.isFollowing ? `You are now following ${target.name}` : `Unfollowed ${target?.name}`);
+        showToast("Follow state toggled!");
     };
 
     // Filter Posts dynamically by Sidebar Tab, Search, and Tag
@@ -479,11 +542,7 @@ export default function Community() {
                             onClick={() => setActiveProfileExplorer(currentUser)}
                             className="flex items-center gap-3 rounded-2xl border border-white/60 bg-white/90 p-3.5 shadow-md backdrop-blur-md cursor-pointer transition hover:scale-[1.02] hover:shadow-lg"
                         >
-                            <img
-                                src={currentUser.avatar}
-                                alt={currentUser.name}
-                                className="h-12 w-12 rounded-xl object-cover border-2 border-[#1E3A23]/30 shrink-0"
-                            />
+                            <Avatar user={currentUser} className="h-12 w-12 rounded-xl" />
                             <div className="min-w-0 flex-1">
                                 <div className="flex items-center gap-1">
                                     <h3 className="text-sm font-bold text-[#1E3A23] truncate">
@@ -577,9 +636,6 @@ export default function Community() {
                                     <Bell size={18} />
                                     <span>Notifications</span>
                                 </div>
-                                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#D9381E] text-[10px] font-extrabold text-white">
-                                    2
-                                </span>
                             </button>
                         </div>
                     </aside>
@@ -593,18 +649,16 @@ export default function Community() {
                             className="rounded-2xl border border-white/60 bg-white/90 p-4 shadow-md backdrop-blur-md"
                         >
                             <div className="flex items-start gap-3">
-                                <img
-                                    src={currentUser.avatar}
-                                    alt={currentUser.name}
-                                    onClick={() => setActiveProfileExplorer(currentUser)}
-                                    className="h-11 w-11 rounded-full object-cover border-2 border-[#1E3A23]/30 shrink-0 cursor-pointer"
+                                <Avatar
+                                    user={currentUser}
+                                    className="h-11 w-11 border-2 border-[#1E3A23]/30 cursor-pointer"
                                 />
                                 <div className="flex-1">
                                     <textarea
                                         rows={2}
                                         value={quickPostText}
                                         onChange={(e) => setQuickPostText(e.target.value)}
-                                        placeholder={`What's on your mind, ${currentUser.name}?`}
+                                        placeholder="What's on your mind, Explorer?"
                                         className="w-full rounded-xl border border-[#E1DEC9] bg-[#FAF9F5] px-4 py-2.5 text-sm text-[#2C352E] placeholder-[#819083] transition focus:border-[#1E3A23] focus:bg-white focus:outline-none resize-none"
                                     />
 
@@ -693,15 +747,9 @@ export default function Community() {
                         ) : filteredPosts.length === 0 ? (
                             <div className="rounded-2xl border border-white/60 bg-white/90 p-8 text-center shadow-md space-y-3">
                                 <span className="text-4xl">🦖</span>
-                                <h3 className="text-base font-bold text-[#1E3A23]">No community posts found</h3>
+                                <h3 className="text-base font-bold text-[#1E3A23]">No community posts yet</h3>
                                 <p className="text-xs text-[#687A6C]">
-                                    {activeTab === "myposts"
-                                        ? `You haven't created any posts as ${currentUser.name} yet!`
-                                        : activeTab === "hybrids"
-                                        ? `You haven't engineered any hybrid species yet!`
-                                        : activeTab === "saved"
-                                        ? "You haven't bookmarked any posts yet."
-                                        : "Try resetting your search query or tag filters."}
+                                    Be the first to share something!
                                 </p>
                                 <div className="flex justify-center gap-2 pt-2">
                                     <button
@@ -712,12 +760,6 @@ export default function Community() {
                                         className="rounded-xl bg-[#1E3A23] px-5 py-2.5 text-xs font-bold text-white shadow-md hover:bg-[#152A19] cursor-pointer"
                                     >
                                         Create New Post
-                                    </button>
-                                    <button
-                                        onClick={() => { setActiveTab("feed"); setSelectedTag(null); setSearchQuery(""); }}
-                                        className="rounded-xl border border-[#E1DEC9] bg-[#FAF9F5] px-4 py-2.5 text-xs font-bold text-[#556358] cursor-pointer"
-                                    >
-                                        Reset View
                                     </button>
                                 </div>
                             </div>
@@ -733,11 +775,17 @@ export default function Community() {
                                             onClick={() => setActiveProfileExplorer(post.author || currentUser)}
                                             className="flex items-center gap-3 cursor-pointer group"
                                         >
-                                            <img
-                                                src={post.author?.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250"}
-                                                alt={post.author?.name || "Explorer"}
-                                                className="h-10 w-10 rounded-full object-cover border border-[#1E3A23]/30 group-hover:border-[#2F7D4D] transition"
-                                            />
+                                            {post.author?.avatar ? (
+                                                <img
+                                                    src={post.author.avatar}
+                                                    alt={post.author?.name || "Explorer"}
+                                                    className="h-10 w-10 rounded-full object-cover border border-[#1E3A23]/30 group-hover:border-[#2F7D4D] transition"
+                                                />
+                                            ) : (
+                                                <div className="h-10 w-10 rounded-full bg-[#E4ECE3] flex items-center justify-center border border-[#1E3A23]/30 group-hover:border-[#2F7D4D] transition font-bold text-xs text-[#2A5231]">
+                                                    {post.author?.name ? post.author.name[0].toUpperCase() : "E"}
+                                                </div>
+                                            )}
                                             <div>
                                                 <div className="flex items-center gap-2">
                                                     <h4 className="text-sm font-bold text-[#1E3A23] group-hover:text-[#2F7D4D] transition">
@@ -753,9 +801,48 @@ export default function Community() {
                                             </div>
                                         </div>
 
-                                        <button className="rounded-full p-1.5 text-[#6D7A6F] hover:bg-[#F7F6F0] cursor-pointer">
-                                            <MoreHorizontal size={18} />
-                                        </button>
+                                        <div className="relative">
+                                            <button 
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setActiveMenuPostId(activeMenuPostId === post.id ? null : post.id);
+                                                }}
+                                                className="rounded-full p-1.5 text-[#6D7A6F] hover:bg-[#F7F6F0] cursor-pointer"
+                                            >
+                                                <MoreHorizontal size={18} />
+                                            </button>
+                                            {activeMenuPostId === post.id && (
+                                                <div className="absolute right-0 top-8 z-30 w-36 rounded-xl border border-[#EBE8DB] bg-white p-1.5 shadow-lg animate-in fade-in slide-in-from-top-1 duration-150">
+                                                    {(post.author?.id === currentUser?.id || post.author?.name === currentUser?.name) && (
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setPostToEdit(post);
+                                                                setCreateModalType(post.type || "text");
+                                                                setCreateModalTitle(post.title || "");
+                                                                setIsCreateOpen(true);
+                                                                setActiveMenuPostId(null);
+                                                            }}
+                                                            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-bold text-[#4A554B] hover:bg-[#FAF9F5] hover:text-[#1E3A23] cursor-pointer"
+                                                        >
+                                                            Edit Post
+                                                        </button>
+                                                    )}
+                                                    {(post.author?.id === currentUser?.id || post.author?.name === currentUser?.name || currentUser?.role === "admin") && (
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleDeletePost(post.id);
+                                                                setActiveMenuPostId(null);
+                                                            }}
+                                                            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-bold text-red-600 hover:bg-red-50 cursor-pointer"
+                                                        >
+                                                            Delete Post
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
 
                                     {/* Card Body */}
@@ -905,6 +992,16 @@ export default function Community() {
                                     </div>
                                 </article>
                             ))
+                        )}
+                        {page < totalPages && (
+                            <div className="flex justify-center pt-4">
+                                <button
+                                    onClick={() => loadFeedData(page + 1, true)}
+                                    className="rounded-xl border border-[#E1DEC9] bg-[#FAF9F5] hover:bg-[#EFEFE6] px-6 py-2.5 text-xs font-bold text-[#1E3A23] shadow-md cursor-pointer transition"
+                                >
+                                    Load More Posts
+                                </button>
+                            </div>
                         )}
                     </section>
 
@@ -1083,11 +1180,7 @@ export default function Community() {
                                             onClick={() => setActiveProfileExplorer(exp)}
                                             className="flex items-center gap-2.5 cursor-pointer group"
                                         >
-                                            <img
-                                                src={exp.avatar}
-                                                alt={exp.name}
-                                                className="h-8 w-8 rounded-full object-cover border border-[#1E3A23]/30 group-hover:border-[#2F7D4D]"
-                                            />
+                                            <Avatar user={exp} className="h-8 w-8" />
                                             <div className="min-w-0">
                                                 <h4 className="text-xs font-bold text-[#1E3A23] group-hover:text-[#2F7D4D] truncate">
                                                     {exp.name}
@@ -1124,7 +1217,8 @@ export default function Community() {
                     initialTitle={createModalTitle}
                     initialTag={createModalTag}
                     onSubmit={handlePublishPost}
-                    onClose={() => setIsCreateOpen(false)}
+                    onClose={() => { setIsCreateOpen(false); setPostToEdit(null); }}
+                    postToEdit={postToEdit}
                 />
             )}
 
@@ -1175,12 +1269,23 @@ export default function Community() {
                         <div className="max-h-64 overflow-y-auto p-4 space-y-3">
                             {activeCommentPost.comments?.length > 0 ? (
                                 activeCommentPost.comments.map((c) => (
-                                    <div key={c.id} className="rounded-2xl bg-[#FAF9F5] p-3 border border-[#F0ECE1]">
-                                        <div className="flex justify-between">
-                                            <p className="text-xs font-bold text-[#1E3A23]">{c.user}</p>
-                                            <span className="text-[10px] text-[#8A968C]">{c.timestamp || "Just now"}</span>
+                                    <div key={c.id} className="rounded-2xl bg-[#FAF9F5] p-3 border border-[#F0ECE1] flex justify-between items-start gap-2">
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex justify-between">
+                                                <p className="text-xs font-bold text-[#1E3A23]">{c.user}</p>
+                                                <span className="text-[10px] text-[#8A968C]">{c.timestamp || "Just now"}</span>
+                                            </div>
+                                            <p className="mt-0.5 text-xs text-[#4A554B]">{c.text}</p>
                                         </div>
-                                        <p className="mt-0.5 text-xs text-[#4A554B]">{c.text}</p>
+                                        {(c.user === currentUser.name || currentUser.role === "admin") && (
+                                            <button
+                                                onClick={() => handleDeleteComment(activeCommentPost.id, c.id)}
+                                                className="text-red-500 hover:text-red-700 p-0.5"
+                                                title="Delete Comment"
+                                            >
+                                                <X size={14} />
+                                            </button>
+                                        )}
                                     </div>
                                 ))
                             ) : (

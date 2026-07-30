@@ -114,15 +114,6 @@ export default function TimelineStrat() {
                     <div className="mt-10 grid grid-cols-2 gap-6">
                         {hunting.traits.map((trait, index) => (
                             <div key={index} className="flex gap-4">
-                                <EditableText
-                                    value={trait.icon}
-                                    placeholder="🦷"
-                                    onChange={(value) =>
-                                        handleTraitChange(index, "icon", value)
-                                    }
-                                    className="flex h-14 w-14 items-center justify-center rounded-full bg-[#EED6A2] text-center text-2xl"
-                                />
-
                                 <div className="grow">
                                     <EditableText
                                         value={trait.title}
