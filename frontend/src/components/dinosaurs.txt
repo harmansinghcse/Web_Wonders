@@ -28,3 +28,4 @@ Tyrannosaurus Rex
 Velociraptor
 Pterodactylus
 Allosaurus
+Therizinosaurus 
