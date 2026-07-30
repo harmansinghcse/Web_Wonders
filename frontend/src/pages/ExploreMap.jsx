@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
+import { useDebounce } from "use-debounce";
 
 import Navbar from "../components/home_components/hero/Navbar";
 
@@ -39,6 +40,7 @@ export default function ExploreMap() {
     ========================================================= */
 
     const [searchQuery, setSearchQuery] = useState("");
+    const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
 
     const [selectedEra, setSelectedEra] = useState("");
 
@@ -175,7 +177,7 @@ export default function ExploreMap() {
     const filteredMarkers = useMemo(() => {
 
         const normalizedSearch =
-            searchQuery
+            debouncedSearchQuery
                 .trim()
                 .toLowerCase();
 
@@ -245,7 +247,7 @@ export default function ExploreMap() {
 
         }, [
             markers,
-            searchQuery,
+            debouncedSearchQuery,
             selectedEra,
             selectedDiet,
             selectedCountry
@@ -335,7 +337,7 @@ export default function ExploreMap() {
        RESET FILTERS
     ========================================================= */
 
-    const handleClearFilters = () => {
+    const handleClearFilters = useCallback(() => {
 
         setSearchQuery("");
 
@@ -353,14 +355,14 @@ export default function ExploreMap() {
                 previous + 1
         );
 
-    };
+    }, []);
 
 
     /* =========================================================
     SEARCH / LOCATE DINOSAUR DIRECTLY
     ========================================================= */
 
-    const handleSearchDinosaur = (
+    const handleSearchDinosaur = useCallback((
         query = searchQuery
     ) => {
 
@@ -425,11 +427,6 @@ export default function ExploreMap() {
 
         /*
         * Clear the other filters.
-        *
-        * This guarantees that the searched
-        * dinosaur is rendered on the map,
-        * even if the previous Era / Diet /
-        * Country filters excluded it.
         */
 
         setSelectedEra("");
@@ -450,31 +447,21 @@ export default function ExploreMap() {
 
 
         /*
-        * This is our single source of truth.
-        *
-        * 1. DinosaurMarker reacts to this ID
-        *    and flies to the dinosaur.
-        *
-        * 2. activeDinosaur updates.
-        *
-        * 3. featuredDinosaur updates.
-        *
-        * 4. The right information panel
-        *    therefore shows the same dinosaur.
+        * Activate the dinosaur.
         */
 
         setActiveDinosaurId(
             dinosaur.id
         );
 
-    };
+    }, [markers, searchQuery]);
 
     /* =========================================================
     SELECT DINOSAUR
     FROM TRENDING / FAMOUS SECTION
     ========================================================= */
 
-    const handleSelectDinosaur = (
+    const handleSelectDinosaur = useCallback((
         dinosaur
     ) => {
 
@@ -486,9 +473,7 @@ export default function ExploreMap() {
 
 
         /*
-        * Clear existing filters so the selected
-        * dinosaur is guaranteed to be rendered
-        * on the interactive map.
+        * Clear existing filters
         */
 
         setSelectedEra("");
@@ -510,12 +495,6 @@ export default function ExploreMap() {
 
         /*
         * Activate the dinosaur.
-        *
-        * This updates:
-        * - the map marker
-        * - map flyTo behaviour
-        * - marker popup
-        * - right-side Featured Dinosaur panel
         */
 
         setActiveDinosaurId(
@@ -540,7 +519,7 @@ export default function ExploreMap() {
 
             });
 
-    };
+    }, []);
 
     /* =========================================================
        TRENDING / FAMOUS DINOSAURS

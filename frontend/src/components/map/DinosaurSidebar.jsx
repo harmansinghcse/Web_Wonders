@@ -1,3 +1,4 @@
+import { useState, useMemo, useEffect } from "react";
 import { ChevronLeft, ChevronRight, MapPin, Compass, Beef, Leaf, Apple } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getOptimizedImageUrl } from "../../utils/imageHelper";
@@ -24,6 +25,24 @@ const DinosaurSidebar = ({
     isOpen,
     setIsOpen
 }) => {
+    const [visibleCount, setVisibleCount] = useState(40);
+
+    // Reset visible item count when list changes
+    useEffect(() => {
+        setVisibleCount(40);
+    }, [dinosaurs]);
+
+    const visibleDinosaurs = useMemo(() => {
+        return dinosaurs.slice(0, visibleCount);
+    }, [dinosaurs, visibleCount]);
+
+    const handleScroll = (e) => {
+        const { scrollTop, scrollHeight, clientHeight } = e.target;
+        if (scrollHeight - scrollTop - clientHeight < 120) {
+            setVisibleCount((prev) => Math.min(dinosaurs.length, prev + 40));
+        }
+    };
+
     // Diet branding aligned with website's dark earth museum theme
     const getDietDetails = (diet) => {
         const d = (diet || "").toLowerCase();
@@ -61,15 +80,18 @@ const DinosaurSidebar = ({
                         </div>
 
                         {/* List Area */}
-                        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2.5 scrollbar-thin scrollbar-thumb-stone-850 scrollbar-track-transparent">
-                            {dinosaurs.length > 0 ? (
+                        <div 
+                            onScroll={handleScroll}
+                            className="flex-1 overflow-y-auto px-4 py-4 space-y-2.5 scrollbar-thin scrollbar-thumb-stone-850 scrollbar-track-transparent"
+                        >
+                            {visibleDinosaurs.length > 0 ? (
                                 <motion.div 
                                     variants={containerVariants}
                                     initial="hidden"
                                     animate="show"
                                     className="space-y-3"
                                 >
-                                    {dinosaurs.map((dino) => {
+                                    {visibleDinosaurs.map((dino) => {
                                         const { id, name, diet, period, country, image } = dino;
                                         const isActive = activeDinosaurId === id;
                                         const dietInfo = getDietDetails(diet);

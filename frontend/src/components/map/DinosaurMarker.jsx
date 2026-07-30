@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import MarkerPopup from "./MarkerPopup";
@@ -58,11 +58,10 @@ const createCustomIcon = (diet, isActive, image) => {
     });
 };
 
-const DinosaurMarker = ({ dinosaur, activeDinosaurId, setActiveDinosaurId }) => {
+const DinosaurMarker = React.memo(({ dinosaur, isActive, setActiveDinosaurId }) => {
     const markerRef = useRef(null);
     const map = useMap();
     const { coordinates, id, diet, image } = dinosaur;
-    const isActive = activeDinosaurId === id;
 
     // React to search selection or sidebar click
     useEffect(() => {
@@ -105,7 +104,7 @@ const DinosaurMarker = ({ dinosaur, activeDinosaurId, setActiveDinosaurId }) => 
                     setActiveDinosaurId(id);
                 },
                 popupclose: () => {
-                    if (activeDinosaurId === id) {
+                    if (isActive) {
                         setActiveDinosaurId(null);
                     }
                 }
@@ -120,6 +119,10 @@ const DinosaurMarker = ({ dinosaur, activeDinosaurId, setActiveDinosaurId }) => 
             </Popup>
         </Marker>
     );
-};
+}, (prevProps, nextProps) => {
+    return prevProps.isActive === nextProps.isActive &&
+           prevProps.dinosaur.id === nextProps.dinosaur.id &&
+           prevProps.dinosaur.image === nextProps.dinosaur.image;
+});
 
 export default DinosaurMarker;
