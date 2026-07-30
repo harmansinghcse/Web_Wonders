@@ -10,6 +10,8 @@ const {
     likePost,
     addComment,
     deleteComment,
+    searchUsers,
+    getSuggestedUsers,
 } = require("../controllers/communityController");
 
 const router = express.Router();
@@ -36,6 +38,10 @@ const optionalProtect = async (req, res, next) => {
 };
 
 const upload = require("../middleware/upload");
+
+// User operations
+router.get("/users/suggested", optionalProtect, getSuggestedUsers);
+router.get("/users/search", optionalProtect, searchUsers);
 
 // Feed retrieval (Guests welcome)
 router.get("/posts", optionalProtect, getPosts);

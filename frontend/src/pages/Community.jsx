@@ -36,6 +36,8 @@ import {
     likePostService,
     addCommentService,
     deleteCommentService,
+    searchUsersService,
+    fetchSuggestedUsersService,
 } from "../services/communityService";
 import { getStoredFollows } from "../services/communityServiceHelpers";
 
@@ -169,25 +171,72 @@ export default function Community() {
     // Quick Composer Text State
     const [quickPostText, setQuickPostText] = useState("");
 
-    // Dynamic suggested explorers based on active posters
-    const suggestedExplorers = useMemo(() => {
-        const list = [];
-        const seen = new Set();
-        posts.forEach(p => {
-            if (p.author && p.author.id && p.author.id !== currentUser.id && !seen.has(p.author.id)) {
-                seen.add(p.author.id);
-                list.push({
-                    id: p.author.id,
-                    name: p.author.name,
-                    handle: p.author.handle,
-                    avatar: p.author.avatar,
-                    role: p.author.role,
-                    isFollowing: false,
-                });
+    // Dynamic user search state
+    const [userSearchQuery, setUserSearchQuery] = useState("");
+    const [searchResults, setSearchResults] = useState([]);
+    const [searchingUsers, setSearchingUsers] = useState(false);
+
+    // Suggested explorers state
+    const [suggestedExplorers, setSuggestedExplorers] = useState([]);
+    const [loadingSuggestions, setLoadingSuggestions] = useState(true);
+
+    // Guest protection alert/redirect
+    const ensureAuth = () => {
+        if (!isLoggedIn) {
+            if (window.confirm("Please log in to interact with the community. Would you like to go to the login page now?")) {
+                window.location.href = "/login";
             }
-        });
-        return list.slice(0, 3);
-    }, [posts, currentUser]);
+            return false;
+        }
+        return true;
+    };
+
+    // User search handler
+    const handleUserSearch = async (val) => {
+        setUserSearchQuery(val);
+        if (!val.trim()) {
+            setSearchResults([]);
+            return;
+        }
+        setSearchingUsers(true);
+        try {
+            const res = await searchUsersService(val);
+            if (res.success) {
+                setSearchResults(res.data);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setSearchingUsers(false);
+        }
+    };
+
+    // Share post interaction handler
+    const handleSharePost = async (post) => {
+        const shareUrl = `${window.location.origin}/community?postId=${post.id || post._id}`;
+        const shareData = {
+            title: post.title || "Prehistoric Discovery",
+            text: post.description || "Check out this prehistoric discovery!",
+            url: shareUrl,
+        };
+
+        if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+            try {
+                await navigator.share(shareData);
+                showToast("Post shared successfully!");
+            } catch (err) {
+                copyToClipboard(shareUrl);
+            }
+        } else {
+            copyToClipboard(shareUrl);
+        }
+    };
+
+    const copyToClipboard = (text) => {
+        navigator.clipboard.writeText(text)
+            .then(() => showToast("Direct link copied to clipboard!"))
+            .catch(() => showToast("Failed to copy link."));
+    };
 
     // Toast Notification
     const [toastMessage, setToastMessage] = useState("");
@@ -225,7 +274,21 @@ export default function Community() {
 
     useEffect(() => {
         loadFeedData(1, false);
-    }, []);
+        
+        const loadSuggestions = async () => {
+            try {
+                const res = await fetchSuggestedUsersService();
+                if (res.success) {
+                    setSuggestedExplorers(res.data);
+                }
+            } catch (err) {
+                console.error("Error loading suggestions:", err);
+            } finally {
+                setLoadingSuggestions(false);
+            }
+        };
+        loadSuggestions();
+    }, [currentUser]);
 
     // Dynamic Trending Hybrids
     const trendingHybrids = useMemo(() => {
@@ -249,10 +312,7 @@ export default function Community() {
 
     // Publish/Create/Edit Post Handler
     const handlePublishPost = async (formData) => {
-        if (!isLoggedIn) {
-            showToast("Please log in to share posts!");
-            return;
-        }
+        if (!ensureAuth()) return;
         try {
             if (postToEdit) {
                 const res = await updatePostService(postToEdit.id, formData);
@@ -274,14 +334,12 @@ export default function Community() {
             showToast(err.response?.data?.message || "Failed to submit post.");
         }
     };
+
     // Quick Composer Submit
     const handleQuickPostSubmit = async (e) => {
         e.preventDefault();
         if (!quickPostText.trim()) return;
-        if (!isLoggedIn) {
-            showToast("Please log in to share posts!");
-            return;
-        }
+        if (!ensureAuth()) return;
 
         const formData = new FormData();
         formData.append("type", "text");
@@ -300,10 +358,7 @@ export default function Community() {
 
     // Dynamic Like Handler
     const handleLike = async (postId) => {
-        if (!isLoggedIn) {
-            showToast("Please log in to like posts!");
-            return;
-        }
+        if (!ensureAuth()) return;
         try {
             const res = await likePostService(postId);
             if (res.success) {
@@ -329,10 +384,7 @@ export default function Community() {
     const handleAddComment = async (e) => {
         if (e && e.preventDefault) e.preventDefault();
         if (!newCommentText.trim() || !activeCommentPost) return;
-        if (!isLoggedIn) {
-            showToast("Please log in to comment!");
-            return;
-        }
+        if (!ensureAuth()) return;
 
         try {
             const res = await addCommentService(activeCommentPost.id, newCommentText.trim());
@@ -364,10 +416,7 @@ export default function Community() {
 
     // Delete Comment Handler
     const handleDeleteComment = async (postId, commentId) => {
-        if (!isLoggedIn) {
-            showToast("Please log in first!");
-            return;
-        }
+        if (!ensureAuth()) return;
         if (!window.confirm("Are you sure you want to delete this comment?")) return;
         try {
             const res = await deleteCommentService(postId, commentId);
@@ -398,10 +447,7 @@ export default function Community() {
 
     // Delete Post Handler
     const handleDeletePost = async (postId) => {
-        if (!isLoggedIn) {
-            showToast("Please log in first!");
-            return;
-        }
+        if (!ensureAuth()) return;
         if (!window.confirm("Are you sure you want to delete this post?")) return;
         try {
             const res = await deletePostService(postId);
@@ -416,6 +462,7 @@ export default function Community() {
 
     // Dynamic Save / Bookmark Handler
     const handleToggleSave = (postId) => {
+        if (!ensureAuth()) return;
         setPosts((prev) =>
             prev.map((p) => {
                 if (p.id === postId) {
@@ -431,10 +478,7 @@ export default function Community() {
     // Dynamic Remix Handler
     const handlePublishRemix = async () => {
         if (!activeRemixPost) return;
-        if (!isLoggedIn) {
-            showToast("Please log in first!");
-            return;
-        }
+        if (!ensureAuth()) return;
 
         const formData = new FormData();
         formData.append("type", "hybrid");
@@ -465,6 +509,7 @@ export default function Community() {
 
     // Dynamic Follow Handler
     const handleFollow = (expId) => {
+        if (!ensureAuth()) return;
         showToast("Follow state toggled!");
     };
 
@@ -947,7 +992,7 @@ export default function Community() {
                                             </button>
 
                                             <button
-                                                onClick={() => showToast("Post link copied to clipboard!")}
+                                                onClick={() => handleSharePost(post)}
                                                 className="flex items-center gap-1.5 transition hover:text-[#1E3A23] cursor-pointer"
                                             >
                                                 <Share2 size={16} />
@@ -1026,51 +1071,55 @@ export default function Community() {
                             </div>
 
                             <div className="space-y-2.5">
-                                {trendingHybrids.map((hybrid, idx) => {
-                                    const rankBadgeColor =
-                                        idx === 0
-                                            ? "bg-[#F59E0B]"
-                                            : idx === 1
-                                            ? "bg-[#94A3B8]"
-                                            : "bg-[#D97706]";
+                                {trendingHybrids.length > 0 ? (
+                                    trendingHybrids.map((hybrid, idx) => {
+                                        const rankBadgeColor =
+                                            idx === 0
+                                                ? "bg-[#F59E0B]"
+                                                : idx === 1
+                                                ? "bg-[#94A3B8]"
+                                                : "bg-[#D97706]";
 
-                                    return (
-                                        <div
-                                            key={hybrid.id || idx}
-                                            onClick={() => {
-                                                setSearchQuery(hybrid.title);
-                                                setActiveTab("feed");
-                                            }}
-                                            className="flex items-center justify-between rounded-xl bg-[#FAF9F5] p-2 border border-[#F0ECE1] transition hover:bg-[#EFEFE6] cursor-pointer"
-                                        >
-                                            <div className="flex items-center gap-2.5 overflow-hidden pr-2">
-                                                <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${rankBadgeColor} text-[10px] font-extrabold text-white`}>
-                                                    {idx + 1}
-                                                </span>
-                                                <img
-                                                    src={
-                                                        hybrid.image ||
-                                                        "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&q=80&w=100"
-                                                    }
-                                                    alt={hybrid.title}
-                                                    className="h-9 w-9 shrink-0 rounded-lg object-cover border border-[#1E3A23]/20"
-                                                />
-                                                <div className="truncate">
-                                                    <h4 className="text-xs font-bold text-[#1E3A23] truncate">
-                                                        {hybrid.title}
-                                                    </h4>
-                                                    <p className="text-[10px] text-[#6D7A6F] truncate">
-                                                        by {hybrid.author?.name || "Explorer"}
-                                                    </p>
+                                        return (
+                                            <div
+                                                key={hybrid.id || idx}
+                                                onClick={() => {
+                                                    setSearchQuery(hybrid.title);
+                                                    setActiveTab("feed");
+                                                }}
+                                                className="flex items-center justify-between rounded-xl bg-[#FAF9F5] p-2 border border-[#F0ECE1] transition hover:bg-[#EFEFE6] cursor-pointer"
+                                            >
+                                                <div className="flex items-center gap-2.5 overflow-hidden pr-2">
+                                                    <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${rankBadgeColor} text-[10px] font-extrabold text-white`}>
+                                                        {idx + 1}
+                                                    </span>
+                                                    <img
+                                                        src={
+                                                            hybrid.image ||
+                                                            "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&q=80&w=100"
+                                                        }
+                                                        alt={hybrid.title}
+                                                        className="h-9 w-9 shrink-0 rounded-lg object-cover border border-[#1E3A23]/20"
+                                                    />
+                                                    <div className="truncate">
+                                                        <h4 className="text-xs font-bold text-[#1E3A23] truncate">
+                                                            {hybrid.title}
+                                                        </h4>
+                                                        <p className="text-[10px] text-[#6D7A6F] truncate">
+                                                            by {hybrid.author?.name || "Explorer"}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-1 text-xs font-bold text-[#D9381E] shrink-0">
+                                                    <Heart size={12} className="fill-[#D9381E]" />
+                                                    <span>{hybrid.likes || 0}</span>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-1 text-xs font-bold text-[#D9381E] shrink-0">
-                                                <Heart size={12} className="fill-[#D9381E]" />
-                                                <span>{hybrid.likes || 0}</span>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
+                                        );
+                                    })
+                                ) : (
+                                    <p className="text-center text-[10px] text-[#6D7A6F] py-2">No trending hybrids engineered yet.</p>
+                                )}
                             </div>
                         </div>
 
@@ -1092,42 +1141,46 @@ export default function Community() {
                             </div>
 
                             <div className="space-y-2.5">
-                                {recentFossils.map((fossil, idx) => (
-                                    <div
-                                        key={fossil.id || idx}
-                                        onClick={() => {
-                                            setSelectedTag("#FossilFind");
-                                            setActiveTab("feed");
-                                        }}
-                                        className="flex items-center justify-between rounded-xl bg-[#FAF9F5] p-2 border border-[#F0ECE1] transition hover:bg-[#EFEFE6] cursor-pointer"
-                                    >
-                                        <div className="flex items-center gap-2.5 overflow-hidden pr-2">
-                                            {fossil.image ? (
-                                                <img
-                                                    src={fossil.image}
-                                                    alt={fossil.title}
-                                                    className="h-9 w-9 shrink-0 rounded-lg object-cover border border-[#1E3A23]/20"
-                                                />
-                                            ) : (
-                                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#F5F2E6] text-base">
-                                                    🦴
+                                {recentFossils.length > 0 ? (
+                                    recentFossils.map((fossil, idx) => (
+                                        <div
+                                            key={fossil.id || idx}
+                                            onClick={() => {
+                                                setSelectedTag("#FossilFind");
+                                                setActiveTab("feed");
+                                            }}
+                                            className="flex items-center justify-between rounded-xl bg-[#FAF9F5] p-2 border border-[#F0ECE1] transition hover:bg-[#EFEFE6] cursor-pointer"
+                                        >
+                                            <div className="flex items-center gap-2.5 overflow-hidden pr-2">
+                                                {fossil.image ? (
+                                                    <img
+                                                        src={fossil.image}
+                                                        alt={fossil.title}
+                                                        className="h-9 w-9 shrink-0 rounded-lg object-cover border border-[#1E3A23]/20"
+                                                    />
+                                                ) : (
+                                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#F5F2E6] text-base">
+                                                        🦴
+                                                    </div>
+                                                )}
+                                                <div className="truncate">
+                                                    <h4 className="text-xs font-bold text-[#1E3A23] truncate">
+                                                        {fossil.title}
+                                                    </h4>
+                                                    <p className="text-[10px] text-[#6D7A6F] truncate">
+                                                        by {fossil.author?.name || "Explorer"}
+                                                    </p>
                                                 </div>
-                                            )}
-                                            <div className="truncate">
-                                                <h4 className="text-xs font-bold text-[#1E3A23] truncate">
-                                                    {fossil.title}
-                                                </h4>
-                                                <p className="text-[10px] text-[#6D7A6F] truncate">
-                                                    by {fossil.author?.name || "Explorer"}
-                                                </p>
+                                            </div>
+                                            <div className="flex items-center gap-1 text-xs font-bold text-[#D9381E] shrink-0">
+                                                <Heart size={12} className="fill-[#D9381E]" />
+                                                <span>{fossil.likes || 0}</span>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-1 text-xs font-bold text-[#D9381E] shrink-0">
-                                            <Heart size={12} className="fill-[#D9381E]" />
-                                            <span>{fossil.likes || 0}</span>
-                                        </div>
-                                    </div>
-                                ))}
+                                    ))
+                                ) : (
+                                    <p className="text-center text-[10px] text-[#6D7A6F] py-2">No fossil finds reported yet.</p>
+                                )}
                             </div>
                         </div>
 
@@ -1162,6 +1215,57 @@ export default function Community() {
                             </div>
                         </div>
 
+                        {/* User Search Widget */}
+                        <div className="rounded-2xl border border-white/60 bg-white/90 p-4 shadow-md backdrop-blur-md">
+                            <h3 className="pb-3 font-serif text-sm font-bold text-[#1E3A23]">
+                                Search Explorers
+                            </h3>
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={userSearchQuery}
+                                    onChange={(e) => handleUserSearch(e.target.value)}
+                                    placeholder="Search by name..."
+                                    className="w-full rounded-xl border border-[#E1DEC9] bg-[#FAF9F5] px-3.5 py-2 text-xs text-[#2C352E] focus:border-[#1E3A23] focus:bg-white focus:outline-none"
+                                />
+                                {userSearchQuery && (
+                                    <button 
+                                        onClick={() => { setUserSearchQuery(""); setSearchResults([]); }}
+                                        className="absolute right-2.5 top-2 text-[#859487] hover:text-[#1E3A23] cursor-pointer"
+                                    >
+                                        <X size={14} />
+                                    </button>
+                                )}
+                            </div>
+                            {userSearchQuery && (
+                                <div className="mt-3 space-y-2 max-h-40 overflow-y-auto">
+                                    {searchingUsers ? (
+                                        <p className="text-center text-[10px] text-[#6D7A6F]">Searching...</p>
+                                    ) : searchResults.length > 0 ? (
+                                        searchResults.map((u) => (
+                                            <div
+                                                key={u.id}
+                                                onClick={() => setActiveProfileExplorer(u)}
+                                                className="flex items-center gap-2.5 cursor-pointer group hover:bg-[#FAF9F5] p-1.5 rounded-lg border border-transparent hover:border-[#F0ECE1] transition"
+                                            >
+                                                <Avatar user={u} className="h-7 w-7" />
+                                                <div className="min-w-0">
+                                                    <h4 className="text-xs font-bold text-[#1E3A23] group-hover:text-[#2F7D4D] truncate">
+                                                        {u.name}
+                                                    </h4>
+                                                    <p className="text-[9px] text-[#6D7A6F] truncate">
+                                                        {u.handle}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className="text-center text-[10px] text-[#6D7A6F]">No members found</p>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
                         {/* Suggested Explorers Widget */}
                         <div className="rounded-2xl border border-white/60 bg-white/90 p-4 shadow-md backdrop-blur-md">
                             <div className="flex items-center justify-between pb-3">
@@ -1171,38 +1275,44 @@ export default function Community() {
                             </div>
 
                             <div className="space-y-3">
-                                {suggestedExplorers.map((exp) => (
-                                    <div
-                                        key={exp.id}
-                                        className="flex items-center justify-between"
-                                    >
+                                {loadingSuggestions ? (
+                                    <p className="text-center text-[10px] text-[#6D7A6F]">Loading suggestions...</p>
+                                ) : suggestedExplorers.length > 0 ? (
+                                    suggestedExplorers.map((exp) => (
                                         <div
-                                            onClick={() => setActiveProfileExplorer(exp)}
-                                            className="flex items-center gap-2.5 cursor-pointer group"
+                                            key={exp.id}
+                                            className="flex items-center justify-between"
                                         >
-                                            <Avatar user={exp} className="h-8 w-8" />
-                                            <div className="min-w-0">
-                                                <h4 className="text-xs font-bold text-[#1E3A23] group-hover:text-[#2F7D4D] truncate">
-                                                    {exp.name}
-                                                </h4>
-                                                <p className="text-[10px] text-[#6D7A6F] truncate">
-                                                    {exp.handle}
-                                                </p>
+                                            <div
+                                                onClick={() => setActiveProfileExplorer(exp)}
+                                                className="flex items-center gap-2.5 cursor-pointer group"
+                                            >
+                                                <Avatar user={exp} className="h-8 w-8" />
+                                                <div className="min-w-0">
+                                                    <h4 className="text-xs font-bold text-[#1E3A23] group-hover:text-[#2F7D4D] truncate">
+                                                        {exp.name}
+                                                    </h4>
+                                                    <p className="text-[10px] text-[#6D7A6F] truncate">
+                                                        {exp.handle}
+                                                    </p>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <button
-                                            onClick={() => handleFollow(exp.id)}
-                                            className={`rounded-lg px-3 py-1 text-xs font-bold transition cursor-pointer ${
-                                                exp.isFollowing
-                                                    ? "border border-[#1E3A23] bg-white text-[#1E3A23]"
-                                                    : "bg-[#1E3A23] text-white hover:bg-[#152A19]"
-                                            }`}
-                                        >
-                                            {exp.isFollowing ? "Following" : "Follow"}
-                                        </button>
-                                    </div>
-                                ))}
+                                            <button
+                                                onClick={() => handleFollow(exp.id)}
+                                                className={`rounded-lg px-3 py-1 text-xs font-bold transition cursor-pointer ${
+                                                    exp.isFollowing
+                                                        ? "border border-[#1E3A23] bg-white text-[#1E3A23]"
+                                                        : "bg-[#1E3A23] text-white hover:bg-[#152A19]"
+                                                }`}
+                                            >
+                                                {exp.isFollowing ? "Following" : "Follow"}
+                                            </button>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-center text-[10px] text-[#6D7A6F] py-2">No suggested explorers found</p>
+                                )}
                             </div>
                         </div>
                     </aside>

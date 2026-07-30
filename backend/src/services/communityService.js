@@ -217,6 +217,26 @@ const deleteComment = async (postId, commentId, userId, isAdmin) => {
     };
 };
 
+/**
+ * Search users by name
+ */
+const searchUsers = async (query, excludeUserId) => {
+    if (!query || !query.trim()) return [];
+    const filter = { name: { $regex: new RegExp(query.trim(), "i") } };
+    if (excludeUserId) {
+        filter._id = { $ne: excludeUserId };
+    }
+    return await User.find(filter).select("name avatar role").limit(10).lean();
+};
+
+/**
+ * Get suggested explorers list
+ */
+const getSuggestedUsers = async (excludeUserId) => {
+    const filter = excludeUserId ? { _id: { $ne: excludeUserId } } : {};
+    return await User.find(filter).select("name avatar role").limit(5).lean();
+};
+
 module.exports = {
     getPosts,
     createPost,
@@ -225,4 +245,6 @@ module.exports = {
     toggleLike,
     addComment,
     deleteComment,
+    searchUsers,
+    getSuggestedUsers,
 };

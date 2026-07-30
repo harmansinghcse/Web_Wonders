@@ -352,6 +352,59 @@ const deleteComment = async (req, res, next) => {
     }
 };
 
+/**
+ * Search users by name/display name
+ */
+const searchUsers = async (req, res, next) => {
+    try {
+        const { q } = req.query;
+        const currentUserId = req.user ? req.user.id : null;
+        const users = await communityService.searchUsers(q, currentUserId);
+        
+        const transformed = users.map(u => ({
+            id: u._id,
+            name: u.name,
+            avatar: u.avatar || "",
+            role: u.role === "admin" ? "Admin" : "Explorer",
+            handle: `@${u.name.toLowerCase().replace(/\s+/g, "")}`,
+            isFollowing: false,
+        }));
+
+        return res.status(200).json({
+            success: true,
+            data: transformed,
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
+/**
+ * Get suggested explorers
+ */
+const getSuggestedUsers = async (req, res, next) => {
+    try {
+        const currentUserId = req.user ? req.user.id : null;
+        const users = await communityService.getSuggestedUsers(currentUserId);
+        
+        const transformed = users.map(u => ({
+            id: u._id,
+            name: u.name,
+            avatar: u.avatar || "",
+            role: u.role === "admin" ? "Admin" : "Explorer",
+            handle: `@${u.name.toLowerCase().replace(/\s+/g, "")}`,
+            isFollowing: false,
+        }));
+
+        return res.status(200).json({
+            success: true,
+            data: transformed,
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     getPosts,
     createPost,
@@ -360,4 +413,6 @@ module.exports = {
     likePost,
     addComment,
     deleteComment,
+    searchUsers,
+    getSuggestedUsers,
 };
