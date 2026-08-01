@@ -40,7 +40,7 @@ import {
     fetchSuggestedUsersService,
     toggleFollowUserService,
 } from "../services/communityService";
-import { getStoredFollows } from "../services/communityServiceHelpers";
+import { getStoredFollows, saveFollowsToStorage } from "../services/communityServiceHelpers";
 
 // Community subcomponents
 import ExplorerProfileModal from "../components/community/ExplorerProfileModal";
@@ -74,16 +74,6 @@ const Avatar = ({ user, className = "h-10 w-10 border border-[#1E3A23]/30" }) =>
 };
 
 export default function Community() {
-    const navigate = useNavigate();
-    const navigateToProfile = (userObj) => {
-        if (!userObj) return;
-        const targetId = userObj.id || userObj._id || userObj;
-        if (!targetId || targetId === "user-default" || targetId === "user-logged" || targetId === currentUser?.id) {
-            navigate("/profile");
-        } else {
-            navigate(`/profile/${targetId}`);
-        }
-    };
     // 1. DYNAMIC CURRENT USER STATE (from AuthContext, backend API /api/profile, or localStorage)
     const { user: authUser } = useAuth();
     const [apiProfile, setApiProfile] = useState(null);
@@ -145,6 +135,25 @@ export default function Community() {
 
     const isLoggedIn = !!authUser || !!apiProfile;
 
+    const navigate = useNavigate();
+    const navigateToProfile = (userObj) => {
+        if (!userObj) return;
+        const targetId = userObj.id || userObj._id || userObj;
+        if (!targetId || targetId === "user-default" || targetId === "user-logged" || targetId === currentUser?.id) {
+            navigate("/profile");
+        } else {
+            navigate(`/profile/${targetId}`);
+        }
+    };
+
+    const ensureAuth = () => {
+        if (!isLoggedIn) {
+            showToast("Please log in first!");
+            return false;
+        }
+        return true;
+    };
+
     // Posts state
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -182,71 +191,32 @@ export default function Community() {
     // Quick Composer Text State
     const [quickPostText, setQuickPostText] = useState("");
 
-    // Dynamic user search state
+    // Suggested Explorers State
+    const [suggestedExplorers, setSuggestedExplorers] = useState([]);
+    const [loadingSuggestions, setLoadingSuggestions] = useState(true);
+
+    // User Search State
     const [userSearchQuery, setUserSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState([]);
     const [searchingUsers, setSearchingUsers] = useState(false);
 
-    // Suggested explorers state
-    const [suggestedExplorers, setSuggestedExplorers] = useState([]);
-    const [loadingSuggestions, setLoadingSuggestions] = useState(true);
-
-    // Guest protection alert/redirect
-    const ensureAuth = () => {
-        if (!isLoggedIn) {
-            if (window.confirm("Please log in to interact with the community. Would you like to go to the login page now?")) {
-                window.location.href = "/login";
-            }
-            return false;
-        }
-        return true;
-    };
-
-    // User search handler
     const handleUserSearch = async (val) => {
         setUserSearchQuery(val);
         if (!val.trim()) {
             setSearchResults([]);
             return;
         }
-        setSearchingUsers(true);
         try {
+            setSearchingUsers(true);
             const res = await searchUsersService(val);
             if (res.success) {
                 setSearchResults(res.data);
             }
         } catch (err) {
-            console.error(err);
+            console.error("Error searching users:", err);
         } finally {
             setSearchingUsers(false);
         }
-    };
-
-    // Share post interaction handler
-    const handleSharePost = async (post) => {
-        const shareUrl = `${window.location.origin}/community?postId=${post.id || post._id}`;
-        const shareData = {
-            title: post.title || "Prehistoric Discovery",
-            text: post.description || "Check out this prehistoric discovery!",
-            url: shareUrl,
-        };
-
-        if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
-            try {
-                await navigator.share(shareData);
-                showToast("Post shared successfully!");
-            } catch (err) {
-                copyToClipboard(shareUrl);
-            }
-        } else {
-            copyToClipboard(shareUrl);
-        }
-    };
-
-    const copyToClipboard = (text) => {
-        navigator.clipboard.writeText(text)
-            .then(() => showToast("Direct link copied to clipboard!"))
-            .catch(() => showToast("Failed to copy link."));
     };
 
     // Toast Notification
@@ -521,45 +491,25 @@ export default function Community() {
     // Dynamic Follow Handler
     const handleFollow = async (expId) => {
         if (!ensureAuth()) return;
-
-        // Optimistic UI updates
-        const prevSuggested = [...suggestedExplorers];
-        const prevResults = [...searchResults];
-        const prevActive = activeProfileExplorer ? { ...activeProfileExplorer } : null;
-
-        // Apply optimistic updates
-        setSuggestedExplorers((prev) =>
-            prev.map((exp) => (exp.id === expId ? { ...exp, isFollowing: !exp.isFollowing } : exp))
-        );
-        setSearchResults((prev) =>
-            prev.map((u) => (u.id === expId ? { ...u, isFollowing: !u.isFollowing } : u))
-        );
-        if (activeProfileExplorer && activeProfileExplorer.id === expId) {
-            setActiveProfileExplorer((prev) => ({ ...prev, isFollowing: !prev.isFollowing }));
-        }
-
         try {
             const res = await toggleFollowUserService(expId);
             if (res.success) {
-                showToast(res.isFollowing ? "Following explorer!" : "Unfollowed explorer.");
-                // Ensure real data matches
+                // Update local suggestedExplorers state
                 setSuggestedExplorers((prev) =>
                     prev.map((exp) => (exp.id === expId ? { ...exp, isFollowing: res.isFollowing } : exp))
                 );
+                // Update search results
                 setSearchResults((prev) =>
                     prev.map((u) => (u.id === expId ? { ...u, isFollowing: res.isFollowing } : u))
                 );
+                // Update active profile modal if it is active and has matching user ID
                 if (activeProfileExplorer && activeProfileExplorer.id === expId) {
                     setActiveProfileExplorer((prev) => ({ ...prev, isFollowing: res.isFollowing }));
                 }
-            } else {
-                throw new Error("Failed to follow");
+                showToast(res.isFollowing ? "Successfully followed explorer!" : "Unfollowed explorer.");
             }
         } catch (err) {
-            // Revert on error
-            setSuggestedExplorers(prevSuggested);
-            setSearchResults(prevResults);
-            if (prevActive) setActiveProfileExplorer(prevActive);
+            console.error("Error toggling follow:", err);
             showToast("Failed to follow explorer.");
         }
     };
@@ -1326,44 +1276,38 @@ export default function Community() {
                             </div>
 
                             <div className="space-y-3">
-                                {loadingSuggestions ? (
-                                    <p className="text-center text-[10px] text-[#6D7A6F]">Loading suggestions...</p>
-                                ) : suggestedExplorers.length > 0 ? (
-                                    suggestedExplorers.map((exp) => (
+                                {suggestedExplorers.map((exp) => (
+                                    <div
+                                        key={exp.id}
+                                        className="flex items-center justify-between gap-2"
+                                    >
                                         <div
-                                            key={exp.id}
-                                            className="flex items-center justify-between"
+                                            onClick={() => setActiveProfileExplorer(exp)}
+                                            className="flex items-center gap-2.5 cursor-pointer group min-w-0 flex-1"
                                         >
-                                            <div
-                                                onClick={() => navigateToProfile(exp)}
-                                                className="flex items-center gap-2.5 cursor-pointer group"
-                                            >
-                                                <Avatar user={exp} className="h-8 w-8" />
-                                                <div className="min-w-0">
-                                                    <h4 className="text-xs font-bold text-[#1E3A23] group-hover:text-[#2F7D4D] truncate">
-                                                        {exp.name}
-                                                    </h4>
-                                                    <p className="text-[10px] text-[#6D7A6F] truncate">
-                                                        {exp.handle}
-                                                    </p>
-                                                </div>
+                                            <Avatar user={exp} className="h-8 w-8" />
+                                            <div className="min-w-0">
+                                                <h4 className="text-xs font-bold text-[#1E3A23] group-hover:text-[#2F7D4D] truncate">
+                                                    {exp.name}
+                                                </h4>
+                                                <p className="text-[10px] text-[#6D7A6F] truncate">
+                                                    {exp.handle}
+                                                </p>
                                             </div>
-
-                                            <button
-                                                onClick={() => handleFollow(exp.id)}
-                                                className={`rounded-lg px-3 py-1 text-xs font-bold transition cursor-pointer ${
-                                                    exp.isFollowing
-                                                        ? "border border-[#1E3A23] bg-white text-[#1E3A23]"
-                                                        : "bg-[#1E3A23] text-white hover:bg-[#152A19]"
-                                                }`}
-                                            >
-                                                {exp.isFollowing ? "Following" : "Follow"}
-                                            </button>
                                         </div>
-                                    ))
-                                ) : (
-                                    <p className="text-center text-[10px] text-[#6D7A6F] py-2">No suggested explorers found</p>
-                                )}
+
+                                        <button
+                                            onClick={() => handleFollow(exp.id)}
+                                            className={`rounded-lg px-3 py-1 text-xs font-bold transition cursor-pointer shrink-0 ${
+                                                exp.isFollowing
+                                                    ? "border border-[#1E3A23] bg-white text-[#1E3A23]"
+                                                    : "bg-[#1E3A23] text-white hover:bg-[#152A19]"
+                                            }`}
+                                        >
+                                            {exp.isFollowing ? "Following" : "Follow"}
+                                        </button>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </aside>
@@ -1561,7 +1505,11 @@ export default function Community() {
             {/* TOAST NOTIFICATION */}
             {toastMessage && (
                 <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-2xl bg-[#1E3A23] px-4 py-3 text-xs font-bold text-white shadow-2xl border border-white/20">
-                    <Check size={16} className="text-[#A3E635]" />
+                    {toastMessage.toLowerCase().includes("failed") || toastMessage.toLowerCase().includes("please") || toastMessage.toLowerCase().includes("error") ? (
+                        <X size={16} className="text-red-400" />
+                    ) : (
+                        <Check size={16} className="text-[#A3E635]" />
+                    )}
                     <span>{toastMessage}</span>
                 </div>
             )}
