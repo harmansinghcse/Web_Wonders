@@ -60,6 +60,11 @@ export const deleteCommentService = async (postId, commentId) => {
     return response.data;
 };
 
+<<<<<<<<< Temporary merge branch 1
+// Search users by query
+export const searchUsersService = async (query) => {
+    const response = await axios.get(`${API_BASE}/api/community/users/search?q=${encodeURIComponent(query)}`, {
+=========
 // Follow a user
 export const followUserService = async (userId) => {
     const response = await axios.post(`${API_BASE}/api/users/${userId}/follow`, {}, {
@@ -111,19 +116,31 @@ export const getSuggestedExplorersService = async () => {
 // Search users
 export const searchUsersService = async (query) => {
     const response = await axios.get(`${API_BASE}/api/users/search?q=${encodeURIComponent(query)}`, {
+>>>>>>>>> Temporary merge branch 2
         withCredentials: true,
     });
     return response.data;
 };
 
+<<<<<<<<< Temporary merge branch 1
+// Fetch suggested explorers
+export const fetchSuggestedUsersService = async () => {
+    const response = await axios.get(`${API_BASE}/api/community/users/suggested`, {
+=========
 // Get user profile details
 export const getUserProfileService = async (userId) => {
     const response = await axios.get(`${API_BASE}/api/users/${userId}/profile`, {
+>>>>>>>>> Temporary merge branch 2
         withCredentials: true,
     });
     return response.data;
 };
 
+<<<<<<<<< Temporary merge branch 1
+// Toggle follow/unfollow user
+export const toggleFollowUserService = async (userId) => {
+    const response = await axios.post(`${API_BASE}/api/community/users/${userId}/follow`, {}, {
+=========
 // Fetch notifications
 export const getNotificationsService = async () => {
     const response = await axios.get(`${API_BASE}/api/users/notifications`, {
@@ -135,6 +152,7 @@ export const getNotificationsService = async () => {
 // Mark notifications read
 export const markNotificationsReadService = async () => {
     const response = await axios.post(`${API_BASE}/api/users/notifications/read`, {}, {
+>>>>>>>>> Temporary merge branch 2
         withCredentials: true,
     });
     return response.data;
