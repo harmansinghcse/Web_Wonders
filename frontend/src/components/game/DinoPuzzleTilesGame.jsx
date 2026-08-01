@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import Navbar from "../home_components/hero/Navbar";
 import { 
     ArrowLeft, 
+    ArrowRight,
     RotateCcw, 
     Trophy, 
     Timer, 
@@ -121,6 +122,7 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
     const [time, setTime] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isSolved, setIsSolved] = useState(false);
+    const [showVictoryModal, setShowVictoryModal] = useState(false);
     const [showPreview, setShowPreview] = useState(false);
     const [soundEnabled, setSoundEnabled] = useState(true);
     const [bestScores, setBestScores] = useState(() => {
@@ -207,6 +209,7 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
         setTime(0);
         setIsPlaying(false);
         setIsSolved(false);
+        setShowVictoryModal(false);
     }, [totalPieces, checkWin]);
 
     const startGame = () => {
@@ -544,10 +547,10 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                             </span>
                         </div>
 
-                        {/* JIGSAW PUZZLE BOARD CANVAS */}
-                        <div className="relative p-4 sm:p-6 rounded-3xl bg-gradient-to-b from-[#2a133d] via-[#1a082b] to-[#0a0412] border-2 border-purple-500/40 shadow-[0_25px_60px_rgba(168,85,247,0.35)] backdrop-blur-2xl">
+                        {/* JIGSAW PUZZLE BOARD CANVAS - SEAMLESS ZERO GAP */}
+                        <div className="relative p-2.5 sm:p-3.5 rounded-3xl bg-gradient-to-b from-[#2a133d] via-[#1a082b] to-[#0a0412] border-2 border-purple-500/40 shadow-[0_25px_60px_rgba(168,85,247,0.35)] backdrop-blur-2xl">
                             <div
-                                className="grid gap-1 sm:gap-1.5 rounded-2xl overflow-hidden bg-black/80 p-2 sm:p-3 border border-purple-500/30"
+                                className="grid gap-0 rounded-2xl overflow-hidden bg-stone-950 border border-purple-500/30 relative"
                                 style={{
                                     gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`,
                                     width: "min(88vw, 420px)",
@@ -574,8 +577,8 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                                             onDrop={(e) => handleDrop(e, slotIdx)}
                                             className={`relative w-full h-full transition-all duration-200 select-none cursor-pointer overflow-visible ${
                                                 isSelected
-                                                    ? "scale-110 z-30 filter drop-shadow-[0_0_12px_rgba(245,158,11,0.9)]"
-                                                    : "hover:scale-[1.04] hover:z-20 filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)]"
+                                                    ? "scale-110 z-30 filter drop-shadow-[0_0_15px_rgba(245,158,11,0.9)]"
+                                                    : "hover:scale-[1.03] hover:z-20 filter drop-shadow-[0_2px_5px_rgba(0,0,0,0.6)]"
                                             }`}
                                         >
                                             <svg
@@ -611,7 +614,7 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                                             </svg>
 
                                             {/* Correct position indicator checkmark */}
-                                            {isCorrect && (
+                                            {isCorrect && !isSolved && (
                                                 <div className="absolute top-1 right-1 bg-emerald-500/90 text-slate-950 p-0.5 rounded-full shadow-md z-30 pointer-events-none">
                                                     <Check size={10} className="stroke-[3]" />
                                                 </div>
@@ -619,6 +622,29 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                                         </div>
                                     );
                                 })}
+
+                                {/* FULL UNIFIED COMPLETED ARTWORK OVERLAY (ON GRID FIRST BEFORE POPUP) */}
+                                {isSolved && (
+                                    <div className="absolute inset-0 z-40 rounded-2xl overflow-hidden border-4 border-amber-400 shadow-[0_0_50px_rgba(245,158,11,0.8)] animate-in fade-in zoom-in-95 duration-500 flex flex-col justify-between p-3.5 sm:p-4">
+                                        <img src={selectedDino.src} alt={selectedDino.name} className="absolute inset-0 w-full h-full object-cover" />
+                                        
+                                        <div className="relative z-10 self-center">
+                                            <span className="bg-amber-400 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider px-4 py-1.5 rounded-full shadow-xl animate-pulse inline-block">
+                                                ✨ PUZZLE COMPLETED! ✨
+                                            </span>
+                                        </div>
+
+                                        <div className="relative z-10 flex flex-col items-center gap-2">
+                                            <button
+                                                onClick={() => setShowVictoryModal(true)}
+                                                className="w-full py-3 px-5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider shadow-2xl transition-all cursor-pointer hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+                                            >
+                                                <span>SEE VICTORY STATS</span>
+                                                <ArrowRight size={16} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </main>
@@ -659,8 +685,8 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                         </div>
                     )}
 
-                    {/* Solved Victory Celebration Modal */}
-                    {isSolved && (
+                    {/* Solved Victory Celebration Modal (Appears 1.4s after completed artwork is shown on grid) */}
+                    {showVictoryModal && (
                         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in zoom-in-95 duration-300">
                             <div className="max-w-sm w-full rounded-3xl bg-gradient-to-b from-[#2a0e4a] via-[#1a0833] to-[#0e041d] border-2 border-amber-400/60 p-6 text-center shadow-[0_0_60px_rgba(245,158,11,0.4)] space-y-5 relative overflow-hidden">
                                 
