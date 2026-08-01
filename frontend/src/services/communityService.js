@@ -59,3 +59,83 @@ export const deleteCommentService = async (postId, commentId) => {
     });
     return response.data;
 };
+
+// Follow a user
+export const followUserService = async (userId) => {
+    const response = await axios.post(`${API_BASE}/api/users/${userId}/follow`, {}, {
+        withCredentials: true,
+    });
+    return response.data;
+};
+
+// Unfollow a user
+export const unfollowUserService = async (userId) => {
+    const response = await axios.post(`${API_BASE}/api/users/${userId}/unfollow`, {}, {
+        withCredentials: true,
+    });
+    return response.data;
+};
+
+// Check follow status
+export const getFollowStatusService = async (userId) => {
+    const response = await axios.get(`${API_BASE}/api/users/${userId}/follow-status`, {
+        withCredentials: true,
+    });
+    return response.data;
+};
+
+// Get followers
+export const getFollowersService = async (userId) => {
+    const response = await axios.get(`${API_BASE}/api/users/${userId}/followers`, {
+        withCredentials: true,
+    });
+    return response.data;
+};
+
+// Get following
+export const getFollowingService = async (userId) => {
+    const response = await axios.get(`${API_BASE}/api/users/${userId}/following`, {
+        withCredentials: true,
+    });
+    return response.data;
+};
+
+// Get suggested explorers
+export const getSuggestedExplorersService = async () => {
+    const response = await axios.get(`${API_BASE}/api/users/suggested`, {
+        withCredentials: true,
+    });
+    return response.data;
+};
+
+// Search users
+export const searchUsersService = async (query) => {
+    const response = await axios.get(`${API_BASE}/api/users/search?q=${encodeURIComponent(query)}`, {
+        withCredentials: true,
+    });
+    return response.data;
+};
+
+// Get user profile details
+export const getUserProfileService = async (userId) => {
+    const response = await axios.get(`${API_BASE}/api/users/${userId}/profile`, {
+        withCredentials: true,
+    });
+    return response.data;
+};
+
+// Fetch notifications
+export const getNotificationsService = async () => {
+    const response = await axios.get(`${API_BASE}/api/users/notifications`, {
+        withCredentials: true,
+    });
+    return response.data;
+};
+
+// Mark notifications read
+export const markNotificationsReadService = async () => {
+    const response = await axios.post(`${API_BASE}/api/users/notifications/read`, {}, {
+        withCredentials: true,
+    });
+    return response.data;
+};
