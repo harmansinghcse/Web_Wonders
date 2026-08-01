@@ -22,7 +22,8 @@ import {
     Bell,
     Swords,
     Search,
-    ShieldCheck
+    ShieldCheck,
+    Users
 } from "lucide-react";
 
 import Navbar from "../components/home_components/hero/Navbar";
@@ -1327,29 +1328,31 @@ export default function Community() {
                             <div className="relative">
                                 <input
                                     type="text"
-                                    value={userSearchQuery}
-                                    onChange={(e) => handleUserSearch(e.target.value)}
+                                    value={userSearchInput}
+                                    onChange={(e) => setUserSearchInput(e.target.value)}
                                     placeholder="Search by name..."
                                     className="w-full rounded-xl border border-[#E1DEC9] bg-[#FAF9F5] px-3.5 py-2 text-xs text-[#2C352E] focus:border-[#1E3A23] focus:bg-white focus:outline-none"
                                 />
-                                {userSearchQuery && (
+                                {userSearchInput && (
                                     <button 
-                                        onClick={() => { setUserSearchQuery(""); setSearchResults([]); }}
+                                        onClick={() => { setUserSearchInput(""); setUserSearchSuggestions([]); }}
                                         className="absolute right-2.5 top-2 text-[#859487] hover:text-[#1E3A23] cursor-pointer"
                                     >
                                         <X size={14} />
                                     </button>
                                 )}
                             </div>
-                            {userSearchQuery && (
+                            {userSearchInput && (
                                 <div className="mt-3 space-y-2 max-h-40 overflow-y-auto">
-                                    {searchingUsers ? (
-                                        <p className="text-center text-[10px] text-[#6D7A6F]">Searching...</p>
-                                    ) : searchResults.length > 0 ? (
-                                        searchResults.map((u) => (
+                                    {userSearchSuggestions.length > 0 ? (
+                                        userSearchSuggestions.map((u) => (
                                             <div
                                                 key={u.id}
-                                                onClick={() => navigateToProfile(u)}
+                                                onClick={() => {
+                                                    setActiveProfileExplorer(u);
+                                                    setUserSearchInput("");
+                                                    setUserSearchSuggestions([]);
+                                                }}
                                                 className="flex items-center gap-2.5 cursor-pointer group hover:bg-[#FAF9F5] p-1.5 rounded-lg border border-transparent hover:border-[#F0ECE1] transition"
                                             >
                                                 <Avatar user={u} className="h-7 w-7" />
