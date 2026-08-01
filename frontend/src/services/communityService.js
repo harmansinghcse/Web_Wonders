@@ -2,9 +2,9 @@ import axios from "axios";
 
 const API_BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
-// Fetch posts (Supports page and limit)
-export const fetchPostsService = async (page = 1, limit = 10) => {
-    const response = await axios.get(`${API_BASE}/api/community/posts?page=${page}&limit=${limit}`, {
+// Fetch posts (Supports page, limit and filter)
+export const fetchPostsService = async (page = 1, limit = 10, filter = "all") => {
+    const response = await axios.get(`${API_BASE}/api/community/posts?page=${page}&limit=${limit}&filter=${filter}`, {
         withCredentials: true,
     });
     return response.data;
@@ -55,30 +55,6 @@ export const addCommentService = async (postId, text) => {
 // Delete comment from a post
 export const deleteCommentService = async (postId, commentId) => {
     const response = await axios.delete(`${API_BASE}/api/community/posts/${postId}/comments/${commentId}`, {
-        withCredentials: true,
-    });
-    return response.data;
-};
-
-// Search users by query
-export const searchUsersService = async (query) => {
-    const response = await axios.get(`${API_BASE}/api/community/users/search?q=${encodeURIComponent(query)}`, {
-        withCredentials: true,
-    });
-    return response.data;
-};
-
-// Fetch suggested explorers
-export const fetchSuggestedUsersService = async () => {
-    const response = await axios.get(`${API_BASE}/api/community/users/suggested`, {
-        withCredentials: true,
-    });
-    return response.data;
-};
-
-// Toggle follow/unfollow user
-export const toggleFollowUserService = async (userId) => {
-    const response = await axios.post(`${API_BASE}/api/community/users/${userId}/follow`, {}, {
         withCredentials: true,
     });
     return response.data;
