@@ -1,9 +1,9 @@
 import { useState } from "react";
 import Navbar from "../home_components/hero/Navbar";
-import { Play, Gamepad2, Zap, Compass } from "lucide-react";
+import { Play, Gamepad2, Grid, Compass } from "lucide-react";
 import MemoryMatchGame from "./MemoryMatchGame";
 import FossilHunterGame from "./FossilHunterGame";
-import DinoRunnerGame from "./DinoRunnerGame";
+import DinoPuzzleTilesGame from "./DinoPuzzleTilesGame";
 import Cursor from "./Cursor";
 
 export default function GameHub({ initialGame = "hub" }) {
@@ -11,7 +11,17 @@ export default function GameHub({ initialGame = "hub" }) {
     const [hoveredGame, setHoveredGame] = useState(null);
 
     const memoryBest = localStorage.getItem("jurassic_memory_best") || "0";
-    const runnerBest = localStorage.getItem("jurassic_runner_high") || "0";
+    const puzzleSaved = localStorage.getItem("jurassic_puzzle_best");
+    let puzzleBestText = null;
+    if (puzzleSaved) {
+        try {
+            const parsed = JSON.parse(puzzleSaved);
+            const firstKey = Object.keys(parsed)[0];
+            if (firstKey && parsed[firstKey]) {
+                puzzleBestText = `${parsed[firstKey].moves} moves`;
+            }
+        } catch (e) {}
+    }
 
     if (activeGame === "memory-match") {
         return <MemoryMatchGame onBackToHub={() => setActiveGame("hub")} />;
@@ -21,8 +31,8 @@ export default function GameHub({ initialGame = "hub" }) {
         return <FossilHunterGame onBackToHub={() => setActiveGame("hub")} />;
     }
 
-    if (activeGame === "dino-runner") {
-        return <DinoRunnerGame onBackToHub={() => setActiveGame("hub")} />;
+    if (activeGame === "dino-puzzle-tiles") {
+        return <DinoPuzzleTilesGame onBackToHub={() => setActiveGame("hub")} />;
     }
 
     // Dynamic background style based on active/hovered game vibe
@@ -45,13 +55,13 @@ export default function GameHub({ initialGame = "hub" }) {
                 accentColor: "#f59e0b"
             };
         }
-        if (hoveredGame === "dino-runner") {
+        if (hoveredGame === "dino-puzzle-tiles") {
             return {
-                gradient: "from-[#240808] via-[#3a0c0c] to-[#0d0303]",
-                radial: "radial-gradient(circle at 70% 60%, rgba(239, 68, 68, 0.35) 0%, transparent 60%)",
-                badge: "bg-red-500/20 text-red-300 border-red-500/40",
-                text: "Fiery Volcanic Magma Action Vibe",
-                accentColor: "#ef4444"
+                gradient: "from-[#170b24] via-[#241038] to-[#0c0514]",
+                radial: "radial-gradient(circle at 70% 60%, rgba(168, 85, 247, 0.35) 0%, transparent 60%)",
+                badge: "bg-purple-500/20 text-purple-300 border-purple-500/40",
+                text: "Mystic Dino Puzzle Artwork Vibe",
+                accentColor: "#a855f7"
             };
         }
         return {
@@ -225,59 +235,59 @@ export default function GameHub({ initialGame = "hub" }) {
                         </div>
                     </div>
 
-                    {/* Game 3: Dino Escape Runner */}
+                    {/* Game 3: Dino Puzzle Tiles */}
                     <div 
-                        onMouseEnter={() => setHoveredGame("dino-runner")}
+                        onMouseEnter={() => setHoveredGame("dino-puzzle-tiles")}
                         onMouseLeave={() => setHoveredGame(null)}
                         className={`group relative rounded-3xl p-6 shadow-2xl backdrop-blur-xl flex flex-col justify-between transition-all duration-500 hover:-translate-y-2 border ${
-                            hoveredGame === "dino-runner"
-                                ? "bg-[#250a0a]/95 border-red-400 shadow-[0_0_40px_rgba(239,68,68,0.35)] scale-[1.02]"
-                                : "bg-[#201010]/90 border-[#4a2020] hover:border-red-500/60"
+                            hoveredGame === "dino-puzzle-tiles"
+                                ? "bg-[#1f0b33]/95 border-purple-400 shadow-[0_0_40px_rgba(168,85,247,0.35)] scale-[1.02]"
+                                : "bg-[#170e24]/90 border-[#3d1d54] hover:border-purple-500/60"
                         }`}
                     >
                         <div className="space-y-4">
-                            <div className="w-full h-52 sm:h-56 rounded-2xl bg-gradient-to-br from-[#471212] via-[#260909] to-[#120303] border border-red-500/40 overflow-hidden relative flex items-center justify-center group-hover:border-red-400 transition-all duration-500 shadow-xl">
+                            <div className="w-full h-52 sm:h-56 rounded-2xl bg-gradient-to-br from-[#3c175c] via-[#210938] to-[#0d0317] border border-purple-500/40 overflow-hidden relative flex items-center justify-center group-hover:border-purple-400 transition-all duration-500 shadow-xl">
                                 <img 
-                                    src="/game_dino_escape.jpg" 
-                                    alt="Jurassic Dino Escape Artwork"
+                                    src="/trex.jpg" 
+                                    alt="Dino Puzzle Tiles Artwork"
                                     className="w-full h-full object-cover scale-[1.05] group-hover:scale-110 transition-transform duration-500"
                                 />
-                                <div className="absolute top-3 right-3 bg-red-950/80 border border-red-400/60 px-3 py-1 rounded-full text-xs font-extrabold text-red-300 uppercase tracking-wider backdrop-blur-md shadow-md">
-                                    ACTION & SPEED
+                                <div className="absolute top-3 right-3 bg-purple-950/90 border border-purple-400/60 px-3 py-1 rounded-full text-xs font-extrabold text-purple-300 uppercase tracking-wider backdrop-blur-md shadow-md">
+                                    PUZZLE & LOGIC
                                 </div>
                             </div>
 
                             <div>
-                                <h3 className="text-2xl sm:text-3xl font-serif font-black text-white group-hover:text-red-300 transition-colors tracking-tight">
-                                    Jurassic Dino Escape
+                                <h3 className="text-2xl sm:text-3xl font-serif font-black text-white group-hover:text-purple-300 transition-colors tracking-tight">
+                                    Dino Puzzle Tiles
                                 </h3>
                                 <p className="text-sm text-gray-200 mt-2 leading-relaxed font-medium">
-                                    Run through volcanic landscapes, jump over lava rocks, dodge Pterodactyls, and collect Amber Gems!
+                                    Slide scrambled prehistoric image tiles to solve the 3×3, 4×4, or 5×5 dinosaur artwork puzzle!
                                 </p>
 
                                 {/* Difficulty Tags */}
                                 <div className="flex flex-wrap gap-2 mt-4">
-                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">EASY (5 SHIELDS)</span>
-                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">MODERATE (3)</span>
-                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/40">HARD (1)</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">EASY (3×3)</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">MODERATE (4×4)</span>
+                                    <span className="text-xs font-bold uppercase px-3 py-1 rounded-full bg-red-500/20 text-red-300 border border-red-500/40">HARD (5×5)</span>
                                 </div>
                             </div>
                         </div>
 
                         <div className="pt-6 space-y-3">
-                            {runnerBest > 0 && (
-                                <div className="flex items-center justify-between text-xs sm:text-sm bg-red-950/50 px-3.5 py-2 rounded-xl border border-red-500/30 font-mono">
-                                    <span className="text-gray-300">Best Distance</span>
-                                    <span className="text-red-300 font-bold">{runnerBest} m</span>
+                            {puzzleBestText && (
+                                <div className="flex items-center justify-between text-xs sm:text-sm bg-purple-950/50 px-3.5 py-2 rounded-xl border border-purple-500/30 font-mono">
+                                    <span className="text-gray-300">Best Solved</span>
+                                    <span className="text-purple-300 font-bold">{puzzleBestText}</span>
                                 </div>
                             )}
 
                             <button
-                                onClick={() => setActiveGame("dino-runner")}
-                                className="w-full py-4 rounded-2xl bg-red-600 hover:bg-red-500 text-white font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-xl transition-all cursor-pointer group-hover:shadow-[0_0_25px_rgba(239,68,68,0.6)]"
+                                onClick={() => setActiveGame("dino-puzzle-tiles")}
+                                className="w-full py-4 rounded-2xl bg-purple-600 hover:bg-purple-500 text-white font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-xl transition-all cursor-pointer group-hover:shadow-[0_0_25px_rgba(168,85,247,0.6)]"
                             >
-                                <Zap size={20} />
-                                <span>PLAY DINO ESCAPE</span>
+                                <Grid size={20} />
+                                <span>PLAY PUZZLE TILES</span>
                             </button>
                         </div>
                     </div>

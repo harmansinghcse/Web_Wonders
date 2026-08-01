@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import { GameHub, MemoryMatchGame, FossilHunterGame, DinoRunnerGame } from "../components/game";
+import { GameHub, MemoryMatchGame, FossilHunterGame, DinoPuzzleTilesGame } from "../components/game";
 
 export default function Games() {
     const location = useLocation();
@@ -13,8 +13,8 @@ export default function Games() {
         return <FossilHunterGame />;
     }
 
-    if (path.includes("dino-runner")) {
-        return <DinoRunnerGame />;
+    if (path.includes("dino-puzzle-tiles") || path.includes("puzzle")) {
+        return <DinoPuzzleTilesGame />;
     }
 
     return <GameHub />;
