@@ -1,11 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Bell, Heart, MessageSquare, Dna, Trophy, CheckCheck } from "lucide-react";
+import { getNotificationsService, markNotificationsReadService } from "../../services/communityService";
 
 export default function NotificationsModal({ currentUser, onClose }) {
     const [notifications, setNotifications] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const markAllRead = () => {
-        setNotifications((prev) => prev.map((n) => ({ ...n, isUnread: false })));
+    const loadNotifications = async () => {
+        try {
+            setLoading(true);
+            const res = await getNotificationsService();
+            if (res.success) {
+                setNotifications(res.data);
+            }
+        } catch (e) {
+            console.error("Error fetching notifications:", e);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        loadNotifications();
+    }, []);
+
+    const markAllRead = async () => {
+        try {
+            setNotifications((prev) => prev.map((n) => ({ ...n, isUnread: false })));
+            await markNotificationsReadService();
+        } catch (e) {
+            console.error("Error marking notifications as read:", e);
+        }
     };
 
     return (
@@ -41,7 +66,11 @@ export default function NotificationsModal({ currentUser, onClose }) {
 
                 {/* Notifications List */}
                 <div className="max-h-96 overflow-y-auto p-4 space-y-2.5">
-                    {notifications.length > 0 ? (
+                    {loading ? (
+                        <div className="flex h-24 items-center justify-center">
+                            <div className="animate-spin rounded-full h-8 w-8 border-3 border-[#2F7D4D] border-t-transparent" />
+                        </div>
+                    ) : notifications.length > 0 ? (
                         notifications.map((n) => (
                             <div
                                 key={n.id}

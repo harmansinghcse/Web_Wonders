@@ -1,12 +1,21 @@
 import React from "react";
-import { X, Flame, ShieldAlert, Skull, Sparkles, Globe, Sun, Zap } from "lucide-react";
+import {
+    X,
+    Flame,
+    ShieldAlert,
+    Skull,
+    Sparkles,
+    Globe,
+    Sun,
+    Zap,
+} from "lucide-react";
 
 export default function AsteroidImpactModal({ onClose }) {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md">
             <div className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-red-500/40 bg-[#0A0606] text-white shadow-2xl animate-in fade-in zoom-in-95 duration-200 max-h-[90vh] flex flex-col">
                 {/* Impact Cover Header */}
-                <div className="relative h-44 w-full bg-gradient-to-r from-red-950 via-amber-950 to-black p-6 flex flex-col justify-end border-b border-red-500/30 overflow-hidden">
+                <div className="relative h-44 w-full bg-linear-to-r from-red-950 via-amber-950 to-black p-6 flex flex-col justify-end border-b border-red-500/30 overflow-hidden">
                     <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(239,68,68,0.35)_0%,transparent_60%)]" />
                     <button
                         onClick={onClose}
@@ -27,24 +36,40 @@ export default function AsteroidImpactModal({ onClose }) {
                 </div>
 
                 {/* Content Body */}
-                <div className="p-6 overflow-y-auto space-y-6 flex-1 text-xs">
+                <div className="p-6 overflow-y-auto no-scrollbar space-y-6 flex-1 text-xs">
                     {/* Impact Spec Matrix */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         <div className="rounded-2xl border border-red-900/50 bg-red-950/30 p-3 text-center">
-                            <p className="text-[10px] font-bold uppercase text-red-400">Asteroid Diameter</p>
-                            <p className="font-serif text-lg font-black text-amber-300 mt-0.5">10–15 km</p>
+                            <p className="text-[10px] font-bold uppercase text-red-400">
+                                Asteroid Diameter
+                            </p>
+                            <p className="font-serif text-lg font-black text-amber-300 mt-0.5">
+                                10–15 km
+                            </p>
                         </div>
                         <div className="rounded-2xl border border-red-900/50 bg-red-950/30 p-3 text-center">
-                            <p className="text-[10px] font-bold uppercase text-red-400">Entry Velocity</p>
-                            <p className="font-serif text-lg font-black text-amber-300 mt-0.5">20 km/s</p>
+                            <p className="text-[10px] font-bold uppercase text-red-400">
+                                Entry Velocity
+                            </p>
+                            <p className="font-serif text-lg font-black text-amber-300 mt-0.5">
+                                20 km/s
+                            </p>
                         </div>
                         <div className="rounded-2xl border border-red-900/50 bg-red-950/30 p-3 text-center">
-                            <p className="text-[10px] font-bold uppercase text-red-400">Yield Energy</p>
-                            <p className="font-serif text-xs font-black text-amber-300 mt-2">100M Megatons</p>
+                            <p className="text-[10px] font-bold uppercase text-red-400">
+                                Yield Energy
+                            </p>
+                            <p className="font-serif text-xs font-black text-amber-300 mt-2">
+                                100M Megatons
+                            </p>
                         </div>
                         <div className="rounded-2xl border border-red-900/50 bg-red-950/30 p-3 text-center">
-                            <p className="text-[10px] font-bold uppercase text-red-400">Global Extinction</p>
-                            <p className="font-serif text-lg font-black text-red-400 mt-0.5">75% Species</p>
+                            <p className="text-[10px] font-bold uppercase text-red-400">
+                                Global Extinction
+                            </p>
+                            <p className="font-serif text-lg font-black text-red-400 mt-0.5">
+                                75% Species
+                            </p>
                         </div>
                     </div>
 
@@ -61,9 +86,15 @@ export default function AsteroidImpactModal({ onClose }) {
                                     1
                                 </span>
                                 <div>
-                                    <h4 className="font-bold text-white">Instant Thermal Blast (0 - 10 Minutes)</h4>
+                                    <h4 className="font-bold text-white">
+                                        Instant Thermal Blast (0 - 10 Minutes)
+                                    </h4>
                                     <p className="text-stone-300 text-[11px] mt-0.5">
-                                        Impact vaporized rock and water in the Gulf of Mexico, creating a thermal fireball brighter than the sun that incinerated organisms within thousands of kilometers.
+                                        Impact vaporized rock and water in the
+                                        Gulf of Mexico, creating a thermal
+                                        fireball brighter than the sun that
+                                        incinerated organisms within thousands
+                                        of kilometers.
                                     </p>
                                 </div>
                             </div>
@@ -73,9 +104,15 @@ export default function AsteroidImpactModal({ onClose }) {
                                     2
                                 </span>
                                 <div>
-                                    <h4 className="font-bold text-white">Mega-Tsunamis & Shockwaves (Hours 1 - 24)</h4>
+                                    <h4 className="font-bold text-white">
+                                        Mega-Tsunamis & Shockwaves (Hours 1 -
+                                        24)
+                                    </h4>
                                     <p className="text-stone-300 text-[11px] mt-0.5">
-                                        100-meter-high megatsunamis radiated outward across global oceans, while magnitude 11+ earthquakes shattered continental tectonic boundaries.
+                                        100-meter-high megatsunamis radiated
+                                        outward across global oceans, while
+                                        magnitude 11+ earthquakes shattered
+                                        continental tectonic boundaries.
                                     </p>
                                 </div>
                             </div>
@@ -85,9 +122,16 @@ export default function AsteroidImpactModal({ onClose }) {
                                     3
                                 </span>
                                 <div>
-                                    <h4 className="font-bold text-white">Impact Winter & Photosynthesis Halt (Years 1 - 10)</h4>
+                                    <h4 className="font-bold text-white">
+                                        Impact Winter & Photosynthesis Halt
+                                        (Years 1 - 10)
+                                    </h4>
                                     <p className="text-stone-300 text-[11px] mt-0.5">
-                                        Billions of tons of sulfur aerosols and soot choked the stratosphere, blocking sunlight. Global temperatures plummeted by 15°C and collapse of food webs ended the non-avian dinosaur lineage.
+                                        Billions of tons of sulfur aerosols and
+                                        soot choked the stratosphere, blocking
+                                        sunlight. Global temperatures plummeted
+                                        by 15°C and collapse of food webs ended
+                                        the non-avian dinosaur lineage.
                                     </p>
                                 </div>
                             </div>
@@ -95,13 +139,18 @@ export default function AsteroidImpactModal({ onClose }) {
                     </div>
 
                     {/* Evolutionary Dawn Note */}
-                    <div className="rounded-2xl border border-amber-500/30 bg-gradient-to-r from-amber-950/40 to-emerald-950/40 p-3.5 text-amber-200">
+                    <div className="rounded-2xl border border-amber-500/30 bg-linear-to-r from-amber-950/40 to-emerald-950/40 p-3.5 text-amber-200">
                         <div className="flex items-center gap-2 mb-1">
                             <Sparkles size={16} className="text-amber-400" />
-                            <h4 className="font-bold text-xs">The Surviving Lineages</h4>
+                            <h4 className="font-bold text-xs">
+                                The Surviving Lineages
+                            </h4>
                         </div>
                         <p className="text-[11px] leading-relaxed text-stone-300">
-                            Small burrowing mammals, aquatic crocodilians, turtles, and avian feathered dinosaurs survived the nuclear winter—paving the way for the Rise of Mammals and modern Birds!
+                            Small burrowing mammals, aquatic crocodilians,
+                            turtles, and avian feathered dinosaurs survived the
+                            nuclear winter—paving the way for the Rise of
+                            Mammals and modern Birds!
                         </p>
                     </div>
                 </div>
