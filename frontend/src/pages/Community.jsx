@@ -37,7 +37,7 @@ import {
     addCommentService,
     deleteCommentService,
 } from "../services/communityService";
-import { getStoredFollows } from "../services/communityServiceHelpers";
+import { getStoredFollows, saveFollowsToStorage } from "../services/communityServiceHelpers";
 
 // Community subcomponents
 import ExplorerProfileModal from "../components/community/ExplorerProfileModal";
@@ -169,6 +169,9 @@ export default function Community() {
     // Quick Composer Text State
     const [quickPostText, setQuickPostText] = useState("");
 
+    // Follow state (persisted locally)
+    const [followedUserIds, setFollowedUserIds] = useState(() => getStoredFollows());
+
     // Dynamic suggested explorers based on active posters
     const suggestedExplorers = useMemo(() => {
         const list = [];
@@ -182,12 +185,12 @@ export default function Community() {
                     handle: p.author.handle,
                     avatar: p.author.avatar,
                     role: p.author.role,
-                    isFollowing: false,
+                    isFollowing: followedUserIds.includes(p.author.id),
                 });
             }
         });
         return list.slice(0, 3);
-    }, [posts, currentUser]);
+    }, [posts, currentUser, followedUserIds]);
 
     // Toast Notification
     const [toastMessage, setToastMessage] = useState("");
@@ -465,7 +468,19 @@ export default function Community() {
 
     // Dynamic Follow Handler
     const handleFollow = (expId) => {
-        showToast("Follow state toggled!");
+        if (!isLoggedIn) {
+            showToast("Please log in to follow explorers!");
+            return;
+        }
+        setFollowedUserIds((prev) => {
+            const isFollowing = prev.includes(expId);
+            const updated = isFollowing
+                ? prev.filter((id) => id !== expId)
+                : [...prev, expId];
+            saveFollowsToStorage(updated);
+            showToast(isFollowing ? "Unfollowed explorer." : "Successfully followed explorer!");
+            return updated;
+        });
     };
 
     // Filter Posts dynamically by Sidebar Tab, Search, and Tag
@@ -1174,11 +1189,11 @@ export default function Community() {
                                 {suggestedExplorers.map((exp) => (
                                     <div
                                         key={exp.id}
-                                        className="flex items-center justify-between"
+                                        className="flex items-center justify-between gap-2"
                                     >
                                         <div
                                             onClick={() => setActiveProfileExplorer(exp)}
-                                            className="flex items-center gap-2.5 cursor-pointer group"
+                                            className="flex items-center gap-2.5 cursor-pointer group min-w-0 flex-1"
                                         >
                                             <Avatar user={exp} className="h-8 w-8" />
                                             <div className="min-w-0">
@@ -1193,7 +1208,7 @@ export default function Community() {
 
                                         <button
                                             onClick={() => handleFollow(exp.id)}
-                                            className={`rounded-lg px-3 py-1 text-xs font-bold transition cursor-pointer ${
+                                            className={`rounded-lg px-3 py-1 text-xs font-bold transition cursor-pointer shrink-0 ${
                                                 exp.isFollowing
                                                     ? "border border-[#1E3A23] bg-white text-[#1E3A23]"
                                                     : "bg-[#1E3A23] text-white hover:bg-[#152A19]"
@@ -1225,7 +1240,10 @@ export default function Community() {
             {/* DYNAMIC EXPLORER PROFILE PASSPORT MODAL */}
             {activeProfileExplorer && (
                 <ExplorerProfileModal
-                    explorer={activeProfileExplorer}
+                    explorer={{
+                        ...activeProfileExplorer,
+                        isFollowing: followedUserIds.includes(activeProfileExplorer.id)
+                    }}
                     currentUser={currentUser}
                     posts={posts}
                     onFollow={handleFollow}
@@ -1380,7 +1398,11 @@ export default function Community() {
             {/* TOAST NOTIFICATION */}
             {toastMessage && (
                 <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-2xl bg-[#1E3A23] px-4 py-3 text-xs font-bold text-white shadow-2xl border border-white/20">
-                    <Check size={16} className="text-[#A3E635]" />
+                    {toastMessage.toLowerCase().includes("failed") || toastMessage.toLowerCase().includes("please") || toastMessage.toLowerCase().includes("error") ? (
+                        <X size={16} className="text-red-400" />
+                    ) : (
+                        <Check size={16} className="text-[#A3E635]" />
+                    )}
                     <span>{toastMessage}</span>
                 </div>
             )}
