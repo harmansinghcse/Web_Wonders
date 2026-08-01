@@ -1,17 +1,19 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import Navbar from "../home_components/hero/Navbar";
 import { 
     ArrowLeft, 
     RotateCcw, 
     Trophy, 
     Timer, 
-    Grid, 
     Eye, 
     Sparkles, 
     Volume2, 
     VolumeX,
     Play,
-    Image as ImageIcon
+    Image as ImageIcon,
+    Puzzle,
+    Check,
+    HelpCircle
 } from "lucide-react";
 import Cursor from "./Cursor";
 
@@ -24,16 +26,101 @@ const DINO_IMAGES = [
     { id: "allosaurus", name: "Allosaurus", src: "/allosaurus.jpg", period: "Late Jurassic", role: "Jurassic Carnivore" },
 ];
 
+/**
+ * Generate deterministic interlocking jigsaw tabs for a given grid size.
+ * Returns { horizTabs, vertTabs }
+ */
+function generateJigsawTabs(gridSize) {
+    // horizTabs: (gridSize-1) rows of dividers, gridSize columns wide
+    const horizTabs = []; 
+    for (let r = 0; r < gridSize - 1; r++) {
+        const row = [];
+        for (let c = 0; c < gridSize; c++) {
+            const val = ((r * 7 + c * 13 + 3) % 2 === 0) ? 1 : -1;
+            row.push(val);
+        }
+        horizTabs.push(row);
+    }
+
+    // vertTabs: gridSize rows of dividers, (gridSize-1) columns wide
+    const vertTabs = [];
+    for (let r = 0; r < gridSize; r++) {
+        const row = [];
+        for (let c = 0; c < gridSize - 1; c++) {
+            const val = ((r * 11 + c * 5 + 7) % 2 === 0) ? 1 : -1;
+            row.push(val);
+        }
+        vertTabs.push(row);
+    }
+
+    return { horizTabs, vertTabs };
+}
+
+/**
+ * Generate SVG Path string for a jigsaw piece at (r, c)
+ * viewBox: 0 0 100 100
+ */
+function createJigsawPath(r, c, gridSize, tabs) {
+    const { horizTabs, vertTabs } = tabs;
+
+    const topTab = (r === 0 || !horizTabs || !horizTabs[r - 1]) ? 0 : -horizTabs[r - 1][c];
+    const bottomTab = (r === gridSize - 1 || !horizTabs || !horizTabs[r]) ? 0 : horizTabs[r][c];
+    const leftTab = (c === 0 || !vertTabs || !vertTabs[r]) ? 0 : -vertTabs[r][c - 1];
+    const rightTab = (c === gridSize - 1 || !vertTabs || !vertTabs[r]) ? 0 : vertTabs[r][c];
+
+    let path = "M 0 0 ";
+
+    // Top Edge (0,0 -> 100,0)
+    if (topTab === 0) {
+        path += "L 100 0 ";
+    } else if (topTab === 1) {
+        path += "L 38 0 C 38 -14, 44 -20, 50 -20 C 56 -20, 62 -14, 62 0 L 100 0 ";
+    } else {
+        path += "L 38 0 C 38 14, 44 20, 50 20 C 56 20, 62 14, 62 0 L 100 0 ";
+    }
+
+    // Right Edge (100,0 -> 100,100)
+    if (rightTab === 0) {
+        path += "L 100 100 ";
+    } else if (rightTab === 1) {
+        path += "L 100 38 C 114 38, 120 44, 120 50 C 120 56, 114 62, 100 62 L 100 100 ";
+    } else {
+        path += "L 100 38 C 86 38, 80 44, 80 50 C 80 56, 86 62, 100 62 L 100 100 ";
+    }
+
+    // Bottom Edge (100,100 -> 0,100)
+    if (bottomTab === 0) {
+        path += "L 0 100 ";
+    } else if (bottomTab === 1) {
+        path += "L 62 100 C 62 114, 56 120, 50 120 C 44 120, 38 114, 38 100 L 0 100 ";
+    } else {
+        path += "L 62 100 C 62 86, 56 80, 50 80 C 44 80, 38 86, 38 100 L 0 100 ";
+    }
+
+    // Left Edge (0,100 -> 0,0)
+    if (leftTab === 0) {
+        path += "L 0 0 ";
+    } else if (leftTab === 1) {
+        path += "L 0 62 C -14 62, -20 56, -20 50 C -20 44, -14 38, 0 38 L 0 0 ";
+    } else {
+        path += "L 0 62 C 14 62, 20 56, 20 50 C 20 44, 14 38, 0 38 L 0 0 ";
+    }
+
+    path += "Z";
+    return path;
+}
+
 export default function DinoPuzzleTilesGame({ onBackToHub }) {
     const [gameState, setGameState] = useState("landing"); // 'landing' | 'playing'
-    const [gridSize, setGridSize] = useState(3); // 3 (Easy), 4 (Moderate), 5 (Hard)
+    const [gridSize, setGridSize] = useState(3); // 3 (Easy: 9), 4 (Moderate: 16), 5 (Hard: 25)
     const [selectedDino, setSelectedDino] = useState(DINO_IMAGES[0]);
-    const [board, setBoard] = useState([]);
+    const [board, setBoard] = useState([]); // Board array mapping slot index -> piece ID
+    const [selectedSlot, setSelectedSlot] = useState(null); // Click-to-swap selection
+    const [draggedSlot, setDraggedSlot] = useState(null); // Drag-and-drop
     const [moves, setMoves] = useState(0);
     const [time, setTime] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
     const [isSolved, setIsSolved] = useState(false);
-    const [showNumbers, setShowNumbers] = useState(true);
     const [showPreview, setShowPreview] = useState(false);
     const [soundEnabled, setSoundEnabled] = useState(true);
     const [bestScores, setBestScores] = useState(() => {
@@ -41,10 +128,23 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
         return saved ? JSON.parse(saved) : {};
     });
 
-    const totalTiles = gridSize * gridSize;
-    const emptyTileValue = totalTiles - 1;
+    const totalPieces = gridSize * gridSize;
 
-    // Synthesized sound effects
+    // Generate interlocking tab data for current grid size
+    const jigsawTabs = useMemo(() => generateJigsawTabs(gridSize), [gridSize]);
+
+    // Precalculate SVG Paths for each piece ID (0 .. totalPieces-1)
+    const piecePaths = useMemo(() => {
+        const paths = [];
+        for (let id = 0; id < totalPieces; id++) {
+            const r = Math.floor(id / gridSize);
+            const c = id % gridSize;
+            paths.push(createJigsawPath(r, c, gridSize, jigsawTabs));
+        }
+        return paths;
+    }, [gridSize, totalPieces, jigsawTabs]);
+
+    // Sound effects
     const playSound = useCallback((type) => {
         if (!soundEnabled) return;
         try {
@@ -54,35 +154,33 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
 
-            if (type === "slide") {
-                osc.type = "triangle";
-                osc.frequency.setValueAtTime(320, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(180, ctx.currentTime + 0.08);
-                gain.gain.setValueAtTime(0.08, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+            if (type === "swap") {
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(420, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(260, ctx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
                 osc.connect(gain);
                 gain.connect(ctx.destination);
                 osc.start();
-                osc.stop(ctx.currentTime + 0.08);
+                osc.stop(ctx.currentTime + 0.1);
             } else if (type === "win") {
                 osc.type = "sine";
                 osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
-                osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); // E5
-                osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2); // G5
-                osc.frequency.setValueAtTime(1046.50, ctx.currentTime + 0.3); // C6
-                gain.gain.setValueAtTime(0.12, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+                osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.12); // E5
+                osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.24); // G5
+                osc.frequency.setValueAtTime(1046.50, ctx.currentTime + 0.36); // C6
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.7);
                 osc.connect(gain);
                 gain.connect(ctx.destination);
                 osc.start();
-                osc.stop(ctx.currentTime + 0.6);
+                osc.stop(ctx.currentTime + 0.7);
             }
-        } catch (e) {
-            // Audio Context uninitialized or blocked
-        }
+        } catch (e) {}
     }, [soundEnabled]);
 
-    // Check if board is solved
+    // Check if board is completely solved
     const checkWin = useCallback((currentBoard) => {
         for (let i = 0; i < currentBoard.length; i++) {
             if (currentBoard[i] !== i) return false;
@@ -90,45 +188,26 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
         return true;
     }, []);
 
-    // Generate guaranteed solvable board by performing random valid moves from solved state
+    // Initialize & shuffle puzzle pieces
     const initializeGame = useCallback(() => {
-        let currentBoard = Array.from({ length: totalTiles }, (_, i) => i);
-        let emptyIdx = totalTiles - 1;
+        let pieces = Array.from({ length: totalPieces }, (_, i) => i);
+        
+        // Shuffle pieces ensuring board is not initially solved
+        do {
+            for (let i = pieces.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [pieces[i], pieces[j]] = [pieces[j], pieces[i]];
+            }
+        } while (checkWin(pieces));
 
-        // Perform shuffles proportional to difficulty
-        const numShuffles = gridSize === 3 ? 120 : gridSize === 4 ? 200 : 320;
-        let lastIdx = -1;
-
-        for (let s = 0; s < numShuffles; s++) {
-            const emptyRow = Math.floor(emptyIdx / gridSize);
-            const emptyCol = emptyIdx % gridSize;
-            const validNeighbors = [];
-
-            // Up, Down, Left, Right
-            if (emptyRow > 0) validNeighbors.push(emptyIdx - gridSize);
-            if (emptyRow < gridSize - 1) validNeighbors.push(emptyIdx + gridSize);
-            if (emptyCol > 0) validNeighbors.push(emptyIdx - 1);
-            if (emptyCol < gridSize - 1) validNeighbors.push(emptyIdx + 1);
-
-            // Avoid immediately reversing previous move
-            const filtered = validNeighbors.filter(idx => idx !== lastIdx);
-            const chosen = filtered.length > 0
-                ? filtered[Math.floor(Math.random() * filtered.length)]
-                : validNeighbors[Math.floor(Math.random() * validNeighbors.length)];
-
-            // Swap
-            currentBoard[emptyIdx] = currentBoard[chosen];
-            currentBoard[chosen] = emptyTileValue;
-            lastIdx = emptyIdx;
-            emptyIdx = chosen;
-        }
-
-        setBoard(currentBoard);
+        setBoard(pieces);
+        setSelectedSlot(null);
+        setDraggedSlot(null);
         setMoves(0);
         setTime(0);
         setIsPlaying(false);
         setIsSolved(false);
-    }, [gridSize, totalTiles, emptyTileValue]);
+    }, [totalPieces, checkWin]);
 
     const startGame = () => {
         initializeGame();
@@ -146,51 +225,68 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
         return () => clearInterval(interval);
     }, [gameState, isPlaying, isSolved]);
 
-    // Handle tile click & slide
-    const handleTileClick = (index) => {
-        if (isSolved) return;
+    // Perform swap between slot A and slot B
+    const swapSlots = (slotA, slotB) => {
+        if (slotA === slotB || isSolved) return;
 
-        const tileVal = board[index];
-        if (tileVal === emptyTileValue) return;
+        if (!isPlaying) setIsPlaying(true);
 
-        const row = Math.floor(index / gridSize);
-        const col = index % gridSize;
+        const newBoard = [...board];
+        const temp = newBoard[slotA];
+        newBoard[slotA] = newBoard[slotB];
+        newBoard[slotB] = temp;
 
-        const emptyIdx = board.indexOf(emptyTileValue);
-        const emptyRow = Math.floor(emptyIdx / gridSize);
-        const emptyCol = emptyIdx % gridSize;
+        setBoard(newBoard);
+        setMoves((prev) => prev + 1);
+        setSelectedSlot(null);
+        playSound("swap");
 
-        // Distance check (must be adjacent vertically or horizontally)
-        const isAdjacent = Math.abs(row - emptyRow) + Math.abs(col - emptyCol) === 1;
+        if (checkWin(newBoard)) {
+            setIsSolved(true);
+            setIsPlaying(false);
+            playSound("win");
 
-        if (isAdjacent) {
-            if (!isPlaying) setIsPlaying(true);
+            // Save best score
+            const key = `${selectedDino.id}_${gridSize}x${gridSize}`;
+            const prevBest = bestScores[key];
+            const currentScore = { moves: moves + 1, time: time + 1 };
 
-            const newBoard = [...board];
-            newBoard[emptyIdx] = tileVal;
-            newBoard[index] = emptyTileValue;
-
-            setBoard(newBoard);
-            setMoves((prev) => prev + 1);
-            playSound("slide");
-
-            if (checkWin(newBoard)) {
-                setIsSolved(true);
-                setIsPlaying(false);
-                playSound("win");
-
-                // Update best score
-                const key = `${selectedDino.id}_${gridSize}x${gridSize}`;
-                const prevBest = bestScores[key];
-                const currentScore = { moves: moves + 1, time: time + 1 };
-
-                if (!prevBest || currentScore.moves < prevBest.moves || (currentScore.moves === prevBest.moves && currentScore.time < prevBest.time)) {
-                    const newBestScores = { ...bestScores, [key]: currentScore };
-                    setBestScores(newBestScores);
-                    localStorage.setItem("jurassic_puzzle_best", JSON.stringify(newBestScores));
-                }
+            if (!prevBest || currentScore.moves < prevBest.moves || (currentScore.moves === prevBest.moves && currentScore.time < prevBest.time)) {
+                const newBestScores = { ...bestScores, [key]: currentScore };
+                setBestScores(newBestScores);
+                localStorage.setItem("jurassic_puzzle_best", JSON.stringify(newBestScores));
             }
         }
+    };
+
+    // Click-to-swap handler
+    const handleSlotClick = (slotIdx) => {
+        if (selectedSlot === null) {
+            setSelectedSlot(slotIdx);
+        } else if (selectedSlot === slotIdx) {
+            setSelectedSlot(null);
+        } else {
+            swapSlots(selectedSlot, slotIdx);
+        }
+    };
+
+    // Drag and drop handlers
+    const handleDragStart = (e, slotIdx) => {
+        setDraggedSlot(slotIdx);
+        e.dataTransfer.setData("text/plain", slotIdx);
+    };
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+    };
+
+    const handleDrop = (e, targetSlotIdx) => {
+        e.preventDefault();
+        const sourceSlot = draggedSlot !== null ? draggedSlot : parseInt(e.dataTransfer.getData("text/plain"), 10);
+        if (!isNaN(sourceSlot) && sourceSlot !== targetSlotIdx) {
+            swapSlots(sourceSlot, targetSlotIdx);
+        }
+        setDraggedSlot(null);
     };
 
     // Format time display
@@ -208,7 +304,7 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
         <div className="relative min-h-screen bg-[#0e0717] text-stone-100 font-sans select-none overflow-x-hidden pb-16">
             <Cursor />
 
-            {/* Background Image & Vibe Overlay */}
+            {/* Background Atmosphere Image & Vibe Overlay */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
                 <img
                     src="/jurassic_game_vibe_bg.jpg"
@@ -216,7 +312,7 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                     className="w-full h-full object-cover filter brightness-60 contrast-110 scale-105"
                     onError={(e) => { e.currentTarget.style.display = 'none'; }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-[#1b0a2c]/70 via-black/40 to-[#0c0414]/90" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#1b0a2c]/70 via-black/45 to-[#0c0414]/90" />
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(168,85,247,0.3)_0%,transparent_70%)]" />
             </div>
 
@@ -243,48 +339,48 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
 
                     <div className="space-y-3">
                         <div className="inline-flex items-center gap-2 bg-[#25103a]/80 border border-purple-400/40 px-4 py-1.5 rounded-full text-xs font-serif font-bold text-purple-300 uppercase backdrop-blur-md">
-                            <Sparkles size={14} className="text-purple-400" />
-                            <span>🧩 JURASSIC PUZZLE TILES</span>
+                            <Puzzle size={15} className="text-purple-400" />
+                            <span>PUZZLE & LOGIC</span>
                         </div>
                         <h1 className="text-4xl sm:text-6xl font-black font-serif text-white uppercase tracking-wider drop-shadow-md">
                             JURASSIC DINO PUZZLE TILES
                         </h1>
                         <p className="text-sm sm:text-base text-purple-200/90 max-w-lg mx-auto font-medium">
-                            Slide scrambled prehistoric image tiles to solve the 3×3, 4×4, or 5×5 dinosaur artwork puzzle!
+                            Choose your artwork and difficulty to reconstruct ancient dinosaur relics in this interlocking jigsaw puzzle!
                         </p>
                     </div>
 
                     {/* Central Launcher Control Window */}
-                    <div className="w-full max-w-md bg-[#180a2b]/95 border border-purple-500/40 p-6 sm:p-8 rounded-3xl shadow-2xl space-y-6 backdrop-blur-md">
+                    <div className="w-full max-w-3xl bg-[#180a2b]/95 border border-purple-500/40 p-6 sm:p-8 rounded-3xl shadow-2xl space-y-7 backdrop-blur-md">
                         
                         {/* Select Difficulty Level */}
                         <div className="space-y-3">
-                            <h3 className="text-xs font-serif font-bold text-amber-300 uppercase tracking-widest">
+                            <h3 className="text-xs font-serif font-bold text-amber-300 uppercase tracking-widest text-center sm:text-left">
                                 SELECT DIFFICULTY LEVEL
                             </h3>
                             
                             <div className="grid grid-cols-3 gap-3">
                                 {[
-                                    { id: 3, name: "EASY", grid: "3×3 Grid", tiles: "8 Tiles" },
-                                    { id: 4, name: "MODERATE", grid: "4×4 Grid", tiles: "15 Tiles" },
-                                    { id: 5, name: "HARD", grid: "5×5 Grid", tiles: "24 Tiles" },
+                                    { id: 3, name: "EASY", grid: "3×3 Grid", pieces: "9 Jigsaw Pieces" },
+                                    { id: 4, name: "MODERATE", grid: "4×4 Grid", pieces: "16 Jigsaw Pieces" },
+                                    { id: 5, name: "HARD", grid: "5×5 Grid", pieces: "25 Jigsaw Pieces" },
                                 ].map((item) => (
                                     <button
                                         key={item.id}
                                         onClick={() => setGridSize(item.id)}
-                                        className={`p-3 rounded-2xl border text-center transition cursor-pointer flex flex-col items-center justify-center ${
+                                        className={`p-3.5 rounded-2xl border text-center transition cursor-pointer flex flex-col items-center justify-center ${
                                             gridSize === item.id
                                                 ? item.id === 3
-                                                    ? "bg-emerald-600/90 border-emerald-400 text-white shadow-lg scale-105"
+                                                    ? "bg-emerald-600/90 border-emerald-400 text-white shadow-lg scale-102"
                                                     : item.id === 4
-                                                    ? "bg-amber-600/90 border-amber-400 text-white shadow-lg scale-105"
-                                                    : "bg-red-600/90 border-red-400 text-white shadow-lg scale-105"
+                                                    ? "bg-amber-600/90 border-amber-400 text-white shadow-lg scale-102"
+                                                    : "bg-red-600/90 border-red-400 text-white shadow-lg scale-102"
                                                 : "bg-black/40 border-white/10 text-stone-300 hover:border-purple-400/50 hover:text-white"
                                         }`}
                                     >
-                                        <span className="font-extrabold text-sm uppercase">{item.name}</span>
-                                        <span className="text-[10px] opacity-80 mt-1">{item.grid}</span>
-                                        <span className="text-[9px] opacity-70">{item.tiles}</span>
+                                        <span className="font-extrabold text-sm sm:text-base uppercase">{item.name}</span>
+                                        <span className="text-[11px] opacity-90 mt-1 font-medium">{item.grid}</span>
+                                        <span className="text-[10px] opacity-75">{item.pieces}</span>
                                     </button>
                                 ))}
                             </div>
@@ -292,35 +388,62 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
 
                         {/* Select Dinosaur Artwork */}
                         <div className="space-y-3 pt-2">
-                            <h3 className="text-xs font-serif font-bold text-purple-300 uppercase tracking-widest">
-                                SELECT DINOSAUR ARTWORK
-                            </h3>
-                            <div className="grid grid-cols-3 gap-2">
-                                {DINO_IMAGES.map((dino) => (
-                                    <button
-                                        key={dino.id}
-                                        onClick={() => setSelectedDino(dino)}
-                                        className={`relative group rounded-xl overflow-hidden border transition cursor-pointer ${
-                                            selectedDino.id === dino.id
-                                                ? "border-amber-400 ring-2 ring-amber-400/50 scale-105 shadow-md"
-                                                : "border-white/15 opacity-70 hover:opacity-100 hover:border-purple-400"
-                                        }`}
-                                    >
-                                        <img src={dino.src} alt={dino.name} className="h-16 w-full object-cover" />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-1">
-                                            <span className="text-[9px] font-bold text-white truncate">{dino.name}</span>
-                                        </div>
-                                    </button>
-                                ))}
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-xs font-serif font-bold text-purple-300 uppercase tracking-widest">
+                                    SELECT DINOSAUR ARTWORK
+                                </h3>
+                                <span className="text-[11px] font-bold text-amber-300">
+                                    Selected: {selectedDino.name}
+                                </span>
+                            </div>
+
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5 sm:gap-4">
+                                {DINO_IMAGES.map((dino) => {
+                                    const isSelected = selectedDino.id === dino.id;
+                                    return (
+                                        <button
+                                            key={dino.id}
+                                            onClick={() => setSelectedDino(dino)}
+                                            className={`group relative rounded-2xl overflow-hidden border transition-all duration-300 cursor-pointer text-left ${
+                                                isSelected
+                                                    ? "border-amber-400 ring-4 ring-amber-400/35 scale-[1.03] shadow-[0_0_25px_rgba(245,158,11,0.35)] z-10"
+                                                    : "border-white/15 opacity-75 hover:opacity-100 hover:border-purple-400 hover:scale-[1.02]"
+                                            }`}
+                                        >
+                                            <div className="h-32 sm:h-36 w-full overflow-hidden relative">
+                                                <img
+                                                    src={dino.src}
+                                                    alt={dino.name}
+                                                    className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                />
+                                                
+                                                {isSelected && (
+                                                    <div className="absolute top-2 right-2 bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider shadow-md">
+                                                        SELECTED ✓
+                                                    </div>
+                                                )}
+
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent flex flex-col justify-end p-3">
+                                                    <span className="text-sm sm:text-base font-extrabold text-white group-hover:text-amber-300 transition-colors drop-shadow-sm">
+                                                        {dino.name}
+                                                    </span>
+                                                    <span className="text-[10px] text-purple-200/90 font-medium mt-0.5 truncate">
+                                                        {dino.period} • {dino.role}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
 
                         {/* Start Game Action Button */}
                         <button
                             onClick={startGame}
-                            className="w-full py-4 rounded-2xl bg-[#52B788] hover:bg-[#40a073] text-slate-950 font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-xl transition-all cursor-pointer hover:scale-102 active:scale-95"
+                            className="w-full py-4 rounded-2xl bg-[#52B788] hover:bg-[#40a073] text-slate-950 font-black text-base uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-xl transition-all cursor-pointer hover:scale-102 active:scale-95"
                         >
-                            <Play size={20} className="fill-current" />
+                            <Play size={22} className="fill-current" />
                             <span>START PUZZLE GAME</span>
                         </button>
 
@@ -354,7 +477,7 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                                 className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-purple-600/80 hover:bg-purple-500 border border-purple-400/40 text-white text-sm font-bold shadow-lg transition cursor-pointer hover:scale-105 active:scale-95"
                             >
                                 <RotateCcw size={16} />
-                                <span>SHUFFLE</span>
+                                <span>RESHUFFLE</span>
                             </button>
                         </div>
                     </header>
@@ -365,11 +488,11 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                         {/* Title & Badge */}
                         <div className="text-center space-y-2 mb-6">
                             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-purple-500/20 border border-purple-400/40 text-purple-300 text-xs font-black tracking-widest uppercase">
-                                <Sparkles size={14} className="text-purple-400" />
-                                <span>{selectedDino.name} • {difficultyLabel.toUpperCase()} ({gridSize}×{gridSize})</span>
+                                <Puzzle size={14} className="text-purple-400" />
+                                <span>{selectedDino.name} • {difficultyLabel.toUpperCase()} ({gridSize}×{gridSize} • {totalPieces} Pieces)</span>
                             </div>
                             <h1 className="text-3xl sm:text-5xl font-black font-serif text-white tracking-tight drop-shadow-md">
-                                DINO PUZZLE TILES
+                                JURASSIC JIGSAW PUZZLE
                             </h1>
                         </div>
 
@@ -377,7 +500,7 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                         <div className="w-full max-w-xl bg-purple-950/40 border border-purple-500/30 rounded-3xl p-4 backdrop-blur-xl mb-6 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center shadow-xl">
                             <div className="bg-black/30 border border-purple-500/20 rounded-2xl p-2.5">
                                 <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-stone-400 uppercase">
-                                    <Grid size={13} className="text-purple-400" />
+                                    <Puzzle size={13} className="text-purple-400" />
                                     <span>MOVES</span>
                                 </div>
                                 <p className="text-lg font-black text-white mt-0.5">{moves}</p>
@@ -405,7 +528,7 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                                 <button
                                     onClick={() => setShowPreview(true)}
                                     className="flex items-center gap-1 text-xs font-bold text-purple-300 hover:text-white bg-purple-500/20 hover:bg-purple-500/40 border border-purple-400/30 px-2.5 py-1.5 rounded-xl transition cursor-pointer"
-                                    title="Preview target image"
+                                    title="Preview target artwork"
                                 >
                                     <Eye size={14} />
                                     <span>PREVIEW</span>
@@ -413,63 +536,84 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                             </div>
                         </div>
 
-                        {/* Quick Game Options Bar */}
-                        <div className="w-full max-w-xl flex items-center justify-between gap-3 mb-6 bg-black/40 border border-white/10 p-3 rounded-2xl backdrop-blur-md">
-                            <span className="text-xs font-bold text-purple-300 truncate">{selectedDino.name} ({gridSize}×{gridSize})</span>
-                            
-                            <button
-                                onClick={() => setShowNumbers((prev) => !prev)}
-                                className={`text-xs font-bold px-3 py-1.5 rounded-xl border transition cursor-pointer ${
-                                    showNumbers
-                                        ? "bg-purple-500/20 text-purple-300 border-purple-400/40"
-                                        : "bg-stone-900 text-stone-400 border-stone-800 hover:text-white"
-                                }`}
-                            >
-                                Numbers: {showNumbers ? "ON" : "OFF"}
-                            </button>
+                        {/* Instructions Bar */}
+                        <div className="w-full max-w-xl flex items-center justify-between gap-3 mb-6 bg-black/40 border border-white/10 p-3 rounded-2xl backdrop-blur-md text-xs text-purple-200/90 font-medium">
+                            <span className="flex items-center gap-1.5">
+                                <HelpCircle size={14} className="text-amber-400 shrink-0" />
+                                <span>Click two jigsaw pieces to swap them, or drag & drop onto any slot!</span>
+                            </span>
                         </div>
 
-                        {/* Puzzle Grid Canvas */}
-                        <div className="relative p-3 sm:p-4 rounded-3xl bg-gradient-to-b from-purple-950/80 via-[#180a2b]/90 to-stone-950 border-2 border-purple-500/40 shadow-[0_20px_50px_rgba(147,51,234,0.3)] backdrop-blur-2xl">
+                        {/* JIGSAW PUZZLE BOARD CANVAS */}
+                        <div className="relative p-4 sm:p-6 rounded-3xl bg-gradient-to-b from-[#2a133d] via-[#1a082b] to-[#0a0412] border-2 border-purple-500/40 shadow-[0_25px_60px_rgba(168,85,247,0.35)] backdrop-blur-2xl">
                             <div
-                                className="grid gap-1 sm:gap-1.5 rounded-2xl overflow-hidden bg-black/60 p-2 border border-purple-500/20"
+                                className="grid gap-1 sm:gap-1.5 rounded-2xl overflow-hidden bg-black/80 p-2 sm:p-3 border border-purple-500/30"
                                 style={{
                                     gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`,
                                     width: "min(88vw, 420px)",
                                     height: "min(88vw, 420px)",
                                 }}
                             >
-                                {board.map((tileVal, idx) => {
-                                    const isEmpty = tileVal === emptyTileValue;
-                                    const origRow = Math.floor(tileVal / gridSize);
-                                    const origCol = tileVal % gridSize;
+                                {board.map((pieceId, slotIdx) => {
+                                    const isSelected = selectedSlot === slotIdx;
+                                    const isCorrect = pieceId === slotIdx;
 
-                                    // Calculate background position percentages
-                                    const posX = (origCol / (gridSize - 1)) * 100;
-                                    const posY = (origRow / (gridSize - 1)) * 100;
+                                    // Piece row & col in original image
+                                    const origRow = Math.floor(pieceId / gridSize);
+                                    const origCol = pieceId % gridSize;
+
+                                    const svgPath = piecePaths[pieceId];
 
                                     return (
                                         <div
-                                            key={idx}
-                                            onClick={() => handleTileClick(idx)}
-                                            className={`relative rounded-lg sm:rounded-xl overflow-hidden transition-all duration-150 select-none shadow-md ${
-                                                isEmpty
-                                                    ? "bg-purple-950/20 border border-purple-500/10 shadow-inner"
-                                                    : "cursor-pointer hover:brightness-110 active:scale-95 border border-purple-400/40 hover:border-purple-300"
+                                            key={slotIdx}
+                                            onClick={() => handleSlotClick(slotIdx)}
+                                            draggable
+                                            onDragStart={(e) => handleDragStart(e, slotIdx)}
+                                            onDragOver={handleDragOver}
+                                            onDrop={(e) => handleDrop(e, slotIdx)}
+                                            className={`relative w-full h-full transition-all duration-200 select-none cursor-pointer overflow-visible ${
+                                                isSelected
+                                                    ? "scale-110 z-30 filter drop-shadow-[0_0_12px_rgba(245,158,11,0.9)]"
+                                                    : "hover:scale-[1.04] hover:z-20 filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.6)]"
                                             }`}
-                                            style={
-                                                isEmpty
-                                                    ? {}
-                                                    : {
-                                                          backgroundImage: `url(${selectedDino.src})`,
-                                                          backgroundSize: `${gridSize * 100}% ${gridSize * 100}%`,
-                                                          backgroundPosition: `${posX}% ${posY}%`,
-                                                      }
-                                            }
                                         >
-                                            {!isEmpty && showNumbers && (
-                                                <div className="absolute top-0.5 left-0.5 sm:top-1 sm:left-1 flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full bg-black/70 border border-white/20 text-[9px] sm:text-[10px] font-black text-amber-300 shadow-sm backdrop-blur-xs">
-                                                    {tileVal + 1}
+                                            <svg
+                                                viewBox="-25 -25 150 150"
+                                                className="w-full h-full overflow-visible"
+                                            >
+                                                <defs>
+                                                    <clipPath id={`jigsaw-clip-${pieceId}`}>
+                                                        <path d={svgPath} />
+                                                    </clipPath>
+                                                </defs>
+
+                                                {/* Image clipped to jigsaw shape */}
+                                                <image
+                                                    href={selectedDino.src}
+                                                    x={-origCol * 100}
+                                                    y={-origRow * 100}
+                                                    width={gridSize * 100}
+                                                    height={gridSize * 100}
+                                                    clipPath={`url(#jigsaw-clip-${pieceId})`}
+                                                    preserveAspectRatio="none"
+                                                />
+
+                                                {/* Outer jigsaw outline stroke */}
+                                                <path
+                                                    d={svgPath}
+                                                    fill="none"
+                                                    stroke={isSelected ? "#f59e0b" : isCorrect ? "rgba(82,183,136,0.6)" : "rgba(0,0,0,0.65)"}
+                                                    strokeWidth={isSelected ? "4" : "2.5"}
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                />
+                                            </svg>
+
+                                            {/* Correct position indicator checkmark */}
+                                            {isCorrect && (
+                                                <div className="absolute top-1 right-1 bg-emerald-500/90 text-slate-950 p-0.5 rounded-full shadow-md z-30 pointer-events-none">
+                                                    <Check size={10} className="stroke-[3]" />
                                                 </div>
                                             )}
                                         </div>
@@ -486,7 +630,7 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                                 <div className="flex items-center justify-between border-b border-white/10 pb-3">
                                     <h3 className="font-serif text-lg font-bold text-white flex items-center gap-2">
                                         <ImageIcon size={18} className="text-purple-400" />
-                                        Target Image Preview
+                                        Target Artwork Preview
                                     </h3>
                                     <button
                                         onClick={() => setShowPreview(false)}
@@ -502,7 +646,7 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
 
                                 <div>
                                     <h4 className="font-bold text-white text-base">{selectedDino.name}</h4>
-                                    <p className="text-xs text-purple-300/80">{selectedDino.period}</p>
+                                    <p className="text-xs text-purple-300/80">{selectedDino.period} • {selectedDino.role}</p>
                                 </div>
 
                                 <button
@@ -520,7 +664,6 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in zoom-in-95 duration-300">
                             <div className="max-w-sm w-full rounded-3xl bg-gradient-to-b from-[#2a0e4a] via-[#1a0833] to-[#0e041d] border-2 border-amber-400/60 p-6 text-center shadow-[0_0_60px_rgba(245,158,11,0.4)] space-y-5 relative overflow-hidden">
                                 
-                                {/* Glow background decal */}
                                 <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-amber-500/20 blur-2xl pointer-events-none" />
 
                                 <div className="inline-flex p-4 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 shadow-xl animate-bounce">
@@ -529,20 +672,20 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
 
                                 <div>
                                     <span className="text-xs font-black uppercase tracking-widest text-amber-300 bg-amber-500/20 px-3 py-1 rounded-full border border-amber-400/40">
-                                        PUZZLE SOLVED ({difficultyLabel.toUpperCase()})!
+                                        JIGSAW PUZZLE SOLVED ({difficultyLabel.toUpperCase()})!
                                     </span>
                                     <h2 className="text-2xl sm:text-3xl font-black font-serif text-white mt-2 tracking-tight">
-                                        {selectedDino.name} Restored!
+                                        {selectedDino.name} Reconstructed!
                                     </h2>
                                     <p className="text-xs text-purple-200/80 mt-1">
-                                        Outstanding work, Paleontologist! You assembled the ancient relic cleanly.
+                                        Outstanding work, Paleontologist! You assembled all {totalPieces} interlocking pieces flawlessly.
                                     </p>
                                 </div>
 
                                 {/* Final Stats */}
                                 <div className="grid grid-cols-2 gap-3 bg-black/50 border border-white/10 p-3 rounded-2xl font-mono text-sm">
                                     <div className="text-center">
-                                        <span className="text-[10px] text-stone-400 uppercase block font-sans">Total Moves</span>
+                                        <span className="text-[10px] text-stone-400 uppercase block font-sans">Swaps Made</span>
                                         <span className="text-lg font-bold text-amber-300">{moves}</span>
                                     </div>
                                     <div className="text-center">
