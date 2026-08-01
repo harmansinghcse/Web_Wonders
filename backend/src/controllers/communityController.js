@@ -77,8 +77,17 @@ const getPosts = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page, 10) || 1;
         const limit = parseInt(req.query.limit, 10) || 10;
+        const filter = req.query.filter || "all";
 
-        const result = await communityService.getPosts(page, limit);
+        let result;
+        if (filter === "following" && req.user) {
+            const Follow = require("../models/Follow");
+            const followingIds = await Follow.find({ follower: req.user.id }).distinct("following");
+            result = await communityService.getPosts(page, limit, followingIds);
+        } else {
+            result = await communityService.getPosts(page, limit);
+        }
+
         const transformed = result.posts.map(post => transformPost(post, req.user?.id));
 
         return res.status(200).json({
@@ -261,6 +270,20 @@ const likePost = async (req, res, next) => {
         const postId = req.params.id;
         const result = await communityService.toggleLike(postId, req.user.id);
 
+        if (result.isLiked) {
+            const Post = require("../models/Post");
+            const post = await Post.findById(postId);
+            if (post && post.author.toString() !== req.user.id.toString()) {
+                const Notification = require("../models/Notification");
+                await Notification.create({
+                    recipient: post.author,
+                    sender: req.user.id,
+                    type: "like",
+                    post: postId,
+                });
+            }
+        }
+
         return res.status(200).json({
             success: true,
             likesCount: result.likesCount,
@@ -291,6 +314,19 @@ const addComment = async (req, res, next) => {
         }
 
         const result = await communityService.addComment(postId, req.user.id, text.trim());
+
+        const Post = require("../models/Post");
+        const post = await Post.findById(postId);
+        if (post && post.author.toString() !== req.user.id.toString()) {
+            const Notification = require("../models/Notification");
+            await Notification.create({
+                recipient: post.author,
+                sender: req.user.id,
+                type: "comment",
+                post: postId,
+                comment: text.trim(),
+            });
+        }
 
         // Transform comments list
         const transformedComments = result.comments.map(c => ({

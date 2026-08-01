@@ -7,11 +7,12 @@ const User = require("../models/User");
  * @param {number} limit - Items per page
  * @returns {Promise<object>} - Paginated posts and count
  */
-const getPosts = async (page = 1, limit = 10) => {
-    const total = await Post.countDocuments();
+const getPosts = async (page = 1, limit = 10, authorIds = null) => {
+    const query = authorIds ? { author: { $in: authorIds } } : {};
+    const total = await Post.countDocuments(query);
     const skip = (page - 1) * limit;
 
-    const posts = await Post.find()
+    const posts = await Post.find(query)
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
