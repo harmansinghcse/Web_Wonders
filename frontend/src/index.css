@@ -66,4 +66,45 @@
   transform: rotateY(180deg);
 }
 
+/* Premium Custom Scrollbars */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(240, 236, 225, 0.45); /* Very light parchment/soft off-white */
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2F7D4D; /* Deep Jurassic green */
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 0.2s ease-in-out;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1F5C38; /* Slightly darker green */
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: #184D30; /* Rich forest green */
+  background-clip: padding-box;
+}
+
+/* Firefox standard properties */
+* {
+  scrollbar-color: #2F7D4D rgba(240, 236, 225, 0.45);
+  scrollbar-width: thin;
+}
+
+
 
