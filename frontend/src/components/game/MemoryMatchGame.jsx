@@ -1035,28 +1035,28 @@ export default function MemoryMatchGame({ onBackToHub }) {
 
                 {/* GAME OVER / VICTORY MODAL */}
                 {gameState === "gameover" && !isPreloading && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fadeIn">
-                        <div className="w-full max-w-2xl bg-gradient-to-b from-[#14261a] to-[#0b160f] border-2 border-emerald-400 rounded-3xl p-6 sm:p-8 shadow-[0_0_50px_rgba(82,183,136,0.3)] text-center relative overflow-hidden text-white space-y-6">
+                    <div className="fixed inset-0 z-50 overflow-y-auto overflow-x-hidden p-4 flex items-center justify-center min-h-screen bg-black/85 backdrop-blur-md custom-scrollbar">
+                        <div className="w-full max-w-lg bg-gradient-to-b from-[#14261a] to-[#0b160f] border-2 border-emerald-400 rounded-3xl p-5 sm:p-6 shadow-[0_0_40px_rgba(82,183,136,0.3)] text-center relative text-white space-y-4 my-auto overflow-hidden">
                             
                             {/* Confetti Glow Background */}
                             <div className="absolute -top-24 -left-24 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl pointer-events-none" />
                             <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-amber-500/20 rounded-full blur-3xl pointer-events-none" />
 
-                            <div className="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-emerald-500/20 border border-emerald-400/40 text-4xl mx-auto shadow-inner animate-bounce">
+                            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 text-2xl mx-auto shadow-inner animate-bounce">
                                 🏆
                             </div>
 
                             <div className="space-y-1">
-                                <h2 className="text-3xl sm:text-5xl font-black font-serif text-[#52B788] tracking-tight uppercase drop-shadow">
+                                <h2 className="text-2xl sm:text-3xl font-black font-serif text-[#52B788] tracking-tight uppercase drop-shadow">
                                     LEVEL COMPLETE!
                                 </h2>
-                                <p className="text-sm sm:text-base text-emerald-200/90 font-medium italic">
+                                <p className="text-xs sm:text-sm text-emerald-200/90 font-medium italic">
                                     Excellent matching! You mastered all prehistoric dinosaur pairs.
                                 </p>
                             </div>
 
                             {/* Stars Rating */}
-                            <div className="flex justify-center gap-2 text-3xl">
+                            <div className="flex justify-center gap-1.5 text-2xl">
                                 <span className="text-amber-400">⭐</span>
                                 <span className="text-amber-400">⭐</span>
                                 <span className="text-amber-400">⭐</span>
@@ -1085,7 +1085,7 @@ export default function MemoryMatchGame({ onBackToHub }) {
                                         <BookOpen size={16} />
                                         <span>Unlocked Prehistoric Facts ({unlockedFacts.length})</span>
                                     </h3>
-                                    <div className="max-h-48 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+                                    <div className="max-h-48 overflow-y-auto space-y-2 pr-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                                         {unlockedFacts.map((dino) => (
                                             <div key={dino.id} className="bg-[#0b1b11] border border-emerald-500/30 p-3 rounded-xl flex items-center gap-3">
                                                 {dino.image ? (
