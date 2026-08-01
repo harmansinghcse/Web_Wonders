@@ -259,6 +259,11 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                 setBestScores(newBestScores);
                 localStorage.setItem("jurassic_puzzle_best", JSON.stringify(newBestScores));
             }
+
+            // Delay victory modal popup so user can admire their completed artwork on the grid canvas first!
+            setTimeout(() => {
+                setShowVictoryModal(true);
+            }, 1400);
         }
     };
 
@@ -625,23 +630,12 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
 
                                 {/* FULL UNIFIED COMPLETED ARTWORK OVERLAY (ON GRID FIRST BEFORE POPUP) */}
                                 {isSolved && (
-                                    <div className="absolute inset-0 z-40 rounded-2xl overflow-hidden border-4 border-amber-400 shadow-[0_0_50px_rgba(245,158,11,0.8)] animate-in fade-in zoom-in-95 duration-500 flex flex-col justify-between p-3.5 sm:p-4">
-                                        <img src={selectedDino.src} alt={selectedDino.name} className="absolute inset-0 w-full h-full object-cover" />
-                                        
-                                        <div className="relative z-10 self-center">
-                                            <span className="bg-amber-400 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider px-4 py-1.5 rounded-full shadow-xl animate-pulse inline-block">
+                                    <div className="absolute inset-0 z-40 rounded-2xl overflow-hidden border-4 border-amber-400 shadow-[0_0_50px_rgba(245,158,11,0.8)] animate-in fade-in zoom-in-95 duration-500">
+                                        <img src={selectedDino.src} alt={selectedDino.name} className="w-full h-full object-cover" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end justify-center p-4">
+                                            <span className="bg-amber-400 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider px-4 py-2 rounded-full shadow-xl animate-bounce">
                                                 ✨ PUZZLE COMPLETED! ✨
                                             </span>
-                                        </div>
-
-                                        <div className="relative z-10 flex flex-col items-center gap-2">
-                                            <button
-                                                onClick={() => setShowVictoryModal(true)}
-                                                className="w-full py-3 px-5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider shadow-2xl transition-all cursor-pointer hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
-                                            >
-                                                <span>SEE VICTORY STATS</span>
-                                                <ArrowRight size={16} />
-                                            </button>
                                         </div>
                                     </div>
                                 )}
@@ -685,10 +679,10 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                         </div>
                     )}
 
-                    {/* Solved Victory Celebration Modal (Appears 1.4s after completed artwork is shown on grid) */}
+                    {/* Solved Victory Celebration Modal */}
                     {showVictoryModal && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in zoom-in-95 duration-300">
-                            <div className="max-w-sm w-full rounded-3xl bg-gradient-to-b from-[#2a0e4a] via-[#1a0833] to-[#0e041d] border-2 border-amber-400/60 p-6 text-center shadow-[0_0_60px_rgba(245,158,11,0.4)] space-y-5 relative overflow-hidden">
+                        <div className="fixed inset-0 z-50 overflow-y-auto p-4 sm:p-6 flex items-center justify-center min-h-screen bg-black/85 backdrop-blur-md">
+                            <div className="max-w-sm w-full max-h-[88vh] overflow-y-auto custom-scrollbar my-auto rounded-3xl bg-gradient-to-b from-[#2a0e4a] via-[#1a0833] to-[#0e041d] border-2 border-amber-400/60 p-6 text-center shadow-[0_0_60px_rgba(245,158,11,0.4)] space-y-5 relative">
                                 
                                 <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-amber-500/20 blur-2xl pointer-events-none" />
 
