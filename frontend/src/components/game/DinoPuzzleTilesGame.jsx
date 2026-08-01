@@ -309,7 +309,7 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
     const difficultyLabel = gridSize === 3 ? "Easy" : gridSize === 4 ? "Moderate" : "Hard";
 
     return (
-        <div className="relative min-h-screen bg-[#0e0717] text-stone-100 font-sans select-none overflow-x-hidden pb-16">
+        <div className="game-page relative min-h-screen bg-[#0e0717] text-stone-100 font-sans select-none overflow-x-hidden pb-16">
             <Cursor />
 
             {/* Background Atmosphere Image & Vibe Overlay */}
