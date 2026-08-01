@@ -22,7 +22,8 @@ import {
     Bell,
     Swords,
     Search,
-    ShieldCheck
+    ShieldCheck,
+    Users
 } from "lucide-react";
 
 import Navbar from "../components/home_components/hero/Navbar";
@@ -36,9 +37,12 @@ import {
     likePostService,
     addCommentService,
     deleteCommentService,
+    followUserService,
+    unfollowUserService,
+    getFollowersService,
+    getFollowingService,
+    getSuggestedExplorersService,
     searchUsersService,
-    fetchSuggestedUsersService,
-    toggleFollowUserService,
 } from "../services/communityService";
 import { getStoredFollows, saveFollowsToStorage } from "../services/communityServiceHelpers";
 
@@ -191,33 +195,17 @@ export default function Community() {
     // Quick Composer Text State
     const [quickPostText, setQuickPostText] = useState("");
 
-    // Suggested Explorers State
+    // Follow state (persisted in database)
+    const [followedUserIds, setFollowedUserIds] = useState([]);
+    const [followPendingId, setFollowPendingId] = useState(null);
+
+    // Suggested explorers state
     const [suggestedExplorers, setSuggestedExplorers] = useState([]);
-    const [loadingSuggestions, setLoadingSuggestions] = useState(true);
+    const [suggestedLoading, setSuggestedLoading] = useState(false);
 
-    // User Search State
-    const [userSearchQuery, setUserSearchQuery] = useState("");
-    const [searchResults, setSearchResults] = useState([]);
-    const [searchingUsers, setSearchingUsers] = useState(false);
-
-    const handleUserSearch = async (val) => {
-        setUserSearchQuery(val);
-        if (!val.trim()) {
-            setSearchResults([]);
-            return;
-        }
-        try {
-            setSearchingUsers(true);
-            const res = await searchUsersService(val);
-            if (res.success) {
-                setSearchResults(res.data);
-            }
-        } catch (err) {
-            console.error("Error searching users:", err);
-        } finally {
-            setSearchingUsers(false);
-        }
-    };
+    // User Search state
+    const [userSearchInput, setUserSearchInput] = useState("");
+    const [userSearchSuggestions, setUserSearchSuggestions] = useState([]);
 
     // Toast Notification
     const [toastMessage, setToastMessage] = useState("");
@@ -227,11 +215,68 @@ export default function Community() {
         setTimeout(() => setToastMessage(""), 3500);
     };
 
-    // Load initial posts with pagination
-    const loadFeedData = async (pageNum = 1, append = false) => {
+    // Load following IDs list
+    const loadFollowedUserIds = async () => {
+        if (!isLoggedIn || !currentUser.id || currentUser.id === "user-default") return;
+        try {
+            const res = await getFollowingService(currentUser.id);
+            if (res.success) {
+                setFollowedUserIds(res.data.map(u => u.id));
+            }
+        } catch (e) {
+            console.error("Error loading following list:", e);
+        }
+    };
+
+    // Load suggested explorers list
+    const loadSuggestedExplorers = async () => {
+        if (!isLoggedIn) return;
+        try {
+            setSuggestedLoading(true);
+            const res = await getSuggestedExplorersService();
+            if (res.success) {
+                setSuggestedExplorers(res.data);
+            }
+        } catch (e) {
+            console.error("Error loading suggested explorers:", e);
+        } finally {
+            setSuggestedLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (isLoggedIn) {
+            loadFollowedUserIds();
+            loadSuggestedExplorers();
+        }
+    }, [isLoggedIn, currentUser.id]);
+
+    // Simple search debounce effect
+    useEffect(() => {
+        if (!userSearchInput.trim()) {
+            setUserSearchSuggestions([]);
+            return;
+        }
+        const delayDebounceFn = setTimeout(async () => {
+            try {
+                const res = await searchUsersService(userSearchInput);
+                if (res.success) {
+                    setUserSearchSuggestions(res.data);
+                }
+            } catch (e) {
+                console.error("Error searching users:", e);
+            }
+        }, 300);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [userSearchInput]);
+
+    // Load initial posts with pagination and tab filter
+    const loadFeedData = async (pageNum = 1, append = false, currentTab = activeTab) => {
         try {
             setLoading(true);
-            const res = await fetchPostsService(pageNum, 10);
+            const filterType = currentTab === "following" ? "following" : "all";
+            const res = await fetchPostsService(pageNum, 10, filterType);
             if (res.success) {
                 if (append) {
                     setPosts((prev) => {
@@ -254,22 +299,8 @@ export default function Community() {
     };
 
     useEffect(() => {
-        loadFeedData(1, false);
-        
-        const loadSuggestions = async () => {
-            try {
-                const res = await fetchSuggestedUsersService();
-                if (res.success) {
-                    setSuggestedExplorers(res.data);
-                }
-            } catch (err) {
-                console.error("Error loading suggestions:", err);
-            } finally {
-                setLoadingSuggestions(false);
-            }
-        };
-        loadSuggestions();
-    }, [currentUser]);
+        loadFeedData(1, false, activeTab);
+    }, [activeTab]);
 
     // Dynamic Trending Hybrids
     const trendingHybrids = useMemo(() => {
@@ -489,28 +520,38 @@ export default function Community() {
     };
 
     // Dynamic Follow Handler
-    const handleFollow = async (expId) => {
+    const handleFollow = async (targetId) => {
         if (!ensureAuth()) return;
+        if (followPendingId === targetId) return;
+
+        const alreadyFollowing = followedUserIds.includes(targetId);
+
         try {
-            const res = await toggleFollowUserService(expId);
-            if (res.success) {
-                // Update local suggestedExplorers state
-                setSuggestedExplorers((prev) =>
-                    prev.map((exp) => (exp.id === expId ? { ...exp, isFollowing: res.isFollowing } : exp))
-                );
-                // Update search results
-                setSearchResults((prev) =>
-                    prev.map((u) => (u.id === expId ? { ...u, isFollowing: res.isFollowing } : u))
-                );
-                // Update active profile modal if it is active and has matching user ID
-                if (activeProfileExplorer && activeProfileExplorer.id === expId) {
-                    setActiveProfileExplorer((prev) => ({ ...prev, isFollowing: res.isFollowing }));
-                }
-                showToast(res.isFollowing ? "Successfully followed explorer!" : "Unfollowed explorer.");
+            setFollowPendingId(targetId);
+            // Optimistic UI updates
+            setFollowedUserIds(prev => 
+                alreadyFollowing ? prev.filter(id => id !== targetId) : [...prev, targetId]
+            );
+            setSuggestedExplorers(prev => 
+                prev.map(u => u.id === targetId ? { ...u, isFollowing: !alreadyFollowing } : u)
+            );
+
+            if (alreadyFollowing) {
+                await unfollowUserService(targetId);
+                showToast("Unfollowed explorer.");
+            } else {
+                await followUserService(targetId);
+                showToast("Successfully followed explorer!");
             }
+            
+            // Refresh suggestion list and following state
+            loadSuggestedExplorers();
+            loadFollowedUserIds();
         } catch (err) {
-            console.error("Error toggling follow:", err);
-            showToast("Failed to follow explorer.");
+            showToast("Failed to complete follow action.");
+            loadFollowedUserIds();
+        } finally {
+            setFollowPendingId(null);
         }
     };
 
@@ -583,6 +624,57 @@ export default function Community() {
                     
                     {/* LEFT SIDEBAR (3 cols) */}
                     <aside className="space-y-5 lg:col-span-3">
+                        {/* Search Users Widget */}
+                        <div className="relative rounded-2xl border border-white/60 bg-white/95 p-3.5 shadow-md backdrop-blur-md">
+                            <div className="flex items-center gap-2 border border-[#E6E4D9] bg-[#FAF9F5] rounded-xl px-3 py-2">
+                                <Search size={16} className="text-[#6D7A6F]" />
+                                <input
+                                    type="text"
+                                    value={userSearchInput}
+                                    onChange={(e) => setUserSearchInput(e.target.value)}
+                                    placeholder="Search explorers..."
+                                    className="w-full bg-transparent text-xs font-semibold text-[#1E3A23] placeholder-[#8A968C] focus:outline-none"
+                                />
+                            </div>
+
+                            {/* Search Suggestions Dropdown */}
+                            {userSearchSuggestions.length > 0 && (
+                                <div className="absolute left-0 right-0 top-full mt-1.5 z-40 rounded-2xl border border-[#E6E4D9] bg-white shadow-xl max-h-52 overflow-y-auto p-1.5 space-y-1">
+                                    {userSearchSuggestions.map((user) => (
+                                        <div
+                                            key={user.id}
+                                            onClick={() => {
+                                                setActiveProfileExplorer(user);
+                                                setUserSearchInput("");
+                                                setUserSearchSuggestions([]);
+                                            }}
+                                            className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-[#FAF9F5] transition cursor-pointer"
+                                        >
+                                            {user.avatar ? (
+                                                <img
+                                                    src={user.avatar}
+                                                    alt={user.name}
+                                                    className="h-8 w-8 rounded-lg object-cover border border-[#1E3A23]/10"
+                                                />
+                                            ) : (
+                                                <div className="h-8 w-8 rounded-lg bg-[#E4ECE3] flex items-center justify-center text-[#2A5231] font-bold text-xs">
+                                                    {user.name[0].toUpperCase()}
+                                                </div>
+                                            )}
+                                            <div className="min-w-0 text-left">
+                                                <h4 className="text-xs font-bold text-[#1E3A23] truncate leading-tight">
+                                                    {user.name}
+                                                </h4>
+                                                <span className="text-[9px] text-[#6D7A6F] font-bold leading-none mt-0.5 block">
+                                                    {user.handle}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
                         {/* Current User Quick Badge */}
                         <div
                             onClick={() => navigateToProfile(currentUser)}
@@ -628,6 +720,18 @@ export default function Community() {
                             >
                                 <Newspaper size={18} />
                                 <span>Feed</span>
+                            </button>
+
+                            <button
+                                onClick={() => { setActiveTab("following"); setSelectedTag(null); setSearchQuery(""); }}
+                                className={`flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold transition cursor-pointer ${
+                                    activeTab === "following"
+                                        ? "bg-[#1E3A23] text-white shadow-xs"
+                                        : "text-[#4A554B] hover:bg-[#EFEFE6] hover:text-[#1E3A23]"
+                                }`}
+                            >
+                                <Users size={18} />
+                                <span>Following</span>
                             </button>
 
                             <button
@@ -1224,29 +1328,31 @@ export default function Community() {
                             <div className="relative">
                                 <input
                                     type="text"
-                                    value={userSearchQuery}
-                                    onChange={(e) => handleUserSearch(e.target.value)}
+                                    value={userSearchInput}
+                                    onChange={(e) => setUserSearchInput(e.target.value)}
                                     placeholder="Search by name..."
                                     className="w-full rounded-xl border border-[#E1DEC9] bg-[#FAF9F5] px-3.5 py-2 text-xs text-[#2C352E] focus:border-[#1E3A23] focus:bg-white focus:outline-none"
                                 />
-                                {userSearchQuery && (
+                                {userSearchInput && (
                                     <button 
-                                        onClick={() => { setUserSearchQuery(""); setSearchResults([]); }}
+                                        onClick={() => { setUserSearchInput(""); setUserSearchSuggestions([]); }}
                                         className="absolute right-2.5 top-2 text-[#859487] hover:text-[#1E3A23] cursor-pointer"
                                     >
                                         <X size={14} />
                                     </button>
                                 )}
                             </div>
-                            {userSearchQuery && (
+                            {userSearchInput && (
                                 <div className="mt-3 space-y-2 max-h-40 overflow-y-auto">
-                                    {searchingUsers ? (
-                                        <p className="text-center text-[10px] text-[#6D7A6F]">Searching...</p>
-                                    ) : searchResults.length > 0 ? (
-                                        searchResults.map((u) => (
+                                    {userSearchSuggestions.length > 0 ? (
+                                        userSearchSuggestions.map((u) => (
                                             <div
                                                 key={u.id}
-                                                onClick={() => navigateToProfile(u)}
+                                                onClick={() => {
+                                                    setActiveProfileExplorer(u);
+                                                    setUserSearchInput("");
+                                                    setUserSearchSuggestions([]);
+                                                }}
                                                 className="flex items-center gap-2.5 cursor-pointer group hover:bg-[#FAF9F5] p-1.5 rounded-lg border border-transparent hover:border-[#F0ECE1] transition"
                                             >
                                                 <Avatar user={u} className="h-7 w-7" />
@@ -1290,21 +1396,26 @@ export default function Community() {
                                                 <h4 className="text-xs font-bold text-[#1E3A23] group-hover:text-[#2F7D4D] truncate">
                                                     {exp.name}
                                                 </h4>
-                                                <p className="text-[10px] text-[#6D7A6F] truncate">
+                                                <p className="text-[9px] text-[#6D7A6F] truncate">
                                                     {exp.handle}
                                                 </p>
+                                                {exp.mutualText && (
+                                                    <p className="text-[8px] text-[#2F7D4D] font-bold truncate leading-none mt-0.5">
+                                                        🤝 {exp.mutualText}
+                                                    </p>
+                                                )}
                                             </div>
                                         </div>
 
                                         <button
                                             onClick={() => handleFollow(exp.id)}
                                             className={`rounded-lg px-3 py-1 text-xs font-bold transition cursor-pointer shrink-0 ${
-                                                exp.isFollowing
+                                                followedUserIds.includes(exp.id)
                                                     ? "border border-[#1E3A23] bg-white text-[#1E3A23]"
                                                     : "bg-[#1E3A23] text-white hover:bg-[#152A19]"
                                             }`}
                                         >
-                                            {exp.isFollowing ? "Following" : "Follow"}
+                                            {followedUserIds.includes(exp.id) ? "Following" : "Follow"}
                                         </button>
                                     </div>
                                 ))}
@@ -1330,10 +1441,18 @@ export default function Community() {
             {/* DYNAMIC EXPLORER PROFILE PASSPORT MODAL */}
             {activeProfileExplorer && (
                 <ExplorerProfileModal
-                    explorer={activeProfileExplorer}
+                    explorerId={activeProfileExplorer.id || activeProfileExplorer._id}
                     currentUser={currentUser}
                     posts={posts}
-                    onFollow={handleFollow}
+                    onFollowChanged={(targetId, nextFollowing) => {
+                        setFollowedUserIds(prev => 
+                            nextFollowing ? [...prev, targetId] : prev.filter(id => id !== targetId)
+                        );
+                        loadSuggestedExplorers();
+                    }}
+                    onUserClick={(userId) => {
+                        setActiveProfileExplorer({ id: userId });
+                    }}
                     onClose={() => setActiveProfileExplorer(null)}
                 />
             )}
