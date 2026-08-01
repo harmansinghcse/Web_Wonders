@@ -207,6 +207,10 @@ export default function Community() {
     const [userSearchInput, setUserSearchInput] = useState("");
     const [userSearchSuggestions, setUserSearchSuggestions] = useState([]);
 
+    // Right Sidebar Search state
+    const [rightSearchInput, setRightSearchInput] = useState("");
+    const [rightSearchSuggestions, setRightSearchSuggestions] = useState([]);
+
     // Toast Notification
     const [toastMessage, setToastMessage] = useState("");
 
@@ -270,6 +274,26 @@ export default function Community() {
 
         return () => clearTimeout(delayDebounceFn);
     }, [userSearchInput]);
+
+    // Simple search debounce effect for right sidebar search
+    useEffect(() => {
+        if (!rightSearchInput.trim()) {
+            setRightSearchSuggestions([]);
+            return;
+        }
+        const delayDebounceFn = setTimeout(async () => {
+            try {
+                const res = await searchUsersService(rightSearchInput);
+                if (res.success) {
+                    setRightSearchSuggestions(res.data);
+                }
+            } catch (e) {
+                console.error("Error searching users:", e);
+            }
+        }, 300);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [rightSearchInput]);
 
     // Load initial posts with pagination and tab filter
     const loadFeedData = async (pageNum = 1, append = false, currentTab = activeTab) => {
@@ -1328,30 +1352,30 @@ export default function Community() {
                             <div className="relative">
                                 <input
                                     type="text"
-                                    value={userSearchInput}
-                                    onChange={(e) => setUserSearchInput(e.target.value)}
+                                    value={rightSearchInput}
+                                    onChange={(e) => setRightSearchInput(e.target.value)}
                                     placeholder="Search by name..."
                                     className="w-full rounded-xl border border-[#E1DEC9] bg-[#FAF9F5] px-3.5 py-2 text-xs text-[#2C352E] focus:border-[#1E3A23] focus:bg-white focus:outline-none"
                                 />
-                                {userSearchInput && (
+                                {rightSearchInput && (
                                     <button 
-                                        onClick={() => { setUserSearchInput(""); setUserSearchSuggestions([]); }}
+                                        onClick={() => { setRightSearchInput(""); setRightSearchSuggestions([]); }}
                                         className="absolute right-2.5 top-2 text-[#859487] hover:text-[#1E3A23] cursor-pointer"
                                     >
                                         <X size={14} />
                                     </button>
                                 )}
                             </div>
-                            {userSearchInput && (
+                            {rightSearchInput && (
                                 <div className="mt-3 space-y-2 max-h-40 overflow-y-auto">
-                                    {userSearchSuggestions.length > 0 ? (
-                                        userSearchSuggestions.map((u) => (
+                                    {rightSearchSuggestions.length > 0 ? (
+                                        rightSearchSuggestions.map((u) => (
                                             <div
                                                 key={u.id}
                                                 onClick={() => {
                                                     setActiveProfileExplorer(u);
-                                                    setUserSearchInput("");
-                                                    setUserSearchSuggestions([]);
+                                                    setRightSearchInput("");
+                                                    setRightSearchSuggestions([]);
                                                 }}
                                                 className="flex items-center gap-2.5 cursor-pointer group hover:bg-[#FAF9F5] p-1.5 rounded-lg border border-transparent hover:border-[#F0ECE1] transition"
                                             >
