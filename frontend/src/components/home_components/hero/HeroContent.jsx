@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import HeroStats from "./HeroStats";
 import HeroButtons from "./HeroButtons";
+import DinoSoundMysteryWidget from "./DinoSoundMysteryWidget";
 
 const containerVariants = {
     hidden: { opacity: 0 },
