@@ -187,31 +187,51 @@ export default function DinoSoundMysteryWidget({ videoSrc = "/dino_sound_video.m
                                         <Film size={16} className="text-[#FBBF24]" />
                                         Interactive Human Dinosaur Voice Showcase 🎬🎉
                                     </span>
-                                    <span className="text-[10px] text-[#FBBF24]/80 font-sans font-semibold flex items-center gap-1 bg-amber-500/20 border border-amber-500/30 px-2.5 py-0.5 rounded-full">
-                                        <PartyPopper size={12} className="text-amber-400" /> FUN VIDEO EDITION
-                                    </span>
+
+                                    {/* Mute/Unmute Audio Control */}
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={toggleMute}
+                                            className="px-3 py-1 rounded-full bg-amber-500/20 hover:bg-amber-500/30 text-[#FBBF24] border border-amber-500/40 text-[11px] font-mono font-bold flex items-center gap-1.5 transition cursor-pointer"
+                                        >
+                                            {isMuted ? (
+                                                <>
+                                                    <VolumeX size={14} className="text-rose-400" />
+                                                    <span>Muted</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Volume2 size={14} className="text-amber-400 animate-pulse" />
+                                                    <span>Audio On</span>
+                                                </>
+                                            )}
+                                        </button>
+                                        <span className="text-[10px] text-[#FBBF24]/80 font-sans font-semibold flex items-center gap-1 bg-amber-500/20 border border-amber-500/30 px-2.5 py-0.5 rounded-full hidden sm:inline-flex">
+                                            <PartyPopper size={12} className="text-amber-400" /> FUN VIDEO
+                                        </span>
+                                    </div>
                                 </div>
 
                                 <div className="w-full relative rounded-2xl overflow-hidden border-2 border-[#F59E0B]/50 bg-black shadow-[0_0_30px_rgba(245,158,11,0.25)] group">
                                     
-                                    {/* Video Element */}
+                                    {/* Video Element - Native controls enabled, no overlay blocking native volume controls */}
                                     <video
                                         ref={videoRef}
                                         src={videoSrc}
                                         className="w-full h-56 sm:h-64 object-cover"
                                         playsInline
-                                        controls={isPlaying}
+                                        controls={true}
+                                        muted={isMuted}
+                                        onPlay={() => setIsPlaying(true)}
+                                        onPause={() => setIsPlaying(false)}
                                         onEnded={() => setIsPlaying(false)}
-                                        onError={(e) => {
-                                            // Graceful handling until video is provided
-                                        }}
                                     />
 
-                                    {/* Video Play Overlay Button */}
+                                    {/* Video Play Overlay Button (Hidden once user starts playing) */}
                                     {!isPlaying && (
                                         <div 
                                             onClick={togglePlay}
-                                            className="absolute inset-0 bg-black/65 backdrop-brightness-95 flex flex-col items-center justify-center cursor-pointer transition-opacity duration-300 hover:bg-black/50 p-4 text-center"
+                                            className="absolute inset-0 bg-black/65 backdrop-brightness-95 flex flex-col items-center justify-center cursor-pointer transition-opacity duration-300 hover:bg-black/50 p-4 text-center z-10"
                                         >
                                             {/* Sound Wave Animation Bars */}
                                             <div className="flex items-end gap-1.5 h-6 mb-3">
@@ -221,37 +241,22 @@ export default function DinoSoundMysteryWidget({ videoSrc = "/dino_sound_video.m
                                                 <span className="w-1.5 h-3 bg-[#34D399] rounded-full animate-bounce [animation-delay:0.1s]" />
                                             </div>
 
-                                            <button className="w-16 h-16 rounded-full bg-gradient-to-r from-[#F59E0B] to-[#D97706] hover:from-[#FBBF24] hover:to-[#F59E0B] text-slate-950 font-black flex items-center justify-center shadow-2xl transition-transform transform group-hover:scale-110 mb-2.5 border-2 border-amber-200">
+                                            <button className="w-16 h-16 rounded-full bg-gradient-to-r from-[#F59E0B] to-[#D97706] hover:from-[#FBBF24] hover:to-[#F59E0B] text-slate-950 font-black flex items-center justify-center shadow-2xl transition-transform transform group-hover:scale-110 mb-2.5 border-2 border-amber-200 cursor-pointer">
                                                 <Play size={28} className="fill-current ml-1 text-slate-950" />
                                             </button>
                                             
                                             <span className="text-xs sm:text-sm font-black font-serif text-[#FBBF24] uppercase tracking-widest drop-shadow-md">
                                                 PLAY THE EPIC "YAAAAAAAAAAAAAAAA!" ROAR
                                             </span>
-                                            <span className="text-[10px] text-amber-200/90 font-medium italic mt-1 bg-black/50 px-2 py-0.5 rounded-full border border-amber-500/30">
+                                            <span className="text-[10px] text-amber-200/90 font-medium italic mt-1 bg-black/50 px-2.5 py-0.5 rounded-full border border-amber-500/30">
                                                 (100% Scientifically Unverified & Hilarious Human Roar!)
                                             </span>
                                         </div>
                                     )}
-
-                                    {/* Bottom Video Controls Bar */}
-                                    <div className="absolute bottom-0 inset-x-0 p-2.5 bg-gradient-to-t from-black/95 via-black/80 to-transparent flex items-center justify-between text-xs text-amber-200 pointer-events-none">
-                                        <span className="font-mono text-[10px] flex items-center gap-2 font-bold text-[#FBBF24]">
-                                            <Sparkles size={13} className="text-[#FBBF24]" />
-                                            HUMAN DINOSAUR ROAR EDITION 🦖
-                                        </span>
-                                        <button
-                                            onClick={toggleMute}
-                                            className="p-1.5 rounded-lg bg-black/75 hover:bg-black/95 text-[#FBBF24] transition pointer-events-auto border border-amber-500/40"
-                                            title={isMuted ? "Unmute" : "Mute"}
-                                        >
-                                            {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
-                                        </button>
-                                    </div>
                                 </div>
 
                                 <p className="text-[10px] text-[#9BD7C1] font-medium italic text-center pt-1">
-                                    🎬 Featuring our hilarious made-up human voice dinosaur roar! Positioned below for an interactive learning & viewing experience.
+                                    🎬 Featuring our hilarious made-up human voice dinosaur roar! Click Play to listen.
                                 </p>
                             </div>
 
