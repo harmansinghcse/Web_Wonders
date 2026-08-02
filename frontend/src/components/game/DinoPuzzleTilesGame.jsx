@@ -317,11 +317,11 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                 <img
                     src="/jurassic_game_vibe_bg.jpg"
                     alt="Jurassic Vibe"
-                    className="w-full h-full object-cover filter brightness-60 contrast-110 scale-105"
+                    className="w-full h-full object-cover filter brightness-75 contrast-105 saturate-105 scale-105 opacity-90"
                     onError={(e) => { e.currentTarget.style.display = 'none'; }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-[#1b0a2c]/70 via-black/45 to-[#0c0414]/90" />
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(168,85,247,0.3)_0%,transparent_70%)]" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#1b0a2c]/65 via-[#0e0414]/50 to-[#0c0414]/80" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(168,85,247,0.30)_0%,transparent_65%)]" />
             </div>
 
             {/* Navigation Navbar (Landing Screen) */}
@@ -338,7 +338,7 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                     {onBackToHub && (
                         <button
                             onClick={onBackToHub}
-                            className="inline-flex items-center gap-2 self-start bg-white/10 hover:bg-white/20 text-purple-200 px-4 py-2 rounded-xl text-xs font-bold shadow-md transition-all cursor-pointer backdrop-blur-md"
+                            className="inline-flex items-center gap-2 self-start bg-white/15 hover:bg-white/25 text-purple-200 px-4 py-2 rounded-xl text-xs font-bold shadow-md transition-all cursor-pointer backdrop-blur-md border border-white/20"
                         >
                             <ArrowLeft size={16} />
                             <span>Back to Game Hub</span>
@@ -346,28 +346,28 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                     )}
 
                     <div className="space-y-3">
-                        <div className="inline-flex items-center gap-2 bg-[#25103a]/80 border border-purple-400/40 px-4 py-1.5 rounded-full text-xs font-serif font-bold text-purple-300 uppercase backdrop-blur-md">
-                            <Puzzle size={15} className="text-purple-400" />
+                        <div className="inline-flex items-center gap-2 bg-[#331552]/85 border border-purple-400/50 px-4 py-1.5 rounded-full text-xs font-serif font-bold text-purple-200 uppercase backdrop-blur-md shadow-md">
+                            <Puzzle size={15} className="text-purple-300" />
                             <span>PUZZLE & LOGIC</span>
                         </div>
-                        <h1 className="text-4xl sm:text-6xl font-black font-serif text-white uppercase tracking-wider drop-shadow-md">
+                        <h1 className="text-4xl sm:text-6xl font-black font-serif text-white uppercase tracking-wider drop-shadow-lg">
                             JURASSIC DINO PUZZLE TILES
                         </h1>
-                        <p className="text-sm sm:text-base text-purple-200/90 max-w-lg mx-auto font-medium">
+                        <p className="text-sm sm:text-base text-purple-100/90 max-w-lg mx-auto font-medium drop-shadow-sm">
                             Choose your artwork and difficulty to reconstruct ancient dinosaur relics in this interlocking jigsaw puzzle!
                         </p>
                     </div>
 
                     {/* Central Launcher Control Window */}
-                    <div className="w-full max-w-3xl bg-[#180a2b]/95 border border-purple-500/40 p-6 sm:p-8 rounded-3xl shadow-2xl space-y-7 backdrop-blur-md">
+                    <div className="w-full max-w-2xl bg-[#25103d]/90 border border-purple-400/50 p-5 sm:p-6 rounded-3xl shadow-[0_0_50px_rgba(168,85,247,0.25)] space-y-5 backdrop-blur-xl">
                         
                         {/* Select Difficulty Level */}
-                        <div className="space-y-3">
-                            <h3 className="text-xs font-serif font-bold text-amber-300 uppercase tracking-widest text-center sm:text-left">
+                        <div className="space-y-2.5">
+                            <h3 className="text-[11px] sm:text-xs font-serif font-bold text-amber-300 uppercase tracking-widest text-center sm:text-left">
                                 SELECT DIFFICULTY LEVEL
                             </h3>
                             
-                            <div className="grid grid-cols-3 gap-3">
+                            <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
                                 {[
                                     { id: 3, name: "EASY", grid: "3×3 Grid", pieces: "9 Jigsaw Pieces" },
                                     { id: 4, name: "MODERATE", grid: "4×4 Grid", pieces: "16 Jigsaw Pieces" },
@@ -376,36 +376,36 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                                     <button
                                         key={item.id}
                                         onClick={() => setGridSize(item.id)}
-                                        className={`p-3.5 rounded-2xl border text-center transition cursor-pointer flex flex-col items-center justify-center ${
+                                        className={`p-2.5 sm:p-3 rounded-2xl border text-center transition cursor-pointer flex flex-col items-center justify-center ${
                                             gridSize === item.id
                                                 ? item.id === 3
                                                     ? "bg-emerald-600/90 border-emerald-400 text-white shadow-lg scale-102"
                                                     : item.id === 4
                                                     ? "bg-amber-600/90 border-amber-400 text-white shadow-lg scale-102"
                                                     : "bg-red-600/90 border-red-400 text-white shadow-lg scale-102"
-                                                : "bg-black/40 border-white/10 text-stone-300 hover:border-purple-400/50 hover:text-white"
+                                                : "bg-[#180829]/75 border-purple-400/25 text-stone-200 hover:border-purple-300 hover:text-white"
                                         }`}
                                     >
-                                        <span className="font-extrabold text-sm sm:text-base uppercase">{item.name}</span>
-                                        <span className="text-[11px] opacity-90 mt-1 font-medium">{item.grid}</span>
-                                        <span className="text-[10px] opacity-75">{item.pieces}</span>
+                                        <span className="font-extrabold text-xs sm:text-sm uppercase">{item.name}</span>
+                                        <span className="text-[10px] opacity-90 mt-0.5 font-medium">{item.grid}</span>
+                                        <span className="text-[9px] opacity-75">{item.pieces}</span>
                                     </button>
                                 ))}
                             </div>
                         </div>
 
                         {/* Select Dinosaur Artwork */}
-                        <div className="space-y-3 pt-2">
+                        <div className="space-y-2.5 pt-1">
                             <div className="flex items-center justify-between">
-                                <h3 className="text-xs font-serif font-bold text-purple-300 uppercase tracking-widest">
+                                <h3 className="text-[11px] sm:text-xs font-serif font-bold text-purple-200 uppercase tracking-widest">
                                     SELECT DINOSAUR ARTWORK
                                 </h3>
-                                <span className="text-[11px] font-bold text-amber-300">
+                                <span className="text-[10px] sm:text-[11px] font-bold text-amber-300">
                                     Selected: {selectedDino.name}
                                 </span>
                             </div>
 
-                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3.5 sm:gap-4">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3">
                                 {DINO_IMAGES.map((dino) => {
                                     const isSelected = selectedDino.id === dino.id;
                                     return (
@@ -414,11 +414,11 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                                             onClick={() => setSelectedDino(dino)}
                                             className={`group relative rounded-2xl overflow-hidden border transition-all duration-300 cursor-pointer text-left ${
                                                 isSelected
-                                                    ? "border-amber-400 ring-4 ring-amber-400/35 scale-[1.03] shadow-[0_0_25px_rgba(245,158,11,0.35)] z-10"
-                                                    : "border-white/15 opacity-75 hover:opacity-100 hover:border-purple-400 hover:scale-[1.02]"
+                                                    ? "border-amber-400 ring-4 ring-amber-400/35 scale-[1.02] shadow-[0_0_25px_rgba(245,158,11,0.4)] z-10"
+                                                    : "border-white/20 opacity-85 hover:opacity-100 hover:border-purple-300 hover:scale-[1.01]"
                                             }`}
                                         >
-                                            <div className="h-32 sm:h-36 w-full overflow-hidden relative">
+                                            <div className="h-24 sm:h-28 w-full overflow-hidden relative">
                                                 <img
                                                     src={dino.src}
                                                     alt={dino.name}
@@ -426,16 +426,16 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                                                 />
                                                 
                                                 {isSelected && (
-                                                    <div className="absolute top-2 right-2 bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider shadow-md">
+                                                    <div className="absolute top-1.5 right-1.5 bg-amber-400 text-slate-950 px-1.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider shadow-md">
                                                         SELECTED ✓
                                                     </div>
                                                 )}
 
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-transparent flex flex-col justify-end p-3">
-                                                    <span className="text-sm sm:text-base font-extrabold text-white group-hover:text-amber-300 transition-colors drop-shadow-sm">
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent flex flex-col justify-end p-2 sm:p-2.5">
+                                                    <span className="text-xs sm:text-sm font-extrabold text-white group-hover:text-amber-300 transition-colors drop-shadow-sm truncate">
                                                         {dino.name}
                                                     </span>
-                                                    <span className="text-[10px] text-purple-200/90 font-medium mt-0.5 truncate">
+                                                    <span className="text-[9px] sm:text-[10px] text-purple-200 font-medium truncate">
                                                         {dino.period} • {dino.role}
                                                     </span>
                                                 </div>
@@ -449,9 +449,9 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
                         {/* Start Game Action Button */}
                         <button
                             onClick={startGame}
-                            className="w-full py-4 rounded-2xl bg-[#52B788] hover:bg-[#40a073] text-slate-950 font-black text-base uppercase tracking-wider flex items-center justify-center gap-2.5 shadow-xl transition-all cursor-pointer hover:scale-102 active:scale-95"
+                            className="w-full py-3.5 rounded-2xl bg-[#52B788] hover:bg-[#40a073] text-slate-950 font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl transition-all cursor-pointer hover:scale-102 active:scale-95"
                         >
-                            <Play size={22} className="fill-current" />
+                            <Play size={20} className="fill-current" />
                             <span>START PUZZLE GAME</span>
                         </button>
 

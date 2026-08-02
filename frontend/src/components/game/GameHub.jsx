@@ -143,7 +143,7 @@ export default function GameHub({ initialGame = "hub" }) {
                                 <img 
                                     src="/game_memory_match.jpg" 
                                     alt="Jurassic Memory Match Artwork"
-                                    className="w-full h-full object-cover scale-[1.05] group-hover:scale-110 transition-transform duration-500"
+                                    className="w-full h-full object-fill group-hover:scale-[1.02] transition-transform duration-500"
                                 />
                                 <div className="absolute top-3 right-3 bg-emerald-950/90 border border-emerald-400/60 px-3 py-1 rounded-full text-xs font-extrabold text-emerald-300 uppercase tracking-wider backdrop-blur-md shadow-md">
                                     MEMORY & LOGIC
