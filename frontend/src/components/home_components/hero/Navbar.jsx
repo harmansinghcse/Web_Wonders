@@ -100,7 +100,7 @@ function Navbar() {
                                 <img
                                     src={logo}
                                     alt="Jurassic Explorer"
-                                    className="h-10 xl:h-12 w-auto object-contain transition duration-300 hover:scale-105"
+                                    className="h-12 xl:h-14 w-auto object-contain transition duration-300 hover:scale-105"
                                 />
                             </Link>
                         </div>
@@ -169,7 +169,7 @@ function Navbar() {
                             <div className="relative group">
                                 <button className={`flex items-center gap-1 xl:gap-1.5 rounded-full border border-transparent px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm font-medium transition-all duration-300 ease-out cursor-pointer ${
                                     location.pathname.startsWith('/explore') || location.pathname === '/map' || location.pathname === '/timeline' || location.pathname === '/explorer'
-                                        ? 'bg-[#E2EFE2] text-[#2E4E34] border-[#36593D]/30 shadow-[0_0_18px_rgba(54,89,61,0.22)] font-semibold'
+                                        ? 'bg-[#D2E6D2] text-[#234229] border-[#36593D]/40 shadow-[0_4px_20px_rgba(37,74,42,0.35),0_0_12px_rgba(54,89,61,0.3)] font-semibold'
                                         : 'text-[#4A4A4A] hover:bg-[#EAF3EA] hover:text-[#36593D] hover:border-[#36593D]/25 hover:shadow-[0_0_15px_rgba(54,89,61,0.18)] hover:-translate-y-[1px]'
                                 }`}>
                                     <Compass size={16} />
@@ -181,21 +181,33 @@ function Navbar() {
                                 <div className="absolute top-full left-0 mt-2 w-60 rounded-2xl border border-[#e3d7c2] bg-white p-2 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 z-50">
                                     <Link
                                         to="/explorer"
-                                        className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D] transition-colors"
+                                        className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold transition-colors ${
+                                            location.pathname === '/explorer'
+                                                ? 'bg-[#D2E6D2] text-[#234229] font-semibold'
+                                                : 'text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D]'
+                                        }`}
                                     >
                                         <Compass size={16} className="text-[#36593D]" />
                                         <span>Explore Dinosaurs</span>
                                     </Link>
                                     <Link
                                         to="/map"
-                                        className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D] transition-colors"
+                                        className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold transition-colors ${
+                                            location.pathname === '/map'
+                                                ? 'bg-[#D2E6D2] text-[#234229] font-semibold'
+                                                : 'text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D]'
+                                        }`}
                                     >
                                         <Map size={16} className="text-[#36593D]" />
                                         <span>Fossil Map</span>
                                     </Link>
                                     <Link
                                         to="/timeline"
-                                        className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D] transition-colors"
+                                        className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold transition-colors ${
+                                            location.pathname === '/timeline'
+                                                ? 'bg-[#D2E6D2] text-[#234229] font-semibold'
+                                                : 'text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D]'
+                                        }`}
                                     >
                                         <Clock3 size={16} className="text-[#36593D]" />
                                         <span>Timeline View</span>
@@ -207,7 +219,7 @@ function Navbar() {
                             <div className="relative group">
                                 <button className={`flex items-center gap-1 xl:gap-1.5 rounded-full border border-transparent px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm font-medium transition-all duration-300 ease-out cursor-pointer ${
                                     location.pathname === '/create'
-                                        ? 'bg-[#E2EFE2] text-[#2E4E34] border-[#36593D]/30 shadow-[0_0_18px_rgba(54,89,61,0.22)] font-semibold'
+                                        ? 'bg-[#D2E6D2] text-[#234229] border-[#36593D]/40 shadow-[0_4px_20px_rgba(37,74,42,0.35),0_0_12px_rgba(54,89,61,0.3)] font-semibold'
                                         : 'text-[#4A4A4A] hover:bg-[#EAF3EA] hover:text-[#36593D] hover:border-[#36593D]/25 hover:shadow-[0_0_15px_rgba(54,89,61,0.18)] hover:-translate-y-[1px]'
                                 }`}>
                                     <Sparkles size={16} />
@@ -219,7 +231,11 @@ function Navbar() {
                                 <div className="absolute top-full left-0 mt-2 w-56 rounded-2xl border border-[#e3d7c2] bg-white p-2 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 z-50">
                                     <Link
                                         to="/create"
-                                        className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D] transition-colors"
+                                        className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold transition-colors ${
+                                            location.pathname === '/create'
+                                                ? 'bg-[#D2E6D2] text-[#234229] font-semibold'
+                                                : 'text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D]'
+                                        }`}
                                     >
                                         <PlusSquare size={16} className="text-[#36593D]" />
                                         <span>Create Dinosaur</span>
@@ -231,11 +247,11 @@ function Navbar() {
                             <div className="relative group">
                                 <button className={`flex items-center gap-1 xl:gap-1.5 rounded-full border border-transparent px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm font-medium transition-all duration-300 ease-out cursor-pointer ${
                                     location.pathname === '/quiz' || location.pathname.startsWith('/games')
-                                        ? 'bg-[#E2EFE2] text-[#2E4E34] border-[#36593D]/30 shadow-[0_0_18px_rgba(54,89,61,0.22)] font-semibold'
+                                        ? 'bg-[#D2E6D2] text-[#234229] border-[#36593D]/40 shadow-[0_4px_20px_rgba(37,74,42,0.35),0_0_12px_rgba(54,89,61,0.3)] font-semibold'
                                         : 'text-[#4A4A4A] hover:bg-[#EAF3EA] hover:text-[#36593D] hover:border-[#36593D]/25 hover:shadow-[0_0_15px_rgba(54,89,61,0.18)] hover:-translate-y-[1px]'
                                 }`}>
                                     <BookOpen size={16} />
-                                    <span>Learn</span>
+                                    <span>Play & Learn</span>
                                     <ChevronDown size={14} className="transition-transform duration-200 group-hover:rotate-180 opacity-70" />
                                 </button>
 
@@ -245,9 +261,9 @@ function Navbar() {
                                     {/* Option 1: Interactive Quiz */}
                                     <Link
                                         to="/quiz"
-                                        className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs sm:text-sm font-medium transition-colors ${
+                                        className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs sm:text-sm transition-colors ${
                                             location.pathname === '/quiz'
-                                                ? 'bg-[#E8F0E8] text-[#36593D] font-semibold'
+                                                ? 'bg-[#D2E6D2] text-[#234229] font-semibold'
                                                 : 'text-stone-700 hover:bg-[#F4F8F4] hover:text-[#36593D]'
                                         }`}
                                     >
@@ -258,16 +274,14 @@ function Navbar() {
                                     {/* Option 2: Games (Opens Jurassic Memory Match page) */}
                                     <Link
                                         to="/games"
-                                        className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs sm:text-sm font-medium transition-colors ${
+                                        className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs sm:text-sm transition-colors ${
                                             location.pathname.startsWith('/games')
-                                                ? 'bg-[#E8F0E8] text-[#36593D] font-semibold'
+                                                ? 'bg-[#D2E6D2] text-[#234229] font-semibold'
                                                 : 'text-stone-700 hover:bg-[#F4F8F4] hover:text-[#36593D]'
                                         }`}
                                     >
                                         <Gamepad2 size={18} className="text-[#36593D] shrink-0" />
-                                        <span>Games</span>
                                     </Link>
-
                                 </div>
                             </div>
 
