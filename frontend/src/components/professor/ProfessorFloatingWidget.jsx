@@ -7,7 +7,6 @@ import {
     RotateCcw, 
     Minus, 
     Sparkles, 
-    ChevronDown,
     Maximize2,
     Minimize2,
     Copy,
@@ -65,13 +64,11 @@ const formatMessageText = (text) => {
 const ProfessorFloatingWidget = () => {
     const {
         isOpen,
-        toggleChat,
         closeChat,
         messages,
         loading,
         sendMessage,
         clearChat,
-        unreadCount,
     } = useProfessor();
 
     const [input, setInput] = useState("");
@@ -113,21 +110,29 @@ const ProfessorFloatingWidget = () => {
         return shuffled.slice(0, 2);
     }, [messages.length]);
 
+    if (!isOpen) return null;
+
     return (
-        <div className="fixed bottom-5 left-5 sm:bottom-6 sm:left-6 z-50 flex flex-col items-start pointer-events-auto select-none">
-            {/* Floating Chat Window */}
-            {isOpen && (
+        <>
+            {/* Backdrop click listener */}
+            <div 
+                className="fixed inset-0 z-40 bg-black/20 backdrop-blur-xs sm:bg-transparent sm:backdrop-blur-none"
+                onClick={closeChat}
+            />
+
+            {/* Chat Window positioned under top navbar */}
+            <div className="fixed top-20 right-3 sm:top-24 sm:right-8 z-50 flex flex-col items-end pointer-events-auto select-none">
                 <div 
-                    className={`mb-3 flex flex-col rounded-3xl border border-[#36593D]/30 bg-[#F7F6F1] text-stone-800 
-                               shadow-[0_20px_60px_rgba(0,0,0,0.25)] backdrop-blur-2xl 
-                               overflow-hidden transition-all duration-300 animate-in fade-in slide-in-from-bottom-6
+                    className={`flex flex-col rounded-3xl border border-[#36593D]/30 bg-[#F7F6F1] text-stone-800 
+                               shadow-[0_25px_70px_rgba(0,0,0,0.35)] backdrop-blur-2xl 
+                               overflow-hidden transition-all duration-300 animate-in fade-in slide-in-from-top-6
                                ${
                                    isExpanded 
-                                       ? "w-[calc(100vw-2rem)] sm:w-[520px] md:w-[560px] h-[660px] max-h-[88vh]" 
-                                       : "w-[calc(100vw-2.5rem)] sm:w-[410px] md:w-[440px] h-[580px] max-h-[80vh]"
+                                       ? "w-[calc(100vw-1.5rem)] sm:w-[520px] md:w-[560px] h-[680px] max-h-[85vh]" 
+                                       : "w-[calc(100vw-2rem)] sm:w-[410px] md:w-[440px] h-[580px] max-h-[80vh]"
                                }`}
                 >
-                    {/* Dark Jurassic Header for High-End Contrast */}
+                    {/* Dark Jurassic Header */}
                     <div className="relative flex items-center justify-between border-b border-[#F59E0B]/20 bg-gradient-to-r from-[#0F2416] via-[#173822] to-[#252212] px-5 py-3.5 shrink-0 text-white">
                         {/* Background decal */}
                         <div className="absolute right-14 top-1/2 -translate-y-1/2 opacity-15 pointer-events-none select-none">
@@ -268,7 +273,7 @@ const ProfessorFloatingWidget = () => {
                                         </div>
                                     </div>
 
-                                    {/* Interactive follow-up suggestion chips under Ross's latest reply */}
+                                    {/* Interactive follow-up suggestion chips */}
                                     {isLastAssistantMsg && !loading && (
                                         <div className="flex flex-wrap gap-1.5 pl-10 pt-1 animate-in fade-in duration-300">
                                             {randomFollowUps.map(({ text, icon: IconComponent }) => (
@@ -309,7 +314,7 @@ const ProfessorFloatingWidget = () => {
                         <div ref={messagesEndRef} />
                     </div>
 
-                    {/* Quick Suggestion Chips - Light Theme */}
+                    {/* Quick Suggestion Chips */}
                     <div className="px-3 py-2 border-t border-[#E2DDD0] bg-[#EFECE3]">
                         <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
                             <Sparkles size={13} className="text-[#36593D] shrink-0 ml-1" />
@@ -333,7 +338,7 @@ const ProfessorFloatingWidget = () => {
                         </div>
                     </div>
 
-                    {/* Input Area - Light Theme */}
+                    {/* Input Area */}
                     <div className="p-3 bg-[#EFECE3] border-t border-[#E2DDD0] shrink-0">
                         <div className="flex items-center gap-2 rounded-2xl border border-[#DCD6C8] bg-white px-3.5 py-2 focus-within:border-[#36593D] focus-within:ring-1 focus-within:ring-[#36593D] transition-all shadow-2xs">
                             <input
@@ -355,51 +360,8 @@ const ProfessorFloatingWidget = () => {
                         </div>
                     </div>
                 </div>
-            )}
-
-            {/* Floating Action Trigger Button */}
-            <button
-                onClick={toggleChat}
-                title="Ask Professor Ross AI"
-                className="group relative flex items-center gap-2.5 rounded-full bg-gradient-to-r from-[#0F2617] via-[#194025] to-[#2B562F] 
-                           pl-4 pr-3.5 py-3 text-white shadow-[0_10px_35px_rgba(0,0,0,0.35),0_0_20px_rgba(245,158,11,0.15)] transition-all duration-300 
-                           hover:scale-105 hover:shadow-[0_15px_45px_rgba(34,197,94,0.35)] border border-[#52B788]/50 hover:border-amber-400/50 
-                           active:scale-95 cursor-pointer"
-            >
-                {/* Pulsing Active Status Dot */}
-                <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#092212]">
-                    <span className="relative flex h-2 w-2">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22c55e] opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-[#22c55e]"></span>
-                    </span>
-                </div>
-
-                {/* Brain / Ross Icon */}
-                <Brain size={19} className="text-[#E2F1E5] shrink-0 group-hover:rotate-12 transition-transform duration-300" />
-
-                {/* Text Label */}
-                <span className="text-sm font-bold tracking-tight text-[#E2F1E5] select-none font-sans whitespace-nowrap">
-                    Ask Prof. Ross
-                </span>
-
-                {/* AI Pill Badge in Prehistoric Amber Gold */}
-                <span className="text-[9px] font-black uppercase tracking-wider text-amber-300 bg-amber-500/20 px-1.5 py-0.5 rounded-md border border-amber-400/40 select-none font-sans shadow-xs">
-                    AI
-                </span>
-
-                {/* Unread Badge */}
-                {!isOpen && unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-[#22c55e] text-[10px] font-bold text-black animate-bounce shadow-md border border-black">
-                        {unreadCount}
-                    </span>
-                )}
-
-                {/* Chevron */}
-                {isOpen && (
-                    <ChevronDown size={16} className="text-[#A3B899] shrink-0 ml-0.5" />
-                )}
-            </button>
-        </div>
+            </div>
+        </>
     );
 };
 
