@@ -23,8 +23,10 @@ import {
 import UserMenu from "../UserMenu";
 import SearchBar from "../../search/SearchBar";
 import NavbarLink from "./NavbarLinks";
+import { useProfessor } from "../../../context/ProfessorContext";
 
 function Navbar() {
+    const { toggleChat, openChat, unreadCount } = useProfessor();
     const [menuOpen, setMenuOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const [query, setQuery] = useState("");
@@ -134,16 +136,34 @@ function Navbar() {
                             </div>
                         )}
 
-                        {/* Hamburger Button */}
+                        {/* Hamburger & Small AI Button (Mobile) */}
                         <div className="flex items-center gap-2 lg:hidden">
+                            {/* Mobile Small AI Button */}
+                            <button
+                                onClick={toggleChat}
+                                title="Ask Professor Ross AI"
+                                className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#173822] via-[#234E31] to-[#2D5B3A] px-3 py-1.5 text-xs font-semibold text-[#E2F1E5] border border-[#52B788]/45 shadow-[0_4px_14px_rgba(23,56,34,0.3),0_0_12px_rgba(245,158,11,0.18)] active:scale-95 cursor-pointer"
+                            >
+                                <Brain size={15} className="text-amber-200 animate-pulse" />
+                                <span>Ross</span>
+                                <span className="text-[8px] font-black uppercase text-amber-200 bg-amber-500/15 px-1 py-0.2 rounded border border-amber-300/30">
+                                    AI
+                                </span>
+                                {unreadCount > 0 && (
+                                    <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-400 text-[8px] font-black text-stone-950">
+                                        {unreadCount}
+                                    </span>
+                                )}
+                            </button>
+
                             <button
                                 onClick={() => {
                                     setSearchOpen(true);
                                     setMenuOpen(false);
                                 }}
-                                className="rounded-full p-2 transition hover:bg-[#36593D]/10"
+                                className="rounded-full p-2 transition hover:bg-[#36593D]/10 cursor-pointer"
                             >
-                                <Search size={24} className="text-[#36593D]" />
+                                <Search size={22} className="text-[#36593D]" />
                             </button>
 
                             <button
@@ -151,9 +171,9 @@ function Navbar() {
                                     setSearchOpen(false);
                                     setMenuOpen(true);
                                 }}
-                                className="rounded-full p-2 transition hover:bg-[#36593D]/10"
+                                className="rounded-full p-2 transition hover:bg-[#36593D]/10 cursor-pointer"
                             >
-                                <Menu size={28} className="text-[#36593D]" />
+                                <Menu size={26} className="text-[#36593D]" />
                             </button>
                         </div>
 
@@ -292,15 +312,32 @@ function Navbar() {
                         </div>
 
                         {/* Right-Section (Desktop) */}
-                        <div className="hidden items-center gap-2 lg:flex">
+                        <div className="hidden items-center gap-2 xl:gap-3 lg:flex">
+                            {/* Ask Prof. Ross AI Button */}
+                            <button
+                                onClick={toggleChat}
+                                title="Ask Professor Ross AI"
+                                className="group relative flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#173822] via-[#234E31] to-[#2D5B3A] px-3 py-1.5 xl:px-3.5 xl:py-2 text-xs xl:text-sm font-semibold text-[#E2F1E5] border border-[#52B788]/60 shadow-[0_0_15px_rgba(82,183,136,0.35),0_4px_16px_rgba(23,56,34,0.35)] hover:scale-105 hover:-translate-y-0.5 hover:border-amber-300/80 hover:shadow-[0_0_24px_rgba(245,158,11,0.35),0_6px_24px_rgba(23,56,34,0.45)] hover:from-[#1F482B] hover:to-[#356743] transition-all duration-300 cursor-pointer active:scale-95 shrink-0"
+                            >
+                                <Brain size={16} className="text-amber-200 group-hover:rotate-12 transition-transform duration-300 shrink-0" />
+                                <span className="whitespace-nowrap font-medium">Ross</span>
+                                <span className="text-[9px] font-black uppercase tracking-wider text-amber-200 bg-amber-500/15 px-1.5 py-0.5 rounded border border-amber-300/30 select-none">
+                                    AI
+                                </span>
+                                {unreadCount > 0 && (
+                                    <span className="flex h-4 w-4 items-center justify-center rounded-full bg-amber-400 text-[9px] font-black text-stone-950 animate-bounce shadow-xs">
+                                        {unreadCount}
+                                    </span>
+                                )}
+                            </button>
+
                             {/* search field */}
                             <SearchBar
                                 value={query}
                                 onChange={setQuery}
                                 placeholder="Search dinosaurs, fossils..."
-                                className="w-44 xl:w-72 focus-within:w-60 transition-all duration-300"
+                                className="w-36 xl:w-60 focus-within:w-64 transition-all duration-300"
                             />
-
 
                             <div className="shrink-0">
                                 <UserMenu />
