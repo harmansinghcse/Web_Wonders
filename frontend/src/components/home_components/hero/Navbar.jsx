@@ -178,7 +178,7 @@ function Navbar() {
                         </div>
 
                         {/* Mid-Section (Desktop Navbar matching Screenshot) */}
-                        <div className="hidden items-center gap-1 xl:gap-1.5 lg:flex">
+                        <div className="hidden items-center gap-0.5 xl:gap-1 lg:flex">
                             
                             {/* Home Link */}
                             <NavbarLink to="/" icon={Home}>
@@ -187,14 +187,14 @@ function Navbar() {
 
                             {/* Explore Dropdown */}
                             <div className="relative group">
-                                <button className={`flex items-center gap-1 xl:gap-1.5 rounded-full border border-transparent px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm font-medium transition-all duration-300 ease-out cursor-pointer ${
+                                <button className={`flex items-center gap-1 rounded-full border border-transparent px-2 xl:px-3 py-1.5 text-xs font-medium transition-all duration-300 ease-out cursor-pointer ${
                                     location.pathname.startsWith('/explore') || location.pathname === '/map' || location.pathname === '/timeline' || location.pathname === '/explorer'
                                         ? 'bg-[#D2E6D2] text-[#234229] border-[#36593D]/40 shadow-[0_4px_20px_rgba(37,74,42,0.35),0_0_12px_rgba(54,89,61,0.3)] font-semibold'
                                         : 'text-[#4A4A4A] hover:bg-[#EAF3EA] hover:text-[#36593D] hover:border-[#36593D]/25 hover:shadow-[0_0_15px_rgba(54,89,61,0.18)] hover:-translate-y-[1px]'
                                 }`}>
-                                    <Compass size={16} />
+                                    <Compass size={15} />
                                     <span>Explore</span>
-                                    <ChevronDown size={14} className="transition-transform duration-200 group-hover:rotate-180 opacity-70" />
+                                    <ChevronDown size={13} className="transition-transform duration-200 group-hover:rotate-180 opacity-70" />
                                 </button>
 
                                 {/* Dropdown Menu Panel */}
@@ -237,14 +237,14 @@ function Navbar() {
 
                             {/* Create Dropdown */}
                             <div className="relative group">
-                                <button className={`flex items-center gap-1 xl:gap-1.5 rounded-full border border-transparent px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm font-medium transition-all duration-300 ease-out cursor-pointer ${
+                                <button className={`flex items-center gap-1 rounded-full border border-transparent px-2 xl:px-3 py-1.5 text-xs font-medium transition-all duration-300 ease-out cursor-pointer ${
                                     location.pathname === '/create'
                                         ? 'bg-[#D2E6D2] text-[#234229] border-[#36593D]/40 shadow-[0_4px_20px_rgba(37,74,42,0.35),0_0_12px_rgba(54,89,61,0.3)] font-semibold'
                                         : 'text-[#4A4A4A] hover:bg-[#EAF3EA] hover:text-[#36593D] hover:border-[#36593D]/25 hover:shadow-[0_0_15px_rgba(54,89,61,0.18)] hover:-translate-y-[1px]'
                                 }`}>
-                                    <Sparkles size={16} />
+                                    <Sparkles size={15} />
                                     <span>Create</span>
-                                    <ChevronDown size={14} className="transition-transform duration-200 group-hover:rotate-180 opacity-70" />
+                                    <ChevronDown size={13} className="transition-transform duration-200 group-hover:rotate-180 opacity-70" />
                                 </button>
 
                                 {/* Dropdown Menu Panel */}
@@ -265,14 +265,14 @@ function Navbar() {
 
                             {/* Learn Dropdown (Matching Screenshot Exactly) */}
                             <div className="relative group">
-                                <button className={`flex items-center gap-1 xl:gap-1.5 rounded-full border border-transparent px-2.5 xl:px-3.5 py-1.5 xl:py-2 text-xs xl:text-sm font-medium transition-all duration-300 ease-out cursor-pointer ${
+                                <button className={`flex items-center gap-1 rounded-full border border-transparent px-2 xl:px-3 py-1.5 text-xs font-medium transition-all duration-300 ease-out cursor-pointer ${
                                     location.pathname === '/quiz' || location.pathname.startsWith('/games')
                                         ? 'bg-[#D2E6D2] text-[#234229] border-[#36593D]/40 shadow-[0_4px_20px_rgba(37,74,42,0.35),0_0_12px_rgba(54,89,61,0.3)] font-semibold'
                                         : 'text-[#4A4A4A] hover:bg-[#EAF3EA] hover:text-[#36593D] hover:border-[#36593D]/25 hover:shadow-[0_0_15px_rgba(54,89,61,0.18)] hover:-translate-y-[1px]'
                                 }`}>
-                                    <BookOpen size={16} />
+                                    <BookOpen size={15} />
                                     <span>Play & Learn</span>
-                                    <ChevronDown size={14} className="transition-transform duration-200 group-hover:rotate-180 opacity-70" />
+                                    <ChevronDown size={13} className="transition-transform duration-200 group-hover:rotate-180 opacity-70" />
                                 </button>
 
                                 {/* Dropdown Menu Panel with Exactly 2 Options: Interactive Quiz & Games */}
@@ -336,7 +336,7 @@ function Navbar() {
                                 value={query}
                                 onChange={setQuery}
                                 placeholder="Search dinosaurs, fossils..."
-                                className="w-36 xl:w-60 focus-within:w-64 transition-all duration-300"
+                                className="w-44 xl:w-72 focus-within:w-60 transition-all duration-300"
                             />
 
                             <div className="shrink-0">
