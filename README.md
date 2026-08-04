@@ -56,22 +56,9 @@ An interactive, full-stack educational web application that brings the prehistor
 
 ## 🛠️ Tech Stack
 
-### Frontend
-- **Framework & Build Tool:** React 19, Vite 8
-- **Styling:** Tailwind CSS v4, Custom CSS
-- **Animations:** Framer Motion
-- **Maps:** Leaflet, React-Leaflet, React-Leaflet-Cluster
-- **Icons & UI Utilities:** Lucide React, React Hot Toast
-- **Authentication:** `@react-oauth/google`
-- **Routing:** React Router DOM v7
-
-### Backend
-- **Runtime & Server:** Node.js, Express.js v5
-- **Database & ODM:** MongoDB, Mongoose
-- **AI Integration:** Groq SDK (`groq-sdk`) / LLM APIs for AI Paleontologist
-- **Media & File Storage:** Cloudinary, Multer
-- **Authentication & Security:** JSON Web Tokens (JWT), BcryptJS, Cookie Parser
-- **Validation & Emails:** Joi validation, Brevo / Nodemailer
+- **Frontend:** React 19, Vite, Tailwind CSS, Framer Motion, Leaflet
+- **Backend:** Node.js, Express.js, MongoDB (Mongoose)
+- **Services & Tools:** Groq AI SDK, Cloudinary, JWT Auth
 
 ---
 
