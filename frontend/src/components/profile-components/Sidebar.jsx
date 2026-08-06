@@ -4,7 +4,6 @@ import {
     Trophy,
     User,
     LogOut,
-    Settings,
     X,
     ShieldAlert,
     Gamepad2,
@@ -57,11 +56,6 @@ const links = [
         name: "Profile",
         icon: User,
         path: "/profile",
-    },
-    {
-        name: "Settings",
-        icon: Settings,
-        path: "/settings",
     },
 ];
 
