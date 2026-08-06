@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Navbar from "../../home_components/hero/Navbar";
 import { ArrowLeft, RefreshCw, Volume2, VolumeX, Compass, Play, Award } from "lucide-react";
 import Cursor from "../common/Cursor";
+import LandingScreen from "./LandingScreen";
 
 // Synthesized sound effects for Fossil Hunter
 const playSound = (type, enabled = true) => {
@@ -214,274 +215,71 @@ export default function FossilHunterGame({ onBackToHub }) {
 
             {/* LANDING / DIFFICULTY SELECTOR SCREEN */}
             {gameState === "landing" && (
-                <main className="relative z-10 max-w-4xl mx-auto pt-28 pb-16 px-4 flex flex-col items-center justify-center min-h-screen text-center space-y-8">
-                    
-                    {onBackToHub && (
-                        <button
-                            onClick={onBackToHub}
-                            className="inline-flex items-center gap-2 self-start bg-white/10 hover:bg-white/20 text-emerald-200 px-4 py-2 rounded-xl text-xs font-bold shadow-md transition-all cursor-pointer backdrop-blur-md"
-                        >
-                            <ArrowLeft size={16} />
-                            <span>Back to Game Hub</span>
-                        </button>
-                    )}
-
-                    <div className="space-y-3">
-                        <div className="inline-flex items-center gap-2 bg-[#1b3827]/80 border border-[#52B788]/40 px-4 py-1 rounded-full text-xs font-serif font-bold text-[#52B788] uppercase backdrop-blur-md">
-                            <span>⛏️ EXCAVATION GAME</span>
-                        </div>
-                        <h1 className="text-4xl sm:text-6xl font-black font-serif text-white uppercase tracking-wider drop-shadow-md">
-                            JURASSIC FOSSIL EXCAVATOR
-                        </h1>
-                        <p className="text-sm sm:text-base text-emerald-200/90 max-w-lg mx-auto font-medium">
-                            Unearth ancient dinosaur bones, avoid dense bedrock hazards, and assemble complete prehistoric skeletons!
-                        </p>
-                    </div>
-
-                    {/* Difficulty Selection */}
-                    <div className="w-full max-w-md bg-[#18291c]/95 border border-[#2b4c34] p-5 rounded-3xl shadow-2xl space-y-4 backdrop-blur-md">
-                        <h3 className="text-xs font-serif font-bold text-amber-300 uppercase tracking-widest">
-                            SELECT DIFFICULTY LEVEL
-                        </h3>
-                        
-                        <div className="grid grid-cols-3 gap-3">
-                            {[
-                                { id: "easy", name: "Easy", digs: "20 Digs", fossils: "4 Fossils", rocks: "3 Rocks" },
-                                { id: "moderate", name: "Moderate", digs: "15 Digs", fossils: "6 Fossils", rocks: "5 Rocks" },
-                                { id: "hard", name: "Hard", digs: "10 Digs", fossils: "8 Fossils", rocks: "7 Rocks" },
-                            ].map((diff) => (
-                                <button
-                                    key={diff.id}
-                                    onClick={() => setDifficulty(diff.id)}
-                                    className={`py-3 px-2 rounded-2xl text-xs font-bold transition-all flex flex-col items-center space-y-1 cursor-pointer border ${
-                                        difficulty === diff.id
-                                            ? "bg-[#52B788] text-slate-950 border-[#52B788] shadow-lg scale-105"
-                                            : "bg-white/5 text-emerald-200 border-white/10 hover:bg-white/10"
-                                    }`}
-                                >
-                                    <span className="font-extrabold uppercase">{diff.name}</span>
-                                    <span className="text-[10px] opacity-80">{diff.digs}</span>
-                                    <span className="text-[9px] opacity-70">{diff.fossils}</span>
-                                </button>
-                            ))}
-                        </div>
-
-                        <button
-                            onClick={() => initGrid(difficulty)}
-                            className="w-full py-4 rounded-2xl bg-[#52B788] text-slate-950 hover:bg-[#64cca2] font-black text-sm uppercase tracking-wider shadow-xl transition-all hover:scale-105 flex items-center justify-center gap-2 cursor-pointer mt-2"
-                        >
-                            <Play size={18} />
-                            <span>START EXCAVATION</span>
-                        </button>
-                    </div>
-
-                </main>
+                <LandingScreen
+                    difficulty={difficulty}
+                    setDifficulty={setDifficulty}
+                    initGrid={initGrid}
+                    onBackToHub={onBackToHub}
+                />
             )}
 
             {/* ACTIVE GAMEPLAY & GAME OVER SCREENS */}
             {(gameState === "playing" || gameState === "gameover") && (
                 <main className="relative z-10 max-w-5xl mx-auto pt-8 pb-12 px-4 sm:px-6 flex flex-col space-y-6">
-                    
-                    {/* Top HUD Header */}
-                    <div className="flex items-center justify-between bg-[#192b1e]/95 border border-[#2b4c34] rounded-2xl p-4 sm:p-5 shadow-xl backdrop-blur-md">
-                        <div className="flex items-center gap-3.5">
-                            <button
-                                onClick={onBackToHub || (() => setGameState("landing"))}
-                                className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 transition-all text-white cursor-pointer hover:scale-105"
-                                title="Return to Game Center"
-                            >
-                                <ArrowLeft size={22} />
-                            </button>
-                            <div>
-                                <div className="flex items-center gap-2.5">
-                                    <h1 className="text-lg sm:text-xl font-serif font-black text-amber-200 uppercase tracking-wider">
-                                        FOSSIL EXCAVATOR
-                                    </h1>
-                                    <span className="bg-[#52B788]/20 border border-[#52B788]/50 px-3 py-0.5 rounded-full text-xs font-black text-[#52B788] uppercase tracking-wider">
-                                        {difficulty}
-                                    </span>
-                                </div>
-                                <p className="text-xs text-emerald-300/90 font-medium">Unearth ancient dinosaur bones!</p>
-                            </div>
-                        </div>
+                    <Gameplay
+                        difficulty={difficulty}
 
-                        <div className="flex items-center gap-3 sm:gap-5">
-                            <div className="bg-[#0b160f] px-4 py-2 rounded-xl border border-[#2b4c34] text-center min-w-[80px]">
-                                <span className="text-[10px] text-gray-400 block uppercase font-bold tracking-wider">Digs Left</span>
-                                <span className="text-lg font-mono font-black text-amber-300">{attempts} / {maxAttempts}</span>
-                            </div>
-                            <div className="bg-[#0b160f] px-4 py-2 rounded-xl border border-[#2b4c34] text-center min-w-[80px]">
-                                <span className="text-[10px] text-gray-400 block uppercase font-bold tracking-wider">Fossils</span>
-                                <span className="text-lg font-mono font-black text-emerald-400">{fossilsFound} / {totalFossils}</span>
-                            </div>
-                            <div className="bg-[#0b160f] px-4 py-2 rounded-xl border border-[#2b4c34] text-center min-w-[80px]">
-                                <span className="text-[10px] text-gray-400 block uppercase font-bold tracking-wider">Score</span>
-                                <span className="text-lg font-mono font-black text-white">{score}</span>
-                            </div>
-                            <button
-                                onClick={() => setSoundEnabled(!soundEnabled)}
-                                className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white cursor-pointer"
-                            >
-                                {soundEnabled ? <Volume2 size={22} /> : <VolumeX size={22} />}
-                            </button>
-                        </div>
-                    </div>
+                        attempts={attempts}
+                        maxAttempts={maxAttempts}
 
-                    {/* Main Play Area */}
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                        
-                        {/* Left: Dig Site Grid */}
-                        <div className="lg:col-span-8 bg-[#18291c]/90 border border-[#2b4c34] rounded-2xl p-6 shadow-2xl flex flex-col items-center backdrop-blur-md">
-                            <h2 className="text-base font-serif font-bold text-amber-300 tracking-wider uppercase mb-5 flex items-center gap-2">
-                                <Compass size={20} />
-                                <span>EXCAVATION GRID (CLICK TILE TO DIG)</span>
-                            </h2>
+                        fossilsFound={fossilsFound}
+                        totalFossils={totalFossils}
 
-                            <div className="grid grid-cols-5 gap-3.5 w-full max-w-lg aspect-square">
-                                {grid.map((tile, idx) => (
-                                    <button
-                                        key={tile.id}
-                                        onClick={() => handleTileClick(idx)}
-                                        disabled={tile.revealed || attempts <= 0 || gameState === "gameover"}
-                                        className={`relative w-full h-full rounded-2xl border-2 transition-all duration-300 flex items-center justify-center text-3xl shadow-lg cursor-pointer ${
-                                            !tile.revealed
-                                                ? "bg-gradient-to-b from-[#4a3f31] to-[#2e261c] border-[#6b5a45] hover:border-amber-400 hover:scale-105"
-                                                : tile.content === "fossil"
-                                                ? "bg-gradient-to-b from-amber-900 via-amber-950 to-stone-900 border-amber-400 shadow-[0_0_20px_rgba(251,191,36,0.6)]"
-                                                : tile.content === "rock"
-                                                ? "bg-stone-800 border-red-500/50"
-                                                : "bg-[#142017] border-[#203a27]"
-                                        }`}
-                                    >
-                                        {!tile.revealed ? (
-                                            <span className="opacity-60 text-sm font-mono font-bold text-amber-200">⛏️</span>
-                                        ) : tile.content === "fossil" ? (
-                                            <span className="animate-bounce" style={{ animationDuration: "2s" }}>
-                                                {tile.fossilInfo.icon}
-                                            </span>
-                                        ) : tile.content === "rock" ? (
-                                            <span>🪨</span>
-                                        ) : (
-                                            <span className="text-stone-600 text-sm font-bold">·</span>
-                                        )}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+                        score={score}
 
-                        {/* Right: Excavation Log & Actions */}
-                        <div className="lg:col-span-4 bg-[#18291c]/90 border border-[#2b4c34] rounded-2xl p-6 shadow-2xl flex flex-col justify-between space-y-5 backdrop-blur-md">
-                            <div>
-                                <h3 className="text-sm font-serif font-bold text-amber-300 uppercase tracking-wider mb-3">
-                                    EXCAVATION LOG
-                                </h3>
-                                <div className="bg-[#0e1710] border border-white/10 rounded-xl p-3.5 h-56 overflow-y-auto space-y-2 text-xs font-mono">
-                                    {discoveredLogs.length === 0 ? (
-                                        <p className="text-gray-500 italic">No digs recorded yet. Click tiles to excavate!</p>
-                                    ) : (
-                                        discoveredLogs.map((log, index) => (
-                                            <p key={index} className="text-emerald-300 border-b border-white/5 pb-1 leading-relaxed">
-                                                {log}
-                                            </p>
-                                        ))
-                                    )}
-                                </div>
-                            </div>
+                        grid={grid}
 
-                            <div className="pt-2 flex flex-col gap-3">
-                                <button
-                                    onClick={() => initGrid(difficulty)}
-                                    className="w-full py-3.5 rounded-xl bg-[#52B788] text-[#0a180e] hover:bg-[#66d29f] font-extrabold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-all cursor-pointer"
-                                >
-                                    <RefreshCw size={18} />
-                                    <span>Reset Site</span>
-                                </button>
+                        discoveredLogs={discoveredLogs}
 
-                                <button
-                                    onClick={() => setGameState("landing")}
-                                    className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wider transition-all cursor-pointer"
-                                >
-                                    Change Level
-                                </button>
-                            </div>
-                        </div>
+                        soundEnabled={soundEnabled}
 
-                    </div>
+                        handleTileClick={handleTileClick}
+
+                        initGrid={initGrid}
+
+                        setGameState={setGameState}
+                        setSoundEnabled={setSoundEnabled}
+
+                        onBackToHub={onBackToHub}
+                    />
 
                     {/* STANDARDIZED JURASSIC COMPLETION MODAL */}
-                    {gameState === "gameover" && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-fadeIn">
-                            <div className="w-full max-w-lg bg-gradient-to-b from-[#14261a] to-[#0b160f] border-2 border-emerald-400 rounded-3xl p-8 shadow-[0_0_50px_rgba(82,183,136,0.3)] text-center space-y-6 text-white">
-                                <div className="text-6xl mb-1 drop-shadow-lg animate-bounce">
-                                    {fossilsFound >= totalFossils ? "🦖" : "🦴"}
-                                </div>
-                                
-                                <div className="space-y-1">
-                                    <h2 className="text-3xl font-serif font-black tracking-wider text-amber-300 uppercase drop-shadow">
-                                        {fossilsFound >= totalFossils ? "LEVEL COMPLETE!" : "EXCAVATION ENDED"}
-                                    </h2>
-                                    <p className="text-sm font-medium text-emerald-200/90 italic">
-                                        {fossilsFound >= totalFossils ? "Excellent excavation, Paleontologist!" : "Nice dig effort! Give it another try."}
-                                    </p>
-                                </div>
+                    <Gameplay
+                        difficulty={difficulty}
 
-                                <div className="bg-[#071109] p-5 rounded-2xl border border-emerald-500/30 grid grid-cols-2 gap-4 font-mono shadow-inner">
-                                    <div className="bg-white/5 p-3 rounded-xl border border-white/10">
-                                        <span className="text-xs text-gray-400 block uppercase font-bold">Total Score</span>
-                                        <span className="text-2xl font-black text-emerald-400">{score}</span>
-                                    </div>
-                                    <div className="bg-white/5 p-3 rounded-xl border border-white/10">
-                                        <span className="text-xs text-gray-400 block uppercase font-bold">Fossils Found</span>
-                                        <span className="text-2xl font-black text-amber-300">{fossilsFound} / {totalFossils}</span>
-                                    </div>
-                                </div>
+                        attempts={attempts}
+                        maxAttempts={maxAttempts}
 
-                                {/* Three Actions Navigation Grid */}
-                                <div className="space-y-3 pt-2">
-                                    {/* Primary Highlighted Button: NEXT LEVEL */}
-                                    <button
-                                        onClick={() => {
-                                            if (difficulty === "easy") {
-                                                setDifficulty("moderate");
-                                                initGrid("moderate");
-                                            } else if (difficulty === "moderate") {
-                                                setDifficulty("hard");
-                                                initGrid("hard");
-                                            } else {
-                                                // Already on Hard -> Restart Hard or Choose another game
-                                                initGrid("hard");
-                                            }
-                                        }}
-                                        className="w-full py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-sm uppercase tracking-wider shadow-lg shadow-emerald-950/50 hover:scale-[1.02] transition-all cursor-pointer flex items-center justify-center gap-2"
-                                    >
-                                        <span>▶</span>
-                                        <span>{difficulty === "hard" ? "PLAY AGAIN (HARD)" : `NEXT LEVEL (${difficulty === "easy" ? "MODERATE" : "HARD"})`}</span>
-                                    </button>
+                        fossilsFound={fossilsFound}
+                        totalFossils={totalFossils}
 
-                                    <div className="grid grid-cols-2 gap-3">
-                                        {/* Secondary Button: TRY AGAIN */}
-                                        <button
-                                            onClick={() => initGrid(difficulty)}
-                                            className="py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-2 border border-white/15"
-                                        >
-                                            <RefreshCw size={16} />
-                                            <span>TRY AGAIN</span>
-                                        </button>
+                        score={score}
 
-                                        {/* Secondary Button: GAME CENTER */}
-                                        <button
-                                            onClick={onBackToHub || (() => setGameState("landing"))}
-                                            className="py-3.5 rounded-xl bg-white/10 hover:bg-white/20 text-emerald-300 font-bold text-xs uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-2 border border-white/15"
-                                        >
-                                            <span>▦</span>
-                                            <span>GAME CENTER</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                        grid={grid}
 
+                        discoveredLogs={discoveredLogs}
+
+                        soundEnabled={soundEnabled}
+
+                        handleTileClick={handleTileClick}
+
+                        initGrid={initGrid}
+
+                        setGameState={setGameState}
+                        setSoundEnabled={setSoundEnabled}
+
+                        onBackToHub={onBackToHub}
+                    />
                 </main>
             )}
 
