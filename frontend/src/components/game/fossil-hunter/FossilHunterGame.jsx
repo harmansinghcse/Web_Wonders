@@ -258,29 +258,21 @@ export default function FossilHunterGame({ onBackToHub }) {
                     />
 
                     {/* STANDARDIZED JURASSIC COMPLETION MODAL */}
-                    <Gameplay
+                    <GameOverModal
+
+                        gameState={gameState}
+
                         difficulty={difficulty}
 
-                        attempts={attempts}
-                        maxAttempts={maxAttempts}
+                        score={score}
 
                         fossilsFound={fossilsFound}
                         totalFossils={totalFossils}
 
-                        score={score}
-
-                        grid={grid}
-
-                        discoveredLogs={discoveredLogs}
-
-                        soundEnabled={soundEnabled}
-
-                        handleTileClick={handleTileClick}
-
                         initGrid={initGrid}
 
+                        setDifficulty={setDifficulty}
                         setGameState={setGameState}
-                        setSoundEnabled={setSoundEnabled}
 
                         onBackToHub={onBackToHub}
                     />

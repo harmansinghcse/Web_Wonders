@@ -428,6 +428,8 @@ export default function MemoryMatchGame({ onBackToHub }) {
                     startNewGame={startNewGame}
                     setDifficulty={setDifficulty}
 
+                    isPreloading={isPreloading}
+
                     onBackToHub={onBackToHub}
                 />
             </main>

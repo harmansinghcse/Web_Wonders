@@ -9,6 +9,7 @@ import {
     Check,
     HelpCircle,
     Eye,
+    Image as ImageIcon,
 } from "lucide-react";
 
 export default function Gameplay({
