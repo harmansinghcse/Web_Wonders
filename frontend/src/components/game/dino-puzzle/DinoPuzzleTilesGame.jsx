@@ -18,6 +18,10 @@ import {
 } from "lucide-react";
 import Cursor from "../common/Cursor";
 
+import LandingScreen from "./LandingScreen";
+import Gameplay from "./Gameplay";
+import VictoryModal from "./VictoryModal";
+
 const DINO_IMAGES = [
     { id: "trex", name: "Tyrannosaurus Rex", src: "/trex.jpg", period: "Late Cretaceous", role: "Apex Predator" },
     { id: "triceratops", name: "Triceratops", src: "/triceratops.jpg", period: "Late Cretaceous", role: "Armored Herbivore" },
@@ -333,404 +337,75 @@ export default function DinoPuzzleTilesGame({ onBackToHub }) {
 
             {/* LANDING / LAUNCHER WINDOW SCREEN */}
             {gameState === "landing" && (
-                <main className="relative z-10 max-w-4xl mx-auto pt-28 pb-16 px-4 flex flex-col items-center justify-center min-h-screen text-center space-y-8">
-                    
-                    {onBackToHub && (
-                        <button
-                            onClick={onBackToHub}
-                            className="inline-flex items-center gap-2 self-start bg-white/15 hover:bg-white/25 text-purple-200 px-4 py-2 rounded-xl text-xs font-bold shadow-md transition-all cursor-pointer backdrop-blur-md border border-white/20"
-                        >
-                            <ArrowLeft size={16} />
-                            <span>Back to Game Hub</span>
-                        </button>
-                    )}
+                <LandingScreen
+                    gridSize={gridSize}
+                    setGridSize={setGridSize}
 
-                    <div className="space-y-3">
-                        <div className="inline-flex items-center gap-2 bg-[#331552]/85 border border-purple-400/50 px-4 py-1.5 rounded-full text-xs font-serif font-bold text-purple-200 uppercase backdrop-blur-md shadow-md">
-                            <Puzzle size={15} className="text-purple-300" />
-                            <span>PUZZLE & LOGIC</span>
-                        </div>
-                        <h1 className="text-4xl sm:text-6xl font-black font-serif text-white uppercase tracking-wider drop-shadow-lg">
-                            JURASSIC DINO PUZZLE TILES
-                        </h1>
-                        <p className="text-sm sm:text-base text-purple-100/90 max-w-lg mx-auto font-medium drop-shadow-sm">
-                            Choose your artwork and difficulty to reconstruct ancient dinosaur relics in this interlocking jigsaw puzzle!
-                        </p>
-                    </div>
+                    selectedDino={selectedDino}
+                    setSelectedDino={setSelectedDino}
 
-                    {/* Central Launcher Control Window */}
-                    <div className="w-full max-w-2xl bg-[#25103d]/90 border border-purple-400/50 p-5 sm:p-6 rounded-3xl shadow-[0_0_50px_rgba(168,85,247,0.25)] space-y-5 backdrop-blur-xl">
-                        
-                        {/* Select Difficulty Level */}
-                        <div className="space-y-2.5">
-                            <h3 className="text-[11px] sm:text-xs font-serif font-bold text-amber-300 uppercase tracking-widest text-center sm:text-left">
-                                SELECT DIFFICULTY LEVEL
-                            </h3>
-                            
-                            <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
-                                {[
-                                    { id: 3, name: "EASY", grid: "3×3 Grid", pieces: "9 Jigsaw Pieces" },
-                                    { id: 4, name: "MODERATE", grid: "4×4 Grid", pieces: "16 Jigsaw Pieces" },
-                                    { id: 5, name: "HARD", grid: "5×5 Grid", pieces: "25 Jigsaw Pieces" },
-                                ].map((item) => (
-                                    <button
-                                        key={item.id}
-                                        onClick={() => setGridSize(item.id)}
-                                        className={`p-2.5 sm:p-3 rounded-2xl border text-center transition cursor-pointer flex flex-col items-center justify-center ${
-                                            gridSize === item.id
-                                                ? item.id === 3
-                                                    ? "bg-emerald-600/90 border-emerald-400 text-white shadow-lg scale-102"
-                                                    : item.id === 4
-                                                    ? "bg-amber-600/90 border-amber-400 text-white shadow-lg scale-102"
-                                                    : "bg-red-600/90 border-red-400 text-white shadow-lg scale-102"
-                                                : "bg-[#180829]/75 border-purple-400/25 text-stone-200 hover:border-purple-300 hover:text-white"
-                                        }`}
-                                    >
-                                        <span className="font-extrabold text-xs sm:text-sm uppercase">{item.name}</span>
-                                        <span className="text-[10px] opacity-90 mt-0.5 font-medium">{item.grid}</span>
-                                        <span className="text-[9px] opacity-75">{item.pieces}</span>
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+                    DINO_IMAGES={DINO_IMAGES}
 
-                        {/* Select Dinosaur Artwork */}
-                        <div className="space-y-2.5 pt-1">
-                            <div className="flex items-center justify-between">
-                                <h3 className="text-[11px] sm:text-xs font-serif font-bold text-purple-200 uppercase tracking-widest">
-                                    SELECT DINOSAUR ARTWORK
-                                </h3>
-                                <span className="text-[10px] sm:text-[11px] font-bold text-amber-300">
-                                    Selected: {selectedDino.name}
-                                </span>
-                            </div>
+                    startGame={startGame}
 
-                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3">
-                                {DINO_IMAGES.map((dino) => {
-                                    const isSelected = selectedDino.id === dino.id;
-                                    return (
-                                        <button
-                                            key={dino.id}
-                                            onClick={() => setSelectedDino(dino)}
-                                            className={`group relative rounded-2xl overflow-hidden border transition-all duration-300 cursor-pointer text-left ${
-                                                isSelected
-                                                    ? "border-amber-400 ring-4 ring-amber-400/35 scale-[1.02] shadow-[0_0_25px_rgba(245,158,11,0.4)] z-10"
-                                                    : "border-white/20 opacity-85 hover:opacity-100 hover:border-purple-300 hover:scale-[1.01]"
-                                            }`}
-                                        >
-                                            <div className="h-24 sm:h-28 w-full overflow-hidden relative">
-                                                <img
-                                                    src={dino.src}
-                                                    alt={dino.name}
-                                                    className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                                />
-                                                
-                                                {isSelected && (
-                                                    <div className="absolute top-1.5 right-1.5 bg-amber-400 text-slate-950 px-1.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider shadow-md">
-                                                        SELECTED ✓
-                                                    </div>
-                                                )}
-
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent flex flex-col justify-end p-2 sm:p-2.5">
-                                                    <span className="text-xs sm:text-sm font-extrabold text-white group-hover:text-amber-300 transition-colors drop-shadow-sm truncate">
-                                                        {dino.name}
-                                                    </span>
-                                                    <span className="text-[9px] sm:text-[10px] text-purple-200 font-medium truncate">
-                                                        {dino.period} • {dino.role}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
-
-                        {/* Start Game Action Button */}
-                        <button
-                            onClick={startGame}
-                            className="w-full py-3.5 rounded-2xl bg-[#52B788] hover:bg-[#40a073] text-slate-950 font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl transition-all cursor-pointer hover:scale-102 active:scale-95"
-                        >
-                            <Play size={20} className="fill-current" />
-                            <span>START PUZZLE GAME</span>
-                        </button>
-
-                    </div>
-                </main>
+                    onBackToHub={onBackToHub}
+                />
             )}
 
             {/* ACTIVE PLAYING GAME ARENA */}
             {gameState === "playing" && (
                 <div>
-                    {/* Header Controls */}
-                    <header className="relative z-10 max-w-6xl mx-auto pt-6 px-4 sm:px-6 flex items-center justify-between">
-                        <button
-                            onClick={() => setGameState("landing")}
-                            className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/15 text-stone-200 text-sm font-bold backdrop-blur-md transition-all cursor-pointer hover:scale-105 active:scale-95 shadow-md"
-                        >
-                            <ArrowLeft size={18} />
-                            <span>PUZZLE MENU</span>
-                        </button>
+                    <Gameplay
+                        board={board}
+                        gridSize={gridSize}
 
-                        <div className="flex items-center gap-3">
-                            <button
-                                onClick={() => setSoundEnabled((prev) => !prev)}
-                                className="p-2.5 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/15 text-stone-200 transition cursor-pointer"
-                                title={soundEnabled ? "Mute sound" : "Enable sound"}
-                            >
-                                {soundEnabled ? <Volume2 size={18} className="text-purple-400" /> : <VolumeX size={18} className="text-stone-400" />}
-                            </button>
-                            <button
-                                onClick={initializeGame}
-                                className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-purple-600/80 hover:bg-purple-500 border border-purple-400/40 text-white text-sm font-bold shadow-lg transition cursor-pointer hover:scale-105 active:scale-95"
-                            >
-                                <RotateCcw size={16} />
-                                <span>RESHUFFLE</span>
-                            </button>
-                        </div>
-                    </header>
+                        selectedDino={selectedDino}
 
-                    {/* Main Game Arena */}
-                    <main className="relative z-10 max-w-5xl mx-auto mt-6 px-4 sm:px-6 flex flex-col items-center">
-                        
-                        {/* Title & Badge */}
-                        <div className="text-center space-y-2 mb-6">
-                            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-purple-500/20 border border-purple-400/40 text-purple-300 text-xs font-black tracking-widest uppercase">
-                                <Puzzle size={14} className="text-purple-400" />
-                                <span>{selectedDino.name} • {difficultyLabel.toUpperCase()} ({gridSize}×{gridSize} • {totalPieces} Pieces)</span>
-                            </div>
-                            <h1 className="text-3xl sm:text-5xl font-black font-serif text-white tracking-tight drop-shadow-md">
-                                JURASSIC JIGSAW PUZZLE
-                            </h1>
-                        </div>
+                        selectedSlot={selectedSlot}
+                        isSolved={isSolved}
 
-                        {/* Dashboard Bar: Stats & Controls */}
-                        <div className="w-full max-w-xl bg-purple-950/40 border border-purple-500/30 rounded-3xl p-4 backdrop-blur-xl mb-6 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center shadow-xl">
-                            <div className="bg-black/30 border border-purple-500/20 rounded-2xl p-2.5">
-                                <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-stone-400 uppercase">
-                                    <Puzzle size={13} className="text-purple-400" />
-                                    <span>MOVES</span>
-                                </div>
-                                <p className="text-lg font-black text-white mt-0.5">{moves}</p>
-                            </div>
+                        moves={moves}
+                        time={time}
 
-                            <div className="bg-black/30 border border-purple-500/20 rounded-2xl p-2.5">
-                                <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-stone-400 uppercase">
-                                    <Timer size={13} className="text-purple-400" />
-                                    <span>TIME</span>
-                                </div>
-                                <p className="text-lg font-black text-white mt-0.5">{formatTime(time)}</p>
-                            </div>
+                        currentBest={currentBest}
+                        difficultyLabel={difficultyLabel}
+                        totalPieces={totalPieces}
 
-                            <div className="bg-black/30 border border-purple-500/20 rounded-2xl p-2.5">
-                                <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-stone-400 uppercase">
-                                    <Trophy size={13} className="text-amber-400" />
-                                    <span>BEST ({difficultyLabel})</span>
-                                </div>
-                                <p className="text-xs font-bold text-amber-300 mt-1">
-                                    {currentBest ? `${currentBest.moves} m (${formatTime(currentBest.time)})` : "--"}
-                                </p>
-                            </div>
+                        piecePaths={piecePaths}
 
-                            <div className="bg-black/30 border border-purple-500/20 rounded-2xl p-2.5 flex items-center justify-center gap-2">
-                                <button
-                                    onClick={() => setShowPreview(true)}
-                                    className="flex items-center gap-1 text-xs font-bold text-purple-300 hover:text-white bg-purple-500/20 hover:bg-purple-500/40 border border-purple-400/30 px-2.5 py-1.5 rounded-xl transition cursor-pointer"
-                                    title="Preview target artwork"
-                                >
-                                    <Eye size={14} />
-                                    <span>PREVIEW</span>
-                                </button>
-                            </div>
-                        </div>
+                        soundEnabled={soundEnabled}
 
-                        {/* Instructions Bar */}
-                        <div className="w-full max-w-xl flex items-center justify-between gap-3 mb-6 bg-black/40 border border-white/10 p-3 rounded-2xl backdrop-blur-md text-xs text-purple-200/90 font-medium">
-                            <span className="flex items-center gap-1.5">
-                                <HelpCircle size={14} className="text-amber-400 shrink-0" />
-                                <span>Click two jigsaw pieces to swap them, or drag & drop onto any slot!</span>
-                            </span>
-                        </div>
+                        handleSlotClick={handleSlotClick}
+                        handleDragStart={handleDragStart}
+                        handleDragOver={handleDragOver}
+                        handleDrop={handleDrop}
 
-                        {/* JIGSAW PUZZLE BOARD CANVAS - SEAMLESS ZERO GAP */}
-                        <div className="relative p-2.5 sm:p-3.5 rounded-3xl bg-gradient-to-b from-[#2a133d] via-[#1a082b] to-[#0a0412] border-2 border-purple-500/40 shadow-[0_25px_60px_rgba(168,85,247,0.35)] backdrop-blur-2xl">
-                            <div
-                                className="grid gap-0 rounded-2xl overflow-hidden bg-stone-950 border border-purple-500/30 relative"
-                                style={{
-                                    gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`,
-                                    width: "min(88vw, 420px)",
-                                    height: "min(88vw, 420px)",
-                                }}
-                            >
-                                {board.map((pieceId, slotIdx) => {
-                                    const isSelected = selectedSlot === slotIdx;
-                                    const isCorrect = pieceId === slotIdx;
+                        initializeGame={initializeGame}
 
-                                    // Piece row & col in original image
-                                    const origRow = Math.floor(pieceId / gridSize);
-                                    const origCol = pieceId % gridSize;
+                        setGameState={setGameState}
+                        setSoundEnabled={setSoundEnabled}
+                        showPreview={showPreview}
+                        setShowPreview={setShowPreview}
 
-                                    const svgPath = piecePaths[pieceId];
-
-                                    return (
-                                        <div
-                                            key={slotIdx}
-                                            onClick={() => handleSlotClick(slotIdx)}
-                                            draggable
-                                            onDragStart={(e) => handleDragStart(e, slotIdx)}
-                                            onDragOver={handleDragOver}
-                                            onDrop={(e) => handleDrop(e, slotIdx)}
-                                            className={`relative w-full h-full transition-all duration-200 select-none cursor-pointer overflow-visible ${
-                                                isSelected
-                                                    ? "scale-110 z-30 filter drop-shadow-[0_0_15px_rgba(245,158,11,0.9)]"
-                                                    : "hover:scale-[1.03] hover:z-20 filter drop-shadow-[0_2px_5px_rgba(0,0,0,0.6)]"
-                                            }`}
-                                        >
-                                            <svg
-                                                viewBox="-25 -25 150 150"
-                                                className="w-full h-full overflow-visible"
-                                            >
-                                                <defs>
-                                                    <clipPath id={`jigsaw-clip-${pieceId}`}>
-                                                        <path d={svgPath} />
-                                                    </clipPath>
-                                                </defs>
-
-                                                {/* Image clipped to jigsaw shape */}
-                                                <image
-                                                    href={selectedDino.src}
-                                                    x={-origCol * 100}
-                                                    y={-origRow * 100}
-                                                    width={gridSize * 100}
-                                                    height={gridSize * 100}
-                                                    clipPath={`url(#jigsaw-clip-${pieceId})`}
-                                                    preserveAspectRatio="none"
-                                                />
-
-                                                {/* Outer jigsaw outline stroke */}
-                                                <path
-                                                    d={svgPath}
-                                                    fill="none"
-                                                    stroke={isSelected ? "#f59e0b" : isCorrect ? "rgba(82,183,136,0.6)" : "rgba(0,0,0,0.65)"}
-                                                    strokeWidth={isSelected ? "4" : "2.5"}
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                />
-                                            </svg>
-
-                                            {/* Correct position indicator checkmark */}
-                                            {isCorrect && !isSolved && (
-                                                <div className="absolute top-1 right-1 bg-emerald-500/90 text-slate-950 p-0.5 rounded-full shadow-md z-30 pointer-events-none">
-                                                    <Check size={10} className="stroke-[3]" />
-                                                </div>
-                                            )}
-                                        </div>
-                                    );
-                                })}
-
-                                {/* FULL UNIFIED COMPLETED ARTWORK OVERLAY (ON GRID FIRST BEFORE POPUP) */}
-                                {isSolved && (
-                                    <div className="absolute inset-0 z-40 rounded-2xl overflow-hidden border-4 border-amber-400 shadow-[0_0_50px_rgba(245,158,11,0.8)] animate-in fade-in zoom-in-95 duration-500">
-                                        <img src={selectedDino.src} alt={selectedDino.name} className="w-full h-full object-cover" />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end justify-center p-4">
-                                            <span className="bg-amber-400 text-slate-950 font-black text-xs sm:text-sm uppercase tracking-wider px-4 py-2 rounded-full shadow-xl animate-bounce">
-                                                ✨ PUZZLE COMPLETED! ✨
-                                            </span>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </main>
-
-                    {/* Target Image Preview Modal */}
-                    {showPreview && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in">
-                            <div className="max-w-md w-full rounded-3xl bg-[#1a0c2e] border border-purple-500/40 p-6 text-center shadow-2xl space-y-4">
-                                <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                                    <h3 className="font-serif text-lg font-bold text-white flex items-center gap-2">
-                                        <ImageIcon size={18} className="text-purple-400" />
-                                        Target Artwork Preview
-                                    </h3>
-                                    <button
-                                        onClick={() => setShowPreview(false)}
-                                        className="text-stone-400 hover:text-white p-1 rounded-full hover:bg-white/10 cursor-pointer"
-                                    >
-                                        ✕
-                                    </button>
-                                </div>
-
-                                <div className="rounded-2xl overflow-hidden border border-purple-400/40 shadow-lg">
-                                    <img src={selectedDino.src} alt={selectedDino.name} className="w-full h-64 object-cover" />
-                                </div>
-
-                                <div>
-                                    <h4 className="font-bold text-white text-base">{selectedDino.name}</h4>
-                                    <p className="text-xs text-purple-300/80">{selectedDino.period} • {selectedDino.role}</p>
-                                </div>
-
-                                <button
-                                    onClick={() => setShowPreview(false)}
-                                    className="w-full py-3 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-sm uppercase tracking-wider transition cursor-pointer"
-                                >
-                                    BACK TO PUZZLE
-                                </button>
-                            </div>
-                        </div>
-                    )}
-
+                        formatTime={formatTime}
+                    />
+                    
                     {/* Solved Victory Celebration Modal */}
-                    {showVictoryModal && (
-                        <div className="fixed inset-0 z-50 overflow-y-auto p-4 sm:p-6 flex items-center justify-center min-h-screen bg-black/85 backdrop-blur-md">
-                            <div className="max-w-sm w-full max-h-[88vh] overflow-y-auto custom-scrollbar my-auto rounded-3xl bg-gradient-to-b from-[#2a0e4a] via-[#1a0833] to-[#0e041d] border-2 border-amber-400/60 p-6 text-center shadow-[0_0_60px_rgba(245,158,11,0.4)] space-y-5 relative">
-                                
-                                <div className="absolute -top-12 -right-12 h-32 w-32 rounded-full bg-amber-500/20 blur-2xl pointer-events-none" />
+                    <VictoryModal
+                        showVictoryModal={showVictoryModal}
 
-                                <div className="inline-flex p-4 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 shadow-xl animate-bounce">
-                                    <Trophy size={36} />
-                                </div>
+                        difficultyLabel={difficultyLabel}
+                        selectedDino={selectedDino}
+                        totalPieces={totalPieces}
 
-                                <div>
-                                    <span className="text-xs font-black uppercase tracking-widest text-amber-300 bg-amber-500/20 px-3 py-1 rounded-full border border-amber-400/40">
-                                        JIGSAW PUZZLE SOLVED ({difficultyLabel.toUpperCase()})!
-                                    </span>
-                                    <h2 className="text-2xl sm:text-3xl font-black font-serif text-white mt-2 tracking-tight">
-                                        {selectedDino.name} Reconstructed!
-                                    </h2>
-                                    <p className="text-xs text-purple-200/80 mt-1">
-                                        Outstanding work, Paleontologist! You assembled all {totalPieces} interlocking pieces flawlessly.
-                                    </p>
-                                </div>
+                        moves={moves}
+                        time={time}
 
-                                {/* Final Stats */}
-                                <div className="grid grid-cols-2 gap-3 bg-black/50 border border-white/10 p-3 rounded-2xl font-mono text-sm">
-                                    <div className="text-center">
-                                        <span className="text-[10px] text-stone-400 uppercase block font-sans">Swaps Made</span>
-                                        <span className="text-lg font-bold text-amber-300">{moves}</span>
-                                    </div>
-                                    <div className="text-center">
-                                        <span className="text-[10px] text-stone-400 uppercase block font-sans">Time Taken</span>
-                                        <span className="text-lg font-bold text-emerald-300">{formatTime(time)}</span>
-                                    </div>
-                                </div>
+                        initializeGame={initializeGame}
+                        setGameState={setGameState}
 
-                                <div className="space-y-2 pt-2">
-                                    <button
-                                        onClick={initializeGame}
-                                        className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black text-sm uppercase tracking-wider shadow-lg transition cursor-pointer hover:scale-102 active:scale-95"
-                                    >
-                                        PLAY AGAIN
-                                    </button>
-                                    <button
-                                        onClick={() => setGameState("landing")}
-                                        className="w-full py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-stone-200 font-bold text-xs uppercase tracking-wider transition cursor-pointer"
-                                    >
-                                        BACK TO PUZZLE MENU
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                        formatTime={formatTime}
+                    />
                 </div>
             )}
         </div>
