@@ -301,6 +301,7 @@ function Navbar() {
                                         }`}
                                     >
                                         <Gamepad2 size={18} className="text-[#36593D] shrink-0" />
+                                        <span>Game Hub</span>
                                     </Link>
                                 </div>
                             </div>
