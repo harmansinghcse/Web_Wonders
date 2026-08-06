@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import Navbar from "../home_components/hero/Navbar";
+import Navbar from "../../home_components/hero/Navbar";
 import { ArrowLeft, RefreshCw, Volume2, VolumeX, Compass, Play, Award } from "lucide-react";
-import Cursor from "./Cursor";
+import Cursor from "../common/Cursor";
 
 // Synthesized sound effects for Fossil Hunter
 const playSound = (type, enabled = true) => {

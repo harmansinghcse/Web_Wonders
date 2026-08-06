@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import Navbar from "../home_components/hero/Navbar";
+import Navbar from "../../home_components/hero/Navbar";
 import { 
     ArrowLeft, 
     ArrowRight,
@@ -16,7 +16,7 @@ import {
     Check,
     HelpCircle
 } from "lucide-react";
-import Cursor from "./Cursor";
+import Cursor from "../common/Cursor";
 
 const DINO_IMAGES = [
     { id: "trex", name: "Tyrannosaurus Rex", src: "/trex.jpg", period: "Late Cretaceous", role: "Apex Predator" },

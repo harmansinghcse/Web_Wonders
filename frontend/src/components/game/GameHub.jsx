@@ -1,10 +1,10 @@
 import { useState } from "react";
 import Navbar from "../home_components/hero/Navbar";
 import { Play, Gamepad2, Grid, Compass } from "lucide-react";
-import MemoryMatchGame from "./MemoryMatchGame";
-import FossilHunterGame from "./FossilHunterGame";
-import DinoPuzzleTilesGame from "./DinoPuzzleTilesGame";
-import Cursor from "./Cursor";
+import MemoryMatchGame from "./memory-match/MemoryMatchGame";
+import FossilHunterGame from "./fossil-hunter/FossilHunterGame";
+import DinoPuzzleTilesGame from "./dino-puzzle/DinoPuzzleTilesGame";
+import Cursor from "./common/Cursor";
 
 export default function GameHub({ initialGame = "hub" }) {
     const [activeGame, setActiveGame] = useState(initialGame);
