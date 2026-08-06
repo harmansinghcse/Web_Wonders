@@ -186,82 +186,92 @@ function Navbar() {
                             </NavbarLink>
 
                             {/* Explore Dropdown */}
-                            <div className="relative group">
-                                <button className={`flex items-center gap-1 rounded-full border border-transparent px-2 xl:px-3 py-1.5 text-xs font-medium transition-all duration-300 ease-out cursor-pointer ${
-                                    location.pathname.startsWith('/explore') || location.pathname === '/map' || location.pathname === '/timeline' || location.pathname === '/explorer'
-                                        ? 'bg-[#D2E6D2] text-[#234229] border-[#36593D]/40 shadow-[0_4px_20px_rgba(37,74,42,0.35),0_0_12px_rgba(54,89,61,0.3)] font-semibold'
-                                        : 'text-[#4A4A4A] hover:bg-[#EAF3EA] hover:text-[#36593D] hover:border-[#36593D]/25 hover:shadow-[0_0_15px_rgba(54,89,61,0.18)] hover:-translate-y-[1px]'
-                                }`}>
-                                    <Compass size={15} />
-                                    <span>Explore</span>
-                                    <ChevronDown size={13} className="transition-transform duration-200 group-hover:rotate-180 opacity-70" />
-                                </button>
+<div className="relative group">
+    <button
+        className={`flex items-center gap-1 rounded-full border border-transparent px-2 xl:px-3 py-1.5 text-xs font-medium transition-all duration-300 ease-out cursor-pointer ${
+            location.pathname === "/explorer" ||
+            location.pathname === "/create" ||
+            location.pathname === "/map" ||
+            location.pathname === "/timeline"
+                ? "bg-[#D2E6D2] text-[#234229] border-[#36593D]/40 shadow-[0_4px_20px_rgba(37,74,42,0.35),0_0_12px_rgba(54,89,61,0.3)] font-semibold"
+                : "text-[#4A4A4A] hover:bg-[#EAF3EA] hover:text-[#36593D] hover:border-[#36593D]/25 hover:shadow-[0_0_15px_rgba(54,89,61,0.18)] hover:-translate-y-[1px]"
+        }`}
+    >
+        <Compass size={15} />
+        <span>Explore</span>
+        <ChevronDown
+            size={13}
+            className="transition-transform duration-200 group-hover:rotate-180 opacity-70"
+        />
+    </button>
 
-                                {/* Dropdown Menu Panel */}
-                                <div className="absolute top-full left-0 mt-2 w-60 rounded-2xl border border-[#e3d7c2] bg-white p-2 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 z-50">
-                                    <Link
-                                        to="/explorer"
-                                        className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold transition-colors ${
-                                            location.pathname === '/explorer'
-                                                ? 'bg-[#D2E6D2] text-[#234229] font-semibold'
-                                                : 'text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D]'
-                                        }`}
-                                    >
-                                        <Compass size={16} className="text-[#36593D]" />
-                                        <span>Explore Dinosaurs</span>
-                                    </Link>
-                                    <Link
-                                        to="/map"
-                                        className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold transition-colors ${
-                                            location.pathname === '/map'
-                                                ? 'bg-[#D2E6D2] text-[#234229] font-semibold'
-                                                : 'text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D]'
-                                        }`}
-                                    >
-                                        <Map size={16} className="text-[#36593D]" />
-                                        <span>Fossil Map</span>
-                                    </Link>
-                                    <Link
-                                        to="/timeline"
-                                        className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold transition-colors ${
-                                            location.pathname === '/timeline'
-                                                ? 'bg-[#D2E6D2] text-[#234229] font-semibold'
-                                                : 'text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D]'
-                                        }`}
-                                    >
-                                        <Clock3 size={16} className="text-[#36593D]" />
-                                        <span>Timeline View</span>
-                                    </Link>
-                                </div>
-                            </div>
+    {/* Dropdown */}
+    <div
+        className="
+            absolute top-full left-0 pt-2 w-60 z-50
+            opacity-0 invisible pointer-events-none translate-y-2
+            group-hover:opacity-100 group-hover:visible
+            group-hover:pointer-events-auto group-hover:translate-y-0
+            transition-all duration-200
+        "
+    >
+        <div className="rounded-2xl border border-[#e3d7c2] bg-white p-2 shadow-xl">
 
-                            {/* Create Dropdown */}
-                            <div className="relative group">
-                                <button className={`flex items-center gap-1 rounded-full border border-transparent px-2 xl:px-3 py-1.5 text-xs font-medium transition-all duration-300 ease-out cursor-pointer ${
-                                    location.pathname === '/create'
-                                        ? 'bg-[#D2E6D2] text-[#234229] border-[#36593D]/40 shadow-[0_4px_20px_rgba(37,74,42,0.35),0_0_12px_rgba(54,89,61,0.3)] font-semibold'
-                                        : 'text-[#4A4A4A] hover:bg-[#EAF3EA] hover:text-[#36593D] hover:border-[#36593D]/25 hover:shadow-[0_0_15px_rgba(54,89,61,0.18)] hover:-translate-y-[1px]'
-                                }`}>
-                                    <Sparkles size={15} />
-                                    <span>Create</span>
-                                    <ChevronDown size={13} className="transition-transform duration-200 group-hover:rotate-180 opacity-70" />
-                                </button>
+            {/* Explore */}
+            <Link
+                to="/explorer"
+                className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold transition-colors ${
+                    location.pathname === "/explorer"
+                        ? "bg-[#D2E6D2] text-[#234229]"
+                        : "text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D]"
+                }`}
+            >
+                <Compass size={16} className="text-[#36593D]" />
+                <span>Explore Dinosaurs</span>
+            </Link>
 
-                                {/* Dropdown Menu Panel */}
-                                <div className="absolute top-full left-0 mt-2 w-56 rounded-2xl border border-[#e3d7c2] bg-white p-2 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 z-50">
-                                    <Link
-                                        to="/create"
-                                        className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold transition-colors ${
-                                            location.pathname === '/create'
-                                                ? 'bg-[#D2E6D2] text-[#234229] font-semibold'
-                                                : 'text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D]'
-                                        }`}
-                                    >
-                                        <PlusSquare size={16} className="text-[#36593D]" />
-                                        <span>Create Dinosaur</span>
-                                    </Link>
-                                </div>
-                            </div>
+            {/* Create */}
+            <Link
+                to="/create"
+                className={`mt-1 flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold transition-colors ${
+                    location.pathname === "/create"
+                        ? "bg-[#D2E6D2] text-[#234229]"
+                        : "text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D]"
+                }`}
+            >
+                <PlusSquare size={16} className="text-[#36593D]" />
+                <span>Create Dinosaur</span>
+            </Link>
+
+            {/* Map */}
+            <Link
+                to="/map"
+                className={`mt-1 flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold transition-colors ${
+                    location.pathname === "/map"
+                        ? "bg-[#D2E6D2] text-[#234229]"
+                        : "text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D]"
+                }`}
+            >
+                <Map size={16} className="text-[#36593D]" />
+                <span>Fossil Map</span>
+            </Link>
+
+            {/* Timeline */}
+            <Link
+                to="/timeline"
+                className={`mt-1 flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-semibold transition-colors ${
+                    location.pathname === "/timeline"
+                        ? "bg-[#D2E6D2] text-[#234229]"
+                        : "text-stone-700 hover:bg-[#E8F0E8] hover:text-[#36593D]"
+                }`}
+            >
+                <Clock3 size={16} className="text-[#36593D]" />
+                <span>Timeline View</span>
+            </Link>
+
+        </div>
+    </div>
+</div>
 
                             {/* Learn Dropdown (Matching Screenshot Exactly) */}
                             <div className="relative group">
