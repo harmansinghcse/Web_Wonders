@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import Navbar from "../../home_components/hero/Navbar";
 import { ArrowLeft, RefreshCw, Volume2, VolumeX, Compass, Play, Award } from "lucide-react";
 import Cursor from "../common/Cursor";
+
+import Gameplay from "./Gameplay";
 import LandingScreen from "./LandingScreen";
+import GameOverModal from "./GameOverModal";
 
 // Synthesized sound effects for Fossil Hunter
 const playSound = (type, enabled = true) => {
@@ -228,6 +231,7 @@ export default function FossilHunterGame({ onBackToHub }) {
                 <main className="relative z-10 max-w-5xl mx-auto pt-8 pb-12 px-4 sm:px-6 flex flex-col space-y-6">
                     <Gameplay
                         difficulty={difficulty}
+                        gameState={gameState}
 
                         attempts={attempts}
                         maxAttempts={maxAttempts}

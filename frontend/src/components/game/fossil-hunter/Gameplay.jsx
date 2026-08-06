@@ -8,7 +8,7 @@ import {
 
 export default function Gameplay({
     difficulty,
-
+    gameState,
     attempts,
     maxAttempts,
 
