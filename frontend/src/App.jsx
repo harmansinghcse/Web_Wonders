@@ -18,6 +18,8 @@ const TopicDetails = lazy(() => import("./pages/TopicDetails"));
 const PlayQuiz = lazy(() => import("./pages/PlayQuiz"));
 const Professor = lazy(() => import("./pages/Professor"));
 const QuizTopic = lazy(() => import("./pages/QuizTopic"));
+const QuizDailyChallenge = lazy(() => import("./pages/QuizDailyChallenge"));
+const DailyChallengeResult = lazy(() => import("./pages/DailyChallengeResult"));
 const QuizPlay = lazy(() => import("./pages/QuizPlay"));
 const QuizResult = lazy(() => import("./pages/QuizResult"));
 const AdminSubmissions = lazy(() => import("./pages/AdminSubmissions"));
@@ -75,6 +77,9 @@ function App() {
                         <Route path="/community" element={<Community />} />
                         <Route path="/quiz" element={<Quiz />} />
                         <Route path="/quiz/:slug" element={<TopicDetails />} />
+                        <Route path="/daily-challenge" element={<QuizDailyChallenge />} />
+                        <Route path="/daily-challenge/result" element={<DailyChallengeResult />} />
+
                         <Route path="/quiz/:slug/play" element={<PlayQuiz />} />
                         <Route path="/professor" element={<Professor />} />
 

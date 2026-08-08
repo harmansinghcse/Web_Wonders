@@ -1,11 +1,5 @@
 import { CheckCircle2, XCircle, Clock3, Dna} from "lucide-react";
 
-// TODO (Backend)
-//
-// Replace these static values using:
-//
-// POST /api/quiz/result
-
 const StatsSummary = () => {
     const stats = [
         {

@@ -1,18 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-// TODO (Backend)
-//
-// Replace static values using:
-//
-// GET /api/quiz/play/:slug/:difficulty
-//
-// {
-//    topic,
-//    currentQuestion,
-//    totalQuestions
-// }
-
 const QuizHeader = ({
     topic,
     currentQuestion,
