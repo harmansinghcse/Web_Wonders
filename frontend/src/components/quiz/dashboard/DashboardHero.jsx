@@ -1,6 +1,6 @@
 import dashboardBanner from "../../../assets/quiz-assets/dashboard-banner.png";
 import professorAvatar from "../../../assets/quiz-assets/ross-avatar.png";
-// TODO (Backend)
+
 // Replace dashboardData prop with API response from:
 // GET /quiz/dashboard
 

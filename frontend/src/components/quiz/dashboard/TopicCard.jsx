@@ -1,9 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
-// TODO (Backend)
-// Props will come from:
-// GET /quiz/topics
 
 const TopicCard = ({
     title,

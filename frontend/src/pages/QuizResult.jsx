@@ -5,23 +5,6 @@ import StatsSummary from "../components/quiz/result/StatsSummary";
 import ProfessorFeedback from "../components/quiz/result/ProfessorFeedback";
 import ResultActions from "../components/quiz/result/ResultActions";
 
-// TODO (Backend)
-//
-// POST /api/quiz/result
-//
-// Response:
-//
-// {
-//    score,
-//    total,
-//    accuracy,
-//    dnaEarned,
-//    badge,
-//    correct,
-//    wrong,
-//    timeTaken
-// }
-
 const QuizResult = () => {
     return (
         <>

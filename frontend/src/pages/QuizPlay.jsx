@@ -7,17 +7,6 @@ import HintCard from "../components/quiz/play/HintCard";
 import QuizNavigation from "../components/quiz/play/QuizNavigation";
 import fossilImage from "../assets/quiz-assets/topic-fossils.png";
 
-// TODO (Backend)
-//
-// Route:
-//
-// /quiz/play/:slug/:difficulty
-//
-// Later:
-//
-// const { slug, difficulty } = useParams();
-//
-// const quizData = await GET /api/quiz/play/:slug/:difficulty;
 
 const QuizPlay = () => {
 

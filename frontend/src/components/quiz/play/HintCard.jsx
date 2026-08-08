@@ -1,14 +1,6 @@
 import { Lightbulb } from "lucide-react";
 import { useState } from "react";
 
-// TODO (Backend)
-//
-// Hint comes from:
-//
-// question.hint
-//
-// Passed from QuizPlay.jsx
-
 const HintCard = ({ hint }) => {
     const [showHint, setShowHint] = useState(false);
 
