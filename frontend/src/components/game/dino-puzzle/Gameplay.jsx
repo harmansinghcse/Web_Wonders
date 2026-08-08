@@ -91,7 +91,7 @@ export default function Gameplay({
                 </div>
 
                 {/* Dashboard Bar: Stats & Controls */}
-                <div className="w-full max-w-xl bg-purple-950/40 border border-purple-500/30 rounded-3xl p-4 backdrop-blur-xl mb-6 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center shadow-xl">
+                <div className="w-full max-w-2xl bg-purple-950/40 border border-purple-500/30 rounded-3xl p-4 backdrop-blur-xl mb-6 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center shadow-xl">
                     <div className="bg-black/30 border border-purple-500/20 rounded-2xl p-2.5">
                         <div className="flex items-center justify-center gap-1.5 text-[11px] font-bold text-stone-400 uppercase">
                             <Puzzle size={13} className="text-purple-400" />
@@ -131,7 +131,7 @@ export default function Gameplay({
                 </div>
 
                 {/* Instructions Bar */}
-                <div className="w-full max-w-xl flex items-center justify-between gap-3 mb-6 bg-black/40 border border-white/10 p-3 rounded-2xl backdrop-blur-md text-xs text-purple-200/90 font-medium">
+                <div className="w-full max-w-2xl flex items-center justify-between gap-3 mb-6 bg-black/40 border border-white/10 p-3 rounded-2xl backdrop-blur-md text-xs text-purple-200/90 font-medium">
                     <span className="flex items-center gap-1.5">
                         <HelpCircle size={14} className="text-amber-400 shrink-0" />
                         <span>Click two jigsaw pieces to swap them, or drag & drop onto any slot!</span>
@@ -139,13 +139,13 @@ export default function Gameplay({
                 </div>
 
                 {/* JIGSAW PUZZLE BOARD CANVAS - SEAMLESS ZERO GAP */}
-                <div className="relative p-2.5 sm:p-3.5 rounded-3xl bg-gradient-to-b from-[#2a133d] via-[#1a082b] to-[#0a0412] border-2 border-purple-500/40 shadow-[0_25px_60px_rgba(168,85,247,0.35)] backdrop-blur-2xl">
+                <div className="relative p-2.5 sm:p-4 rounded-3xl bg-gradient-to-b from-[#2a133d] via-[#1a082b] to-[#0a0412] border-2 border-purple-500/40 shadow-[0_25px_60px_rgba(168,85,247,0.35)] backdrop-blur-2xl">
                     <div
                         className="grid gap-0 rounded-2xl overflow-hidden bg-stone-950 border border-purple-500/30 relative"
                         style={{
                             gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`,
-                            width: "min(88vw, 420px)",
-                            height: "min(88vw, 420px)",
+                            width: "min(92vw, 560px)",
+                            height: "min(92vw, 560px)",
                         }}
                     >
                         {board.map((pieceId, slotIdx) => {
@@ -168,12 +168,12 @@ export default function Gameplay({
                                     onDrop={(e) => handleDrop(e, slotIdx)}
                                     className={`relative w-full h-full transition-all duration-200 select-none cursor-pointer overflow-visible ${
                                         isSelected
-                                            ? "scale-110 z-30 filter drop-shadow-[0_0_15px_rgba(245,158,11,0.9)]"
-                                            : "hover:scale-[1.03] hover:z-20 filter drop-shadow-[0_2px_5px_rgba(0,0,0,0.6)]"
+                                            ? "scale-105 z-30 filter drop-shadow-[0_0_15px_rgba(245,158,11,0.9)]"
+                                            : "hover:scale-[1.02] hover:z-20 filter drop-shadow-[0_2px_5px_rgba(0,0,0,0.6)]"
                                     }`}
                                 >
                                     <svg
-                                        viewBox="-25 -25 150 150"
+                                        viewBox="0 0 100 100"
                                         className="w-full h-full overflow-visible"
                                     >
                                         <defs>
@@ -198,7 +198,7 @@ export default function Gameplay({
                                             d={svgPath}
                                             fill="none"
                                             stroke={isSelected ? "#f59e0b" : isCorrect ? "rgba(82,183,136,0.6)" : "rgba(0,0,0,0.65)"}
-                                            strokeWidth={isSelected ? "4" : "2.5"}
+                                            strokeWidth={isSelected ? "3" : "2"}
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
                                         />
