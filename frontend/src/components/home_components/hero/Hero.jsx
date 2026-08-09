@@ -1,7 +1,7 @@
 import HeroContent from "./HeroContent";
 import Navbar from "./Navbar";
 
-const heroImage = "/jurrasic-home-bg.png";
+const heroImage = "/jurrasic-home-bg.webp";
 
 export default function Hero() {
     return (

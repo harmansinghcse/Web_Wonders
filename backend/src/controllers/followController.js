@@ -1,6 +1,8 @@
 const User = require("../models/User");
 const Follow = require("../models/Follow");
 const Notification = require("../models/Notification");
+const Message = require("../models/Message");
+const Conversation = require("../models/Conversation");
 
 // Follow a user
 const followUser = async (req, res, next) => {
@@ -325,11 +327,14 @@ const getNotifications = async (req, res, next) => {
         const data = notifications.map(n => ({
             id: n._id,
             user: n.sender?.name || "Explorer",
+            senderId: n.sender?._id || "",
             userAvatar: n.sender?.avatar || "",
-            text: n.type === "follow" ? "started following you" : n.type === "like" ? "liked your post" : "commented on your post",
+            text: n.type === "follow" ? "started following you" : n.type === "like" ? "liked your post" : `commented: "${n.comment || "on your post"}"`,
             timeAgo: formatTimeAgo(n.createdAt),
             type: n.type,
             isUnread: n.isUnread,
+            postId: n.post,
+            commentId: n.commentId,
         }));
 
         return res.status(200).json({
@@ -368,6 +373,36 @@ const markNotificationsRead = async (req, res, next) => {
     }
 };
 
+const getUnreadCounts = async (req, res, next) => {
+    try {
+        const currentUserId = req.user._id;
+
+        const unreadNotifications = await Notification.countDocuments({
+            recipient: currentUserId,
+            isUnread: true,
+        });
+
+        const userConversations = await Conversation.find({
+            participants: currentUserId,
+        }).distinct("_id");
+
+        const unreadMessages = await Message.countDocuments({
+            conversation: { $in: userConversations },
+            sender: { $ne: currentUserId },
+            readAt: null,
+        });
+
+        return res.status(200).json({
+            success: true,
+            unreadNotifications,
+            unreadMessages,
+            totalCount: unreadNotifications + unreadMessages,
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     followUser,
     unfollowUser,
@@ -379,4 +414,6 @@ module.exports = {
     getUserProfile,
     getNotifications,
     markNotificationsRead,
+    getUnreadCounts,
 };
+

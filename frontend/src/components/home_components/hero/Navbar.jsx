@@ -1,4 +1,4 @@
-import logo from "../../../assets/jurrasic-logo.png";
+import logo from "../../../assets/jurrasic-logo.webp";
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { 
@@ -19,12 +19,16 @@ import {
     Brain, 
     Map, 
     Users,
-    MessageSquare
+    MessageSquare,
+    Bell
 } from "lucide-react";
 import UserMenu from "../UserMenu";
 import SearchBar from "../../search/SearchBar";
 import NavbarLink from "./NavbarLinks";
 import { useProfessor } from "../../../context/ProfessorContext";
+import { getUnreadCountsService } from "../../../services/communityService";
+import NotificationsModal from "../../community/NotificationsModal";
+
 
 function Navbar() {
     const { toggleChat, openChat, unreadCount } = useProfessor();
@@ -32,6 +36,29 @@ function Navbar() {
     const [searchOpen, setSearchOpen] = useState(false);
     const [query, setQuery] = useState("");
     const location = useLocation();
+    const [unreadCounts, setUnreadCounts] = useState({ unreadNotifications: 0, unreadMessages: 0, totalCount: 0 });
+    const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+
+    useEffect(() => {
+        const fetchCounts = async () => {
+            try {
+                const res = await getUnreadCountsService();
+                if (res.success) {
+                    setUnreadCounts({
+                        unreadNotifications: res.unreadNotifications,
+                        unreadMessages: res.unreadMessages,
+                        totalCount: res.totalCount
+                    });
+                }
+            } catch (err) {
+                // Ignore guest errors
+            }
+        };
+        fetchCounts();
+        const interval = setInterval(fetchCounts, 5000);
+        return () => clearInterval(interval);
+    }, [location.pathname]);
+
 
     // implement mobile menu with overlay
     useEffect(() => {
@@ -88,12 +115,6 @@ function Navbar() {
             icon: Users,
             label: "Community",
             desc: "Connect, share hybrids and fossil finds",
-        },
-        {
-            to: "/community/messages",
-            icon: MessageSquare,
-            label: "Direct Messages",
-            desc: "Send private messages to other explorers",
         }
     ];
 
@@ -161,6 +182,18 @@ function Navbar() {
                                 {unreadCount > 0 && (
                                     <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-400 text-[8px] font-black text-stone-950">
                                         {unreadCount}
+                                    </span>
+                                )}
+                            </button>
+
+                            <button
+                                onClick={() => setIsNotificationsOpen(true)}
+                                className="relative rounded-full p-2 transition hover:bg-[#36593D]/10 cursor-pointer text-[#36593D]"
+                            >
+                                <Bell size={22} />
+                                {unreadCounts.unreadNotifications > 0 && (
+                                    <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[8px] font-bold text-white">
+                                        {unreadCounts.unreadNotifications}
                                     </span>
                                 )}
                             </button>
@@ -329,11 +362,6 @@ function Navbar() {
                             <NavbarLink to="/community" icon={Users}>
                                 Community
                             </NavbarLink>
-
-                            {/* Messages */}
-                            <NavbarLink to="/community/messages" icon={MessageSquare}>
-                                Messages
-                            </NavbarLink>
                         </div>
 
                         {/* Right-Section (Desktop) */}
@@ -364,11 +392,25 @@ function Navbar() {
                                 className="w-44 xl:w-72 focus-within:w-60 transition-all duration-300"
                             />
 
-                            <div className="shrink-0">
-                                <UserMenu />
-                            </div>
-                        </div>
-                    </nav>
+                             {/* Notification Bell */}
+                             <button
+                                 onClick={() => setIsNotificationsOpen(true)}
+                                 className="relative p-2 text-[#4A4A4A] hover:bg-[#EAF3EA] hover:text-[#36593D] rounded-full transition-all duration-300 cursor-pointer shrink-0"
+                                 title="Notifications"
+                             >
+                                 <Bell size={18} />
+                                 {unreadCounts.unreadNotifications > 0 && (
+                                     <span className="absolute top-0 right-0 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white shadow-xs">
+                                         {unreadCounts.unreadNotifications}
+                                     </span>
+                                 )}
+                             </button>
+
+                             <div className="shrink-0">
+                                 <UserMenu />
+                             </div>
+                         </div>
+                     </nav>
                 </header>
             </div>
 
@@ -485,8 +527,14 @@ function Navbar() {
                     </div>
                 </div>
             )}
+            {isNotificationsOpen && (
+                <NotificationsModal
+                    onClose={() => setIsNotificationsOpen(false)}
+                />
+            )}
         </>
     );
 }
+
 
 export default Navbar;

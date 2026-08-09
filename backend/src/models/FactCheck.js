@@ -17,7 +17,8 @@ const factCheckSchema = new mongoose.Schema(
                 "Partially Correct",
                 "Misleading",
                 "Incorrect",
-                "Insufficient Evidence"
+                "Insufficient Evidence",
+                "Answered"
             ],
             required: true,
         },

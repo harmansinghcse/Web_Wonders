@@ -1,6 +1,6 @@
 import QuizContent from "./QuizContent";
 import QuizVisual from "./QuizVisual";
-import quizBackground from "../../../assets/home-assets/quiz-background.png";
+import quizBackground from "../../../assets/home-assets/quiz-background.webp";
 
 export default function QuizSection() {
     return (
