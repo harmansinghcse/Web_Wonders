@@ -13,6 +13,7 @@ import {
 
 import { useNavigate, NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import logo from "../../assets/jurrasic-logo.webp";
 
 /**
  * --------------------------------------------
@@ -101,12 +102,9 @@ export default function Sidebar({ isOpen = false, onClose = () => {} }) {
                 <div className="flex items-center justify-between border-b border-[#D8D2C5]/20 p-5 sm:p-6">
                     <div className="flex items-center gap-3">
                         <img
-                            src="/favicon.png"
+                            src={logo}
                             alt="Jurassic Explorer"
-                            className="h-9 w-9 object-contain shrink-0"
-                            onError={(e) => {
-                                e.target.style.display = "none";
-                            }}
+                            className="h-9 w-auto object-contain shrink-0"
                         />
                         <div>
                             <h1 className="text-xl font-black uppercase tracking-wider text-white">

@@ -1,5 +1,3 @@
-import DinoSoundMysteryWidget from "./DinoSoundMysteryWidget";
-
 export default function HeroButtons() {
     const scrollToNext = () => {
         window.scrollTo({
@@ -18,9 +16,6 @@ export default function HeroButtons() {
                 <span className="font-extrabold">↓</span>
                 Scroll to explore
             </button>
-
-            {/* Dinosaur Sound Mystery Action Button */}
-            <DinoSoundMysteryWidget />
         </div>
     );
 }

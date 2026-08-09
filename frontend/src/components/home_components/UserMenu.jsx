@@ -3,7 +3,7 @@ import { ChevronDown, ChevronRight, User } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
 function UserMenu({ mobile = false, onClose = () => {} }) {
-    const { user, isLoggedIn, loading } = useAuth();
+    const { user, isLoggedIn, loading, logout } = useAuth();
     const lastKnownLoggedIn = typeof window !== "undefined" && localStorage.getItem("isLoggedIn") === "true";
 
     if (loading && lastKnownLoggedIn) {
@@ -79,11 +79,13 @@ function UserMenu({ mobile = false, onClose = () => {} }) {
 
                 {/* Logout row with accent bar */}
                 <button
-                    onClick={() => {
+                    onClick={async () => {
                         onClose();
-                        // TODO: logout()
+                        if (logout) {
+                            await logout();
+                        }
                     }}
-                    className="group flex items-center justify-between rounded-xl border-l-2 border-[#E28F7A] bg-[#E28F7A]/5 px-4 py-3 text-left text-[#E28F7A] transition hover:bg-[#E28F7A]/10"
+                    className="group flex items-center justify-between rounded-xl border-l-2 border-[#E28F7A] bg-[#E28F7A]/5 px-4 py-3 text-left text-[#E28F7A] transition hover:bg-[#E28F7A]/10 cursor-pointer"
                 >
                     <span className="font-semibold">Logout</span>
                     <ChevronRight
