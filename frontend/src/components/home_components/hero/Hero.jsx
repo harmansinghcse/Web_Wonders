@@ -10,6 +10,10 @@ export default function Hero() {
             <img
                 src={heroImage}
                 alt="Jurassic Landscape"
+                fetchpriority="high"
+                loading="eager"
+                width={1920}
+                height={1080}
                 className="absolute inset-0 h-full w-full object-cover object-[80%_top] sm:object-center"
             />
 

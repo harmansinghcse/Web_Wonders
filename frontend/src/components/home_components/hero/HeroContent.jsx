@@ -44,8 +44,8 @@ export default function HeroContent() {
                 <div className="h-px w-14 bg-[#303030]" />
             </motion.div>
 
-            {/* Heading */}
-            <motion.div variants={itemVariants} className="space-y-0">
+            {/* Heading - Immediate LCP Paint */}
+            <div className="space-y-0">
                 <h1 className="font-display text-5xl sm:text-6xl lg:text-[4.2rem] xl:text-[4.8rem] 2xl:text-[5.2rem] font-semibold leading-[0.95] tracking-[-0.03em] text-[#241D18]">
                     Explore the
                 </h1>
@@ -53,7 +53,7 @@ export default function HeroContent() {
                 <h2 className="font-display text-5xl sm:text-6xl lg:text-[4.2rem] xl:text-[4.8rem] 2xl:text-[5.2rem] italic font-semibold leading-[1.0] tracking-[-0.03em] text-[#006F0F]">
                     Age of Dinosaurs
                 </h2>
-            </motion.div>
+            </div>
             {/* Description */}
             <motion.p
                 variants={itemVariants}

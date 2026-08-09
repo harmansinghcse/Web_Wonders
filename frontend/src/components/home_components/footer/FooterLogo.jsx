@@ -30,6 +30,8 @@ const FooterLogo = () => {
                 <img
                     src="/jurassic-explorer-logo.webp"
                     alt="Jurassic Explorer"
+                    width={144}
+                    height={56}
                     className="w-36  h-auto object-contain transition-transform duration-300 ease-out hover:scale-[1.02]"
                 />
             </button>

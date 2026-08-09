@@ -1,0 +1,14 @@
+# Jurassic Explorer
+
+Jurassic Explorer is an interactive, educational dinosaur and paleontology exploration platform. Discover prehistoric giants, explore worldwide fossil maps, travel through geological eras, test paleontology knowledge with interactive quizzes, and build custom hybrid dinosaur species.
+
+## Core Features & Pages
+
+- [Home](https://jurassicexplorer.vercel.app/): Main interactive portal and daily dinosaur mystery
+- [Explore Dinosaurs](https://jurassicexplorer.vercel.app/explorer): Browse and filter the complete dinosaur database
+- [Fossil Map](https://jurassicexplorer.vercel.app/map): Worldwide interactive map of dinosaur fossil discovery sites
+- [Timeline View](https://jurassicexplorer.vercel.app/timeline): Travel through Triassic, Jurassic, and Cretaceous geological eras
+- [Interactive Quiz](https://jurassicexplorer.vercel.app/quiz): Test your paleontology knowledge across topic modules
+- [Create Dinosaur](https://jurassicexplorer.vercel.app/create): Design and build custom hybrid dinosaur species
+- [Community](https://jurassicexplorer.vercel.app/community): Shared discoveries, community creations, and discussions
+- [Games](https://jurassicexplorer.vercel.app/games): Jurassic Memory Match and educational mini-games
