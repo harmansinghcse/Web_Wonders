@@ -94,11 +94,11 @@ export default function Profile() {
 
             <main className="relative z-10 flex-1 overflow-y-auto">
                 {/* Mobile top bar to open sidebar */}
-                <div className="flex items-center justify-between border-b border-[#D8D2C5]/50 bg-white/80 backdrop-blur-md px-4 py-3 lg:hidden">
+                <div className="flex items-center justify-between border-b border-[#D8D2C5]/30 bg-[#1E3326] px-4 py-3 text-white lg:hidden">
                     <div className="flex items-center gap-3">
                         <button
                             onClick={() => setIsSidebarOpen(true)}
-                            className="rounded-full border border-slate-200 p-2 text-slate-700 transition hover:bg-slate-100 cursor-pointer"
+                            className="rounded-full border border-white/15 bg-white/10 p-2 text-white transition hover:bg-white/20 cursor-pointer"
                             aria-label="Open menu"
                         >
                             <svg
@@ -112,15 +112,20 @@ export default function Profile() {
                                 <path d="M3 6h18M3 12h18M3 18h18" />
                             </svg>
                         </button>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2.5">
                             <img
                                 src={logo}
                                 alt="Jurassic Explorer"
-                                className="h-8 w-auto object-contain"
+                                className="h-9 w-auto object-contain shrink-0"
                             />
-                            <span className="text-sm font-bold text-slate-800">
-                                My Profile
-                            </span>
+                            <div>
+                                <h1 className="text-sm font-black uppercase tracking-wider text-white leading-none">
+                                    Jurassic
+                                </h1>
+                                <p className="text-[9px] font-semibold uppercase tracking-wider text-[#A3BFA8] leading-tight">
+                                    Explorer Console
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
