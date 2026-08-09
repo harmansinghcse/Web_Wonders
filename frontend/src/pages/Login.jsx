@@ -50,7 +50,6 @@ function Login() {
             }
             toast.success("Login successful! 🦕");
 
-            localStorage.setItem("is_logged_in", "true");
             await checkAuth();
 
             setTimeout(() => {
