@@ -46,6 +46,7 @@ import {
     getFollowingService,
     getSuggestedExplorersService,
     searchUsersService,
+    factCheckPostService,
 } from "../services/communityService";
 import { getStoredFollows, saveFollowsToStorage } from "../services/communityServiceHelpers";
 import { getAllDinosaurs } from "../services/dinosaurService";

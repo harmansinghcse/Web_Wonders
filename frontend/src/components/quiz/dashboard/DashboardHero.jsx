@@ -1,8 +1,6 @@
 import dashboardBanner from "../../../assets/quiz-assets/dashboard-banner.png";
 import professorAvatar from "../../../assets/quiz-assets/ross-avatar.png";
 
-// Replace dashboardData prop with API response from:
-// GET /quiz/dashboard
 
 const DashboardHero = ({ user }) => {
     const name = user?.name || "Explorer";
