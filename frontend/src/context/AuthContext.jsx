@@ -13,19 +13,33 @@ export function AuthProvider({ children }) {
     }, []);
 
     const checkAuth = async () => {
+        // Prevent firing /api/users/me when visitor is known to be unauthenticated/logged out
+        const hasSession = localStorage.getItem("is_logged_in");
+        if (hasSession === "false") {
+            setUser(null);
+            setLoading(false);
+            return;
+        }
+
         try {
             const response = await fetch(`${API_URL}/api/users/me`, {
                 credentials: "include",
             });
 
             if (!response.ok) {
+                localStorage.setItem("is_logged_in", "false");
                 setUser(null);
                 return;
             }
 
             const data = await response.json();
-
-            setUser(data.user);
+            if (data?.user) {
+                localStorage.setItem("is_logged_in", "true");
+                setUser(data.user);
+            } else {
+                localStorage.setItem("is_logged_in", "false");
+                setUser(null);
+            }
         } catch (error) {
             console.error("Auth check failed:", error);
             setUser(null);
@@ -43,6 +57,7 @@ export function AuthProvider({ children }) {
         } catch (error) {
             console.error(error);
         } finally {
+            localStorage.setItem("is_logged_in", "false");
             setUser(null);
         }
     };

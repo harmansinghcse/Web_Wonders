@@ -29,7 +29,7 @@ export default function QuizFeature({
             </div>
 
             <div className="min-w-0 flex-1">
-                <h4
+                <h3
                     className="
                     text-sm
                     sm:text-base
@@ -40,7 +40,7 @@ export default function QuizFeature({
                     "
                 >
                     {title}
-                </h4>
+                </h3>
 
                 <p
                     className="

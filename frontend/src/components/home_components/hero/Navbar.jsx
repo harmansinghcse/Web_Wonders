@@ -109,6 +109,8 @@ function Navbar() {
                                 <img
                                     src={logo}
                                     alt="Jurassic Explorer"
+                                    width={180}
+                                    height={56}
                                     className="h-12 xl:h-14 w-auto object-contain transition duration-300 hover:scale-105"
                                 />
                             </Link>
