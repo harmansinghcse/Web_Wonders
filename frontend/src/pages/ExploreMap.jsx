@@ -900,11 +900,13 @@ export default function ExploreMap() {
 
                 <div
                     className="
+                        pointer-events-none
                         absolute
                         -left-40
                         top-28
                         h-[500px]
                         w-[500px]
+                        max-w-full
                         rounded-full
                         bg-[#5F963F]/10
                         blur-[130px]
@@ -916,11 +918,13 @@ export default function ExploreMap() {
 
                 <div
                     className="
+                        pointer-events-none
                         absolute
                         -right-32
                         top-[350px]
                         h-[480px]
                         w-[480px]
+                        max-w-full
                         rounded-full
                         bg-[#E5B548]/10
                         blur-[130px]
@@ -932,11 +936,13 @@ export default function ExploreMap() {
 
                 <div
                     className="
+                        pointer-events-none
                         absolute
                         bottom-20
                         left-1/3
                         h-[500px]
                         w-[600px]
+                        max-w-full
                         rounded-full
                         bg-[#327044]/08
                         blur-[140px]

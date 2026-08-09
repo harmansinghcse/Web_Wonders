@@ -40,6 +40,17 @@ function Navbar() {
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
     useEffect(() => {
+        if (menuOpen || searchOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "";
+        }
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [menuOpen, searchOpen]);
+
+    useEffect(() => {
         const fetchCounts = async () => {
             try {
                 const res = await getUnreadCountsService();
