@@ -10,9 +10,11 @@ const {
     likePost,
     addComment,
     deleteComment,
+    editComment,
     searchUsers,
     getSuggestedUsers,
     toggleFollowUser,
+    factCheckPost,
 } = require("../controllers/communityController");
 
 const router = express.Router();
@@ -56,9 +58,13 @@ router.delete("/posts/:id", protect, deletePost);
 // Like system (Authenticated)
 router.post("/posts/:id/like", protect, likePost);
 
+// Fact checking (Authenticated)
+router.post("/posts/:id/fact-check", protect, factCheckPost);
+
 // Comment system (Authenticated)
 router.post("/posts/:id/comment", protect, addComment);
 router.post("/posts/:id/comments", protect, addComment); // support plural endpoint
+router.put("/posts/:postId/comments/:commentId", protect, editComment);
 router.delete("/posts/:postId/comments/:commentId", protect, deleteComment);
 
 module.exports = router;

@@ -44,6 +44,26 @@ const postSchema = new mongoose.Schema(
             enum: ["text", "hybrid", "photo", "fossil"],
             default: "text",
         },
+        postType: {
+            type: String,
+            enum: ["text", "image", "question", "comparison", "opinion", "discovery", "educational", "discussion", "fact", "casual"],
+            default: "text",
+        },
+        dinosaur: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Dinosaur",
+            required: false,
+            index: true,
+        },
+        seedMarker: {
+            type: String,
+            default: "",
+            index: true,
+        },
+        seedVersion: {
+            type: String,
+            default: "",
+        },
         image: {
             type: String,
             default: "",

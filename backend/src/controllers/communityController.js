@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const communityService = require("../services/communityService");
 const uploadToCloudinary = require("../utils/uploadToCloudiary");
 
@@ -29,9 +30,14 @@ const formatTimeAgo = (date) => {
 /**
  * Transform MongoDB Post document into frontend-friendly JSON format
  */
-const transformPost = (post, currentUserId) => {
+const transformPost = (post, currentUser, factCheck = null) => {
+    const currentUserId = currentUser?.id || currentUser?._id;
+    const isAdmin = currentUser?.role === "admin";
     const likesCount = Array.isArray(post.likes) ? post.likes.length : 0;
     const commentsCount = Array.isArray(post.comments) ? post.comments.length : 0;
+
+    const canEdit = !!(currentUserId && post.author?._id && post.author._id.toString() === currentUserId.toString());
+    const canDelete = !!(canEdit || isAdmin);
 
     return {
         id: post._id,
@@ -45,6 +51,7 @@ const transformPost = (post, currentUserId) => {
         timeAgo: formatTimeAgo(post.createdAt),
         category: post.category,
         type: post.type,
+        postType: post.postType || "text",
         title: post.title,
         badge: post.badge,
         description: post.description,
@@ -65,9 +72,28 @@ const transformPost = (post, currentUserId) => {
                 role: c.author?.role || "Explorer",
                 text: c.text,
                 timestamp: formatTimeAgo(c.createdAt),
+                permissions: {
+                    canEdit: !!(currentUserId && c.author?._id && c.author._id.toString() === currentUserId.toString()),
+                    canDelete: !!(currentUserId && (c.author?._id && c.author._id.toString() === currentUserId.toString() || isAdmin))
+                }
             }))
             : [],
         tags: post.tags || [],
+        dinosaur: post.dinosaur ? {
+            id: post.dinosaur._id || post.dinosaur,
+            name: post.dinosaur.name || "",
+            slug: post.dinosaur.slug || ""
+        } : null,
+        factCheck: factCheck ? {
+            verdict: factCheck.verdict,
+            explanation: factCheck.explanation,
+            checkedBy: factCheck.checkedBy,
+            checkedAt: factCheck.checkedAt
+        } : null,
+        permissions: {
+            canEdit,
+            canDelete
+        }
     };
 };
 
@@ -77,19 +103,42 @@ const transformPost = (post, currentUserId) => {
 const getPosts = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page, 10) || 1;
-        const limit = parseInt(req.query.limit, 10) || 10;
-        const filter = req.query.filter || "all";
+        const limit = parseInt(req.query.limit, 10) || 20;
+        const feedMode = req.query.feedMode || "explore";
+        const postType = req.query.postType;
+        const dinosaurId = req.query.dinosaurId;
+        const tag = req.query.tag;
+        const sort = req.query.sort;
 
-        let result;
-        if (filter === "following" && req.user) {
+        let authorIds = null;
+        if (feedMode === "following" && req.user) {
             const Follow = require("../models/Follow");
-            const followingIds = await Follow.find({ follower: req.user.id }).distinct("following");
-            result = await communityService.getPosts(page, limit, followingIds);
-        } else {
-            result = await communityService.getPosts(page, limit);
+            authorIds = await Follow.find({ follower: req.user.id }).distinct("following");
+            // If the user isn't following anyone, make sure we return empty instead of all posts
+            if (!authorIds || authorIds.length === 0) {
+                authorIds = [new mongoose.Types.ObjectId()];
+            }
         }
 
-        const transformed = result.posts.map(post => transformPost(post, req.user?.id));
+        const queryOptions = {
+            authorIds,
+            postType,
+            dinosaurId,
+            tag,
+            sort,
+            feedMode
+        };
+
+        const result = await communityService.getPosts(page, limit, queryOptions);
+
+        const postIds = result.posts.map(p => p._id);
+        const FactCheck = require("../models/FactCheck");
+        const factChecks = await FactCheck.find({ post: { $in: postIds } }).lean();
+
+        const transformed = result.posts.map(post => {
+            const fc = factChecks.find(f => f.post.toString() === post._id.toString());
+            return transformPost(post, req.user, fc);
+        });
 
         return res.status(200).json({
             success: true,
@@ -159,6 +208,8 @@ const createPost = async (req, res, next) => {
             description: trimmedDesc,
             category: dynamicCategory,
             type: dynamicType,
+            postType: req.body.postType || "text",
+            dinosaur: req.body.dinosaurId || undefined,
             image: imageUrl,
             stats: parsedStats || undefined,
             tags: parsedTags || [],
@@ -166,7 +217,7 @@ const createPost = async (req, res, next) => {
 
         return res.status(201).json({
             success: true,
-            data: transformPost(newPost, req.user.id),
+            data: transformPost(newPost, req.user),
         });
     } catch (err) {
         next(err);
@@ -217,6 +268,8 @@ const updatePost = async (req, res, next) => {
             description: description !== undefined ? description.trim() : undefined,
             category: dynamicCategory,
             type: dynamicType,
+            postType: req.body.postType,
+            dinosaur: req.body.dinosaurId,
             tags: parsedTags,
             stats: parsedStats,
             image: imageUrl,
@@ -225,7 +278,7 @@ const updatePost = async (req, res, next) => {
         return res.status(200).json({
             success: true,
             message: "Post updated successfully",
-            data: transformPost(updated, req.user.id),
+            data: transformPost(updated, req.user),
         });
     } catch (err) {
         if (err.message.includes("Unauthorized")) {
@@ -392,6 +445,54 @@ const deleteComment = async (req, res, next) => {
 };
 
 /**
+ * Edit a comment on a post
+ */
+const editComment = async (req, res, next) => {
+    try {
+        const { postId, commentId } = req.params;
+        const { text } = req.body;
+
+        if (!text || !text.trim()) {
+            return res.status(400).json({
+                success: false,
+                message: "Comment text cannot be empty.",
+            });
+        }
+
+        const result = await communityService.editComment(postId, commentId, req.user.id, text.trim());
+
+        const transformedComments = result.comments.map(c => ({
+            id: c._id,
+            userId: c.author?._id,
+            user: c.author?.name || "Explorer",
+            avatar: c.author?.avatar,
+            role: c.author?.role,
+            text: c.text,
+            timestamp: formatTimeAgo(c.createdAt),
+            permissions: {
+                canEdit: !!(req.user && c.author?._id && c.author._id.toString() === req.user.id.toString()),
+                canDelete: !!(req.user && (c.author?._id && c.author._id.toString() === req.user.id.toString() || req.user.role === 'admin'))
+            }
+        }));
+
+        return res.status(200).json({
+            success: true,
+            message: "Comment updated successfully",
+            comments: transformedComments,
+            commentsCount: result.commentsCount,
+        });
+    } catch (err) {
+        if (err.message.includes("Unauthorized")) {
+            return res.status(403).json({ success: false, message: err.message });
+        }
+        if (err.message.includes("not found")) {
+            return res.status(404).json({ success: false, message: err.message });
+        }
+        next(err);
+    }
+};
+
+/**
  * Search users by name/display name
  */
 const searchUsers = async (req, res, next) => {
@@ -500,6 +601,32 @@ const toggleFollowUser = async (req, res, next) => {
     }
 };
 
+const factCheckService = require("../services/factCheckService");
+
+const factCheckPost = async (req, res, next) => {
+    try {
+        const postId = req.params.id;
+        const post = await Post.findById(postId);
+        if (!post) {
+            return res.status(404).json({ success: false, message: "Post not found." });
+        }
+
+        const result = await factCheckService.factCheckPost(postId);
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                verdict: result.verdict,
+                explanation: result.explanation,
+                checkedBy: result.checkedBy,
+                checkedAt: result.checkedAt
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getPosts,
     createPost,
@@ -508,7 +635,9 @@ module.exports = {
     likePost,
     addComment,
     deleteComment,
+    editComment,
     searchUsers,
     getSuggestedUsers,
     toggleFollowUser,
+    factCheckPost,
 };

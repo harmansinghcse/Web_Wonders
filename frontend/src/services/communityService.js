@@ -2,9 +2,24 @@ import axios from "axios";
 
 const API_BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
-// Fetch posts (Supports page, limit and filter)
-export const fetchPostsService = async (page = 1, limit = 10, filter = "all") => {
-    const response = await axios.get(`${API_BASE}/api/community/posts?page=${page}&limit=${limit}&filter=${filter}`, {
+// Fetch posts (Supports page, limit, feedMode, postType, dinosaurId, tag, and sort)
+export const fetchPostsService = async (page = 1, limit = 20, queryOptions = {}) => {
+    const { feedMode = "explore", postType, dinosaurId, tag, sort } = queryOptions;
+    let url = `${API_BASE}/api/community/posts?page=${page}&limit=${limit}&feedMode=${feedMode}`;
+    if (postType) url += `&postType=${postType}`;
+    if (dinosaurId) url += `&dinosaurId=${dinosaurId}`;
+    if (tag) url += `&tag=${encodeURIComponent(tag)}`;
+    if (sort) url += `&sort=${sort}`;
+
+    const response = await axios.get(url, {
+        withCredentials: true,
+    });
+    return response.data;
+};
+
+// Fact-check a post using Professor Ross
+export const factCheckPostService = async (postId) => {
+    const response = await axios.post(`${API_BASE}/api/community/posts/${postId}/fact-check`, {}, {
         withCredentials: true,
     });
     return response.data;
@@ -55,6 +70,14 @@ export const addCommentService = async (postId, text) => {
 // Delete comment from a post
 export const deleteCommentService = async (postId, commentId) => {
     const response = await axios.delete(`${API_BASE}/api/community/posts/${postId}/comments/${commentId}`, {
+        withCredentials: true,
+    });
+    return response.data;
+};
+
+// Edit comment on a post
+export const updateCommentService = async (postId, commentId, text) => {
+    const response = await axios.put(`${API_BASE}/api/community/posts/${postId}/comments/${commentId}`, { text }, {
         withCredentials: true,
     });
     return response.data;
