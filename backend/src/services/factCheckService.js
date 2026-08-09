@@ -31,7 +31,28 @@ About: ${JSON.stringify(post.dinosaur.about || {})}`;
     }
 
     // 4. Construct prompt
-    const prompt = `
+    const isQuestion = post.postType === "question";
+    let prompt = "";
+    if (isQuestion) {
+        prompt = `
+You are Professor Ross, resident paleontologist. Answer the following user question:
+Question: "${post.description}"
+
+${groundTruth ? `Context from our database:\n${groundTruth}` : ""}
+
+Provide a wise, scientifically grounded, yet highly accessible answer. Maintain your personality (forty years in the field, curious, dry/gentle humor, natural tone).
+Respond ONLY with a JSON object containing:
+1. "verdict": Always output "Answered".
+2. "explanation": A 2-4 sentence answer to the question.
+
+JSON response format:
+{
+  "verdict": "Answered",
+  "explanation": "Answer text"
+}
+`;
+    } else {
+        prompt = `
 Fact check the following community post about paleontology/dinosaurs:
 Title: "${post.title}"
 Content: "${post.description}"
@@ -48,13 +69,16 @@ JSON response format:
   "explanation": "Explanation text"
 }
 `;
+    }
 
     const completion = await groq.chat.completions.create({
         model: "llama-3.3-70b-versatile",
         messages: [
             {
                 role: "system",
-                content: "You are Professor Ross, a professional paleontologist fact-checking dinosaur claims. You must output a valid JSON object."
+                content: isQuestion 
+                    ? "You are Professor Ross, a professional paleontologist answering student questions. You must output a valid JSON object."
+                    : "You are Professor Ross, a professional paleontologist fact-checking dinosaur claims. You must output a valid JSON object."
             },
             {
                 role: "user",
@@ -71,15 +95,17 @@ JSON response format:
     } catch (e) {
         console.error("Failed to parse AI response:", resultText);
         parsed = {
-            verdict: "Insufficient Evidence",
-            explanation: "Professor Ross was unable to verify the claims at this time."
+            verdict: isQuestion ? "Answered" : "Insufficient Evidence",
+            explanation: isQuestion 
+                ? "Professor Ross was unable to answer the question at this time." 
+                : "Professor Ross was unable to verify the claims at this time."
         };
     }
 
     // Ensure verdict is valid
-    const validVerdicts = ["Correct", "Mostly Correct", "Partially Correct", "Misleading", "Incorrect", "Insufficient Evidence"];
+    const validVerdicts = ["Correct", "Mostly Correct", "Partially Correct", "Misleading", "Incorrect", "Insufficient Evidence", "Answered"];
     if (!validVerdicts.includes(parsed.verdict)) {
-        parsed.verdict = "Insufficient Evidence";
+        parsed.verdict = isQuestion ? "Answered" : "Insufficient Evidence";
     }
 
     // Save and cache result

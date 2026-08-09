@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Post = require("../models/Post");
+const FactCheck = require("../models/FactCheck");
 const communityService = require("../services/communityService");
 const uploadToCloudinary = require("../utils/uploadToCloudiary");
 
@@ -276,6 +277,9 @@ const updatePost = async (req, res, next) => {
             image: imageUrl,
         });
 
+        // Invalidate cached fact check/answer
+        await FactCheck.deleteOne({ post: postId });
+
         return res.status(200).json({
             success: true,
             message: "Post updated successfully",
@@ -373,6 +377,7 @@ const addComment = async (req, res, next) => {
         const Post = require("../models/Post");
         const post = await Post.findById(postId);
         if (post && post.author.toString() !== req.user.id.toString()) {
+            const newComment = result.comments[result.comments.length - 1];
             const Notification = require("../models/Notification");
             await Notification.create({
                 recipient: post.author,
@@ -380,6 +385,7 @@ const addComment = async (req, res, next) => {
                 type: "comment",
                 post: postId,
                 comment: text.trim(),
+                commentId: newComment ? newComment._id.toString() : undefined,
             });
         }
 

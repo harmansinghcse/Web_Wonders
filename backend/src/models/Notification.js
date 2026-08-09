@@ -25,6 +25,9 @@ const notificationSchema = new mongoose.Schema(
         comment: {
             type: String,
         },
+        commentId: {
+            type: String,
+        },
         isUnread: {
             type: Boolean,
             default: true,

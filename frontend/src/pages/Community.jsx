@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import Messages from "./Messages";
 import {
     Plus,
@@ -146,6 +146,11 @@ export default function Community() {
 
     const navigate = useNavigate();
     const { tab } = useParams();
+    const [searchParams] = useSearchParams();
+    const targetPostId = searchParams.get("postId");
+    const targetCommentId = searchParams.get("commentId");
+
+    const [highlightedCommentId, setHighlightedCommentId] = useState(null);
 
     useEffect(() => {
         if (tab === "following") {
@@ -259,6 +264,49 @@ export default function Community() {
         setToastMessage(msg);
         setTimeout(() => setToastMessage(""), 3500);
     };
+
+    useEffect(() => {
+        if (targetCommentId) {
+            setHighlightedCommentId(targetCommentId);
+            const timer = setTimeout(() => {
+                setHighlightedCommentId(null);
+            }, 2500);
+            return () => clearTimeout(timer);
+        }
+    }, [targetCommentId]);
+
+    useEffect(() => {
+        if (targetPostId && posts.length > 0) {
+            const foundPost = posts.find(p => p.id === targetPostId || p._id === targetPostId);
+            if (foundPost) {
+                const loadCommentsForTarget = async () => {
+                    try {
+                        const res = await fetchCommentsService(targetPostId);
+                        if (res.success) {
+                            setActiveCommentPost({
+                                ...foundPost,
+                                comments: res.comments
+                            });
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
+                };
+                loadCommentsForTarget();
+            }
+        }
+    }, [targetPostId, posts]);
+
+    useEffect(() => {
+        if (activeCommentPost && targetCommentId) {
+            setTimeout(() => {
+                const el = document.getElementById(`comment-${targetCommentId}`);
+                if (el) {
+                    el.scrollIntoView({ behavior: "smooth", block: "center" });
+                }
+            }, 500);
+        }
+    }, [activeCommentPost, targetCommentId]);
 
     // Load following IDs list
     const loadFollowedUserIds = async () => {
@@ -1808,8 +1856,18 @@ export default function Community() {
 
                         <div className="max-h-64 overflow-y-auto p-4 space-y-3">
                             {activeCommentPost.comments?.length > 0 ? (
-                                activeCommentPost.comments.map((c) => (
-                                    <div key={c.id} className="rounded-2xl bg-[#FAF9F5] p-3 border border-[#F0ECE1] flex justify-between items-start gap-3">
+                                activeCommentPost.comments.map((c) => {
+                                    const isHighlighted = c.id === highlightedCommentId || c._id === highlightedCommentId;
+                                    return (
+                                        <div
+                                            key={c.id}
+                                            id={`comment-${c.id}`}
+                                            className={`rounded-2xl p-3 border flex justify-between items-start gap-3 transition-all duration-500 ${
+                                                isHighlighted 
+                                                    ? "bg-[#EBF5EE] border-[#2F7D4D] ring-2 ring-[#2F7D4D]/20 scale-[1.02]" 
+                                                    : "bg-[#FAF9F5] border-[#F0ECE1]"
+                                            }`}
+                                        >
                                         {c.avatar ? (
                                             <img
                                                 src={c.avatar}
@@ -1884,7 +1942,8 @@ export default function Community() {
                                             )}
                                         </div>
                                     </div>
-                                ))
+                                    );
+                                })
                             ) : (
                                 <p className="text-center text-xs text-[#8A968C] py-4">No comments yet. Be the first to comment!</p>
                             )}
