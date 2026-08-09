@@ -1,17 +1,5 @@
 import AnswerOption from "./AnswerOption";
 
-// TODO (Backend)
-//
-// Replace this static data using:
-//
-// GET /api/quiz/play/:slug/:difficulty
-//
-// {
-//   question,
-//   image,
-//   options
-// }
-
 const QuestionCard = ({
     question,
     selectedOption,

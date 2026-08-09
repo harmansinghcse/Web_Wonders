@@ -5,26 +5,6 @@ import ProfessorTip from "../components/quiz/topic/ProfessorTip";
 import DifficultyGrid from "../components/quiz/topic/DifficultyGrid";
 import TopicFooterCTA from "../components/quiz/topic/TopicFooterCTA";
 
-// TODO (Backend)
-//
-// Read slug using:
-//
-// const { slug } = useParams();
-//
-// Fetch:
-//
-// GET /api/quiz/topics/:slug
-//
-// Examples:
-// /quiz/topic/fossils
-// /quiz/topic/dinosaurs
-// /quiz/topic/evolution
-//
-// Pass the response to:
-// <TopicHero />
-// <DifficultyGrid />
-// <ProfessorTip />
-
 const QuizTopic = () => {
     return (
         <>

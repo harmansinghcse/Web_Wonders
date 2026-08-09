@@ -1,9 +1,6 @@
 import { Sprout, Mountain, Flame, Clock3, BookOpen } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-// TODO (Backend)
-// Replace this static data with GET /quiz/topics/:slug
-// Replace const levels = [...] with data.levels
 const levels = [
     {
         id: "easy",

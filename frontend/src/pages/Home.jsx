@@ -1,6 +1,7 @@
 import Hero from "../components/home_components/hero/Hero";
 import CreateSection from "../components/home_components/create/CreateSection";
 import QuizSection from "../components/home_components/quiz/QuizSection";
+import Footer from "../components/home_components/footer/Footer"
 
 export default function Home() {
     return (
@@ -8,9 +9,8 @@ export default function Home() {
             <Hero />
             <CreateSection />
             <QuizSection />
-
-            {/* <TrendingSection />
-            <Footer /> */}
+            {/* <TrendingSection />*/}
+            <Footer />
         </>
     );
 }

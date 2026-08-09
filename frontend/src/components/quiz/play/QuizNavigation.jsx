@@ -1,23 +1,5 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
-// TODO (Backend)
-//
-// Replace handleNext() logic.
-//
-// Current:
-// Clicking Next directly navigates to Result page.
-//
-// Later:
-//
-// 1. Submit selected answer.
-// 2. If more questions remain:
-//      Load next question.
-// 3. Else:
-//      Navigate to Result screen.
-//
-// Previous button should:
-// - Go to previous question if available.
-
 const QuizNavigation = ({
     onPrevious,
     onNext,

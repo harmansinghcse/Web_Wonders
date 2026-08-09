@@ -1,14 +1,14 @@
 import TopicCard from "./TopicCard";
 
+
 import fossils from "../../../assets/quiz-assets/topic-fossils.png";
 import dinosaur from "../../../assets/quiz-assets/topic-dinosaur.png";
 import volcano from "../../../assets/quiz-assets/topic-volcano.png";
 import evolution from "../../../assets/quiz-assets/topic-dna.png";
 
 import { ArrowRight, Trophy, Clock3 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-// TODO (Backend)
-// Replace with GET /quiz/topics
 
 const getLocalImage = (slug) => {
     switch (slug) {
@@ -26,6 +26,7 @@ const getLocalImage = (slug) => {
 };
 
 const TopicGrid = ({ topics = [] }) => {
+    const navigate = useNavigate();
     return (
         <section className="mx-auto mt-10 max-w-7xl px-6">
             {/* Heading */}
@@ -85,7 +86,7 @@ const TopicGrid = ({ topics = [] }) => {
                     <div className="mt-8 space-y-4">
                         <div className="flex items-center gap-3">
                             <Clock3 size={20} className="text-[#47613F]" />
-                            <span>5 Questions</span>
+                            <span>3 Questions</span>
                         </div>
 
                         <div className="flex items-center gap-3">
@@ -94,7 +95,10 @@ const TopicGrid = ({ topics = [] }) => {
                         </div>
                     </div>
 
-                    <button className="mt-10 w-full rounded-2xl bg-[#47613F] py-4 font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-[#385032]">
+                    <button
+                        onClick={() => navigate("/daily-challenge")}
+                        className="mt-10 w-full rounded-2xl bg-[#47613F] py-4 font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-[#385032]"
+                    >
                         Start Challenge
                     </button>
                 </div>

@@ -24,6 +24,8 @@ export default function Modals({
     startNewGame,
     setDifficulty,
 
+    isPreloading,
+
     onBackToHub,
 }){
     return (

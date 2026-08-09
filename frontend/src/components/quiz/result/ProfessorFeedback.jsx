@@ -1,18 +1,5 @@
 import professorAvatar from "../../../assets/quiz-assets/ross-avatar.png";
 
-// TODO (Backend)
-//
-// Replace message based on accuracy.
-//
-// 90%+
-// Excellent
-//
-// 70%+
-// Great Job
-//
-// below 70%
-// Keep Practicing
-
 const ProfessorFeedback = () => {
     return (
         <section className="mx-auto mt-8 max-w-5xl px-6">

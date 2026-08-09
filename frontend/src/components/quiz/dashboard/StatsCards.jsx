@@ -1,7 +1,5 @@
 import { Flame, Dna, Target, BookOpen } from "lucide-react";
 
-// TODO (Backend)
-// Replace these values with GET /quiz/dashboard response
 
 const StatsCards = ({ user }) => {
     const stats = [
