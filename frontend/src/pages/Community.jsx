@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import Messages from "./Messages";
 import {
     Plus,
     Newspaper,
@@ -143,6 +144,20 @@ export default function Community() {
     const isLoggedIn = !!authUser || !!apiProfile;
 
     const navigate = useNavigate();
+    const { tab } = useParams();
+
+    useEffect(() => {
+        if (tab === "following") {
+            setActiveTab("following");
+        } else if (tab === "discover") {
+            setActiveTab("feed");
+        } else if (tab === "messages") {
+            setActiveTab("messages");
+        } else {
+            setActiveTab("feed");
+        }
+    }, [tab]);
+
     const navigateToProfile = (userObj) => {
         if (!userObj) return;
         const targetId = userObj.id || userObj._id || userObj;
@@ -753,7 +768,28 @@ export default function Community() {
 
             {/* MAIN COMMUNITY HUB CONTENT */}
             <main className="relative z-10 mx-auto max-w-7xl px-4 pt-20 sm:px-6 lg:px-8 pb-16">
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+                {tab === "messages" ? (
+                    <div className="space-y-4">
+                        {/* Subnav */}
+                        <div className="flex gap-2 rounded-2xl border border-white/60 bg-white/95 p-2 shadow-sm mb-5">
+                            {["feed", "following", "discover", "messages"].map((t) => (
+                                <button
+                                    key={t}
+                                    onClick={() => navigate(`/community/${t === "feed" ? "" : t}`)}
+                                    className={`flex-1 text-center py-2.5 rounded-xl text-xs font-bold capitalize transition-all cursor-pointer ${
+                                        t === "messages"
+                                            ? "bg-[#1E3A23] text-white shadow-sm"
+                                            : "text-[#4A554B] hover:bg-[#FAF9F5] hover:text-[#1E3A23]"
+                                    }`}
+                                >
+                                    {t}
+                                </button>
+                            ))}
+                        </div>
+                        <Messages />
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
                     
                     {/* LEFT SIDEBAR (3 cols) */}
                     <aside className="space-y-5 lg:col-span-3">
@@ -937,7 +973,29 @@ export default function Community() {
 
                     {/* CENTER MAIN FEED (6 cols) */}
                     <section className="space-y-5 lg:col-span-6">
-                        
+                        {/* Sub-navigation bar */}
+                        <div className="flex gap-2 rounded-2xl border border-white/60 bg-white/95 p-2 shadow-sm">
+                            {["feed", "following", "discover", "messages"].map((t) => (
+                                <button
+                                    key={t}
+                                    onClick={() => {
+                                        if (t === "messages") {
+                                            navigate("/community/messages");
+                                        } else {
+                                            navigate(`/community/${t === "feed" ? "" : t}`);
+                                        }
+                                    }}
+                                    className={`flex-1 text-center py-2.5 rounded-xl text-xs font-bold capitalize transition-all cursor-pointer ${
+                                        (t === "feed" && (!tab || tab === "discover")) || tab === t
+                                            ? "bg-[#1E3A23] text-white shadow-sm"
+                                            : "text-[#4A554B] hover:bg-[#FAF9F5] hover:text-[#1E3A23]"
+                                    }`}
+                                >
+                                    {t}
+                                </button>
+                            ))}
+                        </div>
+
                         {/* Interactive Quick Feed Composer */}
                         <form
                             onSubmit={handleQuickPostSubmit}
@@ -1679,6 +1737,7 @@ export default function Community() {
                         </div>
                     </aside>
                 </div>
+                )}
             </main>
 
             {/* DYNAMIC CREATE POST MODAL */}

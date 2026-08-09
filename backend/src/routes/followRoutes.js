@@ -11,6 +11,7 @@ const {
     getUserProfile,
     getNotifications,
     markNotificationsRead,
+    getUnreadCounts,
 } = require("../controllers/followController");
 
 const router = express.Router();
@@ -18,6 +19,7 @@ const router = express.Router();
 // User Profiles & Actions
 router.get("/suggested", protect, getSuggestedExplorers);
 router.get("/search", protect, searchUsers);
+router.get("/notifications/unread-count", protect, getUnreadCounts);
 router.get("/notifications", protect, getNotifications);
 router.post("/notifications/read", protect, markNotificationsRead);
 
