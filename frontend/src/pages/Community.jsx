@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import Messages from "./Messages";
 import {
     Plus,
     Newspaper,
@@ -45,6 +46,7 @@ import {
     getFollowingService,
     getSuggestedExplorersService,
     searchUsersService,
+    factCheckPostService,
 } from "../services/communityService";
 import { getStoredFollows, saveFollowsToStorage } from "../services/communityServiceHelpers";
 import { getAllDinosaurs } from "../services/dinosaurService";
@@ -143,6 +145,25 @@ export default function Community() {
     const isLoggedIn = !!authUser || !!apiProfile;
 
     const navigate = useNavigate();
+    const { tab } = useParams();
+    const [searchParams] = useSearchParams();
+    const targetPostId = searchParams.get("postId");
+    const targetCommentId = searchParams.get("commentId");
+
+    const [highlightedCommentId, setHighlightedCommentId] = useState(null);
+
+    useEffect(() => {
+        if (tab === "following") {
+            setActiveTab("following");
+        } else if (tab === "discover") {
+            setActiveTab("feed");
+        } else if (tab === "messages") {
+            setActiveTab("messages");
+        } else {
+            setActiveTab("feed");
+        }
+    }, [tab]);
+
     const navigateToProfile = (userObj) => {
         if (!userObj) return;
         const targetId = userObj.id || userObj._id || userObj;
@@ -243,6 +264,49 @@ export default function Community() {
         setToastMessage(msg);
         setTimeout(() => setToastMessage(""), 3500);
     };
+
+    useEffect(() => {
+        if (targetCommentId) {
+            setHighlightedCommentId(targetCommentId);
+            const timer = setTimeout(() => {
+                setHighlightedCommentId(null);
+            }, 2500);
+            return () => clearTimeout(timer);
+        }
+    }, [targetCommentId]);
+
+    useEffect(() => {
+        if (targetPostId && posts.length > 0) {
+            const foundPost = posts.find(p => p.id === targetPostId || p._id === targetPostId);
+            if (foundPost) {
+                const loadCommentsForTarget = async () => {
+                    try {
+                        const res = await fetchCommentsService(targetPostId);
+                        if (res.success) {
+                            setActiveCommentPost({
+                                ...foundPost,
+                                comments: res.comments
+                            });
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
+                };
+                loadCommentsForTarget();
+            }
+        }
+    }, [targetPostId, posts]);
+
+    useEffect(() => {
+        if (activeCommentPost && targetCommentId) {
+            setTimeout(() => {
+                const el = document.getElementById(`comment-${targetCommentId}`);
+                if (el) {
+                    el.scrollIntoView({ behavior: "smooth", block: "center" });
+                }
+            }, 500);
+        }
+    }, [activeCommentPost, targetCommentId]);
 
     // Load following IDs list
     const loadFollowedUserIds = async () => {
@@ -738,7 +802,7 @@ export default function Community() {
             {/* FRONT PAGE PARCHMENT & ATMOSPHERIC BACKGROUND */}
             <div className="fixed inset-0 z-0">
                 <img
-                    src="/jurrasic-home-bg.png"
+                    src="/jurrasic-home-bg.webp"
                     alt="Jurassic Background"
                     className="h-full w-full object-cover object-center"
                 />
@@ -753,7 +817,28 @@ export default function Community() {
 
             {/* MAIN COMMUNITY HUB CONTENT */}
             <main className="relative z-10 mx-auto max-w-7xl px-4 pt-20 sm:px-6 lg:px-8 pb-16">
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+                {tab === "messages" ? (
+                    <div className="space-y-4">
+                        {/* Subnav */}
+                        <div className="flex gap-2 rounded-2xl border border-white/60 bg-white/95 p-2 shadow-sm mb-5">
+                            {["feed", "following", "discover", "messages"].map((t) => (
+                                <button
+                                    key={t}
+                                    onClick={() => navigate(`/community/${t === "feed" ? "" : t}`)}
+                                    className={`flex-1 text-center py-2.5 rounded-xl text-xs font-bold capitalize transition-all cursor-pointer ${
+                                        t === "messages"
+                                            ? "bg-[#1E3A23] text-white shadow-sm"
+                                            : "text-[#4A554B] hover:bg-[#FAF9F5] hover:text-[#1E3A23]"
+                                    }`}
+                                >
+                                    {t}
+                                </button>
+                            ))}
+                        </div>
+                        <Messages />
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
                     
                     {/* LEFT SIDEBAR (3 cols) */}
                     <aside className="space-y-5 lg:col-span-3">
@@ -937,7 +1022,29 @@ export default function Community() {
 
                     {/* CENTER MAIN FEED (6 cols) */}
                     <section className="space-y-5 lg:col-span-6">
-                        
+                        {/* Sub-navigation bar */}
+                        <div className="flex gap-2 rounded-2xl border border-white/60 bg-white/95 p-2 shadow-sm">
+                            {["feed", "following", "discover", "messages"].map((t) => (
+                                <button
+                                    key={t}
+                                    onClick={() => {
+                                        if (t === "messages") {
+                                            navigate("/community/messages");
+                                        } else {
+                                            navigate(`/community/${t === "feed" ? "" : t}`);
+                                        }
+                                    }}
+                                    className={`flex-1 text-center py-2.5 rounded-xl text-xs font-bold capitalize transition-all cursor-pointer ${
+                                        (t === "feed" && (!tab || tab === "discover")) || tab === t
+                                            ? "bg-[#1E3A23] text-white shadow-sm"
+                                            : "text-[#4A554B] hover:bg-[#FAF9F5] hover:text-[#1E3A23]"
+                                    }`}
+                                >
+                                    {t}
+                                </button>
+                            ))}
+                        </div>
+
                         {/* Interactive Quick Feed Composer */}
                         <form
                             onSubmit={handleQuickPostSubmit}
@@ -1679,6 +1786,7 @@ export default function Community() {
                         </div>
                     </aside>
                 </div>
+                )}
             </main>
 
             {/* DYNAMIC CREATE POST MODAL */}
@@ -1748,8 +1856,18 @@ export default function Community() {
 
                         <div className="max-h-64 overflow-y-auto p-4 space-y-3">
                             {activeCommentPost.comments?.length > 0 ? (
-                                activeCommentPost.comments.map((c) => (
-                                    <div key={c.id} className="rounded-2xl bg-[#FAF9F5] p-3 border border-[#F0ECE1] flex justify-between items-start gap-3">
+                                activeCommentPost.comments.map((c) => {
+                                    const isHighlighted = c.id === highlightedCommentId || c._id === highlightedCommentId;
+                                    return (
+                                        <div
+                                            key={c.id}
+                                            id={`comment-${c.id}`}
+                                            className={`rounded-2xl p-3 border flex justify-between items-start gap-3 transition-all duration-500 ${
+                                                isHighlighted 
+                                                    ? "bg-[#EBF5EE] border-[#2F7D4D] ring-2 ring-[#2F7D4D]/20 scale-[1.02]" 
+                                                    : "bg-[#FAF9F5] border-[#F0ECE1]"
+                                            }`}
+                                        >
                                         {c.avatar ? (
                                             <img
                                                 src={c.avatar}
@@ -1824,7 +1942,8 @@ export default function Community() {
                                             )}
                                         </div>
                                     </div>
-                                ))
+                                    );
+                                })
                             ) : (
                                 <p className="text-center text-xs text-[#8A968C] py-4">No comments yet. Be the first to comment!</p>
                             )}

@@ -76,7 +76,8 @@ function App() {
                         <Route path="/timeline" element={<Timeline />} />
                         <Route path="/explorer" element={<Explore />} />
                         <Route path="/community" element={<Community />} />
-                        <Route path="/community/messages" element={<Messages />} />
+                        <Route path="/community/:tab" element={<Community />} />
+                        <Route path="/community/:tab/:conversationId" element={<Community />} />
                         <Route path="/quiz" element={<Quiz />} />
                         <Route path="/quiz/:slug" element={<TopicDetails />} />
                         <Route path="/daily-challenge" element={<QuizDailyChallenge />} />

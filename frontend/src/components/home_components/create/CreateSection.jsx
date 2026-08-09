@@ -4,7 +4,7 @@ import CreateShowcase from "./CreateShowcase";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const createBg = "/create-bg.png";
+const createBg = "/create-bg.webp";
 
 const containerVariants = {
     hidden: { opacity: 0 },

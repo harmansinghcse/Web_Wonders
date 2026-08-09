@@ -25,7 +25,7 @@ const Footer = () => {
 
     return (
         <footer className="relative w-full bg-top bg-cover bg-no-repeat min-h-[300px]"
-        style={{backgroundImage: "url('/footer-bg.png')"}}
+        style={{backgroundImage: "url('/footer-bg.webp')"}}
         >
         
             <div className="max-w-[1400px] mx-auto px-8 lg:px-12 xl:px-16 pt-10 pb-8">

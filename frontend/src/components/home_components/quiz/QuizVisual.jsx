@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import quizDino from "../../../assets/home-assets/quiz-dino.png";
+import quizDino from "../../../assets/home-assets/quiz-dino.webp";
 import DNAStatsCard from "./DNAStatsCard";
 import ProgressCard from "./ProgressCard";
 

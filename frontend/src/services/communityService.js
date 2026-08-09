@@ -170,3 +170,11 @@ export const markNotificationsReadService = async () => {
     });
     return response.data;
 };
+
+// Fetch unread count for notifications and messages
+export const getUnreadCountsService = async () => {
+    const response = await axios.get(`${API_BASE}/api/users/notifications/unread-count`, {
+        withCredentials: true,
+    });
+    return response.data;
+};

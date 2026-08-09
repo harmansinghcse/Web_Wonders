@@ -1,15 +1,8 @@
-/**
- * --------------------------------------------
- * Component: ProfileHeader
- * Purpose:
- * Displays the user's profile information,
- * including cover image, avatar, name,
- * email, bio, and an option to edit
- * the profile.
- * --------------------------------------------
- */
+import { useNavigate } from "react-router-dom";
 
 export default function ProfileHeader({ profile, onEdit }) {
+    const navigate = useNavigate();
+
     return (
         // Profile header section
         <section className="overflow-hidden rounded-3xl border border-[#D8D2C5] bg-white shadow-md">
@@ -43,12 +36,19 @@ export default function ProfileHeader({ profile, onEdit }) {
                             {profile.bio || "No bio yet."}
                         </p>
                     </div>
-                    {onEdit && (
+                    {onEdit ? (
                         <button
                             onClick={onEdit}
                             className="rounded-xl bg-[#005611] px-6 py-3 font-bold text-white transition duration-200 hover:bg-[#00400C] hover:scale-[1.02] shadow-md shadow-[#005611]/15"
                         >
                             Edit Profile
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => navigate(`/community/messages?userId=${profile.id || profile._id}`)}
+                            className="rounded-xl bg-[#005611] px-6 py-3 font-bold text-white transition duration-200 hover:bg-[#00400C] hover:scale-[1.02] shadow-md shadow-[#005611]/15 flex items-center gap-2 cursor-pointer"
+                        >
+                            Message
                         </button>
                     )}
                 </div>
