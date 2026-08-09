@@ -37,6 +37,7 @@ import {
     likePostService,
     addCommentService,
     deleteCommentService,
+    updateCommentService,
     followUserService,
     unfollowUserService,
     getFollowersService,
@@ -45,6 +46,7 @@ import {
     searchUsersService,
 } from "../services/communityService";
 import { getStoredFollows, saveFollowsToStorage } from "../services/communityServiceHelpers";
+import { getAllDinosaurs } from "../services/dinosaurService";
 
 // Community subcomponents
 import ExplorerProfileModal from "../components/community/ExplorerProfileModal";
@@ -186,6 +188,8 @@ export default function Community() {
     // Comment Modal State
     const [activeCommentPost, setActiveCommentPost] = useState(null);
     const [newCommentText, setNewCommentText] = useState("");
+    const [editingCommentId, setEditingCommentId] = useState(null);
+    const [editingCommentText, setEditingCommentText] = useState("");
 
     // Remix Modal State
     const [activeRemixPost, setActiveRemixPost] = useState(null);
@@ -194,6 +198,26 @@ export default function Community() {
 
     // Quick Composer Text State
     const [quickPostText, setQuickPostText] = useState("");
+
+    // Filter states
+    const [selectedPostType, setSelectedPostType] = useState("all");
+    const [selectedDinosaurId, setSelectedDinosaurId] = useState("");
+    const [selectedSort, setSelectedSort] = useState("newest");
+    const [dinosaursList, setDinosaursList] = useState([]);
+    const [factcheckingPostId, setFactcheckingPostId] = useState(null);
+    const [expandedFactcheckPostIds, setExpandedFactcheckPostIds] = useState(new Set());
+
+    const toggleFactcheckExpand = (postId) => {
+        setExpandedFactcheckPostIds(prev => {
+            const next = new Set(prev);
+            if (next.has(postId)) {
+                next.delete(postId);
+            } else {
+                next.add(postId);
+            }
+            return next;
+        });
+    };
 
     // Follow state (persisted in database)
     const [followedUserIds, setFollowedUserIds] = useState([]);
@@ -295,12 +319,32 @@ export default function Community() {
         return () => clearTimeout(delayDebounceFn);
     }, [rightSearchInput]);
 
+    // Fetch dinosaurs list on mount
+    useEffect(() => {
+        const fetchDinos = async () => {
+            try {
+                const list = await getAllDinosaurs();
+                if (list) {
+                    setDinosaursList(list);
+                }
+            } catch (err) {
+                console.error("Failed to load dinosaurs list:", err);
+            }
+        };
+        fetchDinos();
+    }, []);
+
     // Load initial posts with pagination and tab filter
     const loadFeedData = async (pageNum = 1, append = false, currentTab = activeTab) => {
         try {
             setLoading(true);
-            const filterType = currentTab === "following" ? "following" : "all";
-            const res = await fetchPostsService(pageNum, 10, filterType);
+            const queryOptions = {
+                feedMode: currentTab,
+                postType: selectedPostType,
+                dinosaurId: selectedDinosaurId,
+                sort: selectedSort,
+            };
+            const res = await fetchPostsService(pageNum, 20, queryOptions);
             if (res.success) {
                 if (append) {
                     setPosts((prev) => {
@@ -324,7 +368,7 @@ export default function Community() {
 
     useEffect(() => {
         loadFeedData(1, false, activeTab);
-    }, [activeTab]);
+    }, [activeTab, selectedPostType, selectedDinosaurId, selectedSort]);
 
     // Dynamic Trending Hybrids
     const trendingHybrids = useMemo(() => {
@@ -481,6 +525,42 @@ export default function Community() {
         }
     };
 
+    // Edit Comment Handler
+    const handleEditComment = async (postId, commentId) => {
+        if (!ensureAuth()) return;
+        if (!editingCommentText || !editingCommentText.trim()) {
+            showToast("Comment text cannot be empty.");
+            return;
+        }
+        try {
+            const res = await updateCommentService(postId, commentId, editingCommentText.trim());
+            if (res.success) {
+                setPosts((prev) =>
+                    prev.map((p) => {
+                        if (p.id === postId) {
+                            return {
+                                ...p,
+                                commentsCount: res.commentsCount,
+                                comments: res.comments,
+                            };
+                        }
+                        return p;
+                    })
+                );
+                setActiveCommentPost((prev) => ({
+                    ...prev,
+                    commentsCount: res.commentsCount,
+                    comments: res.comments,
+                }));
+                setEditingCommentId(null);
+                setEditingCommentText("");
+                showToast("Comment updated!");
+            }
+        } catch (err) {
+            showToast("Failed to edit comment.");
+        }
+    };
+
     // Delete Post Handler
     const handleDeletePost = async (postId) => {
         if (!ensureAuth()) return;
@@ -493,6 +573,34 @@ export default function Community() {
             }
         } catch (err) {
             showToast(err.response?.data?.message || "Failed to delete post.");
+        }
+    };
+
+    // Fact Check Handler
+    const handleFactCheckPost = async (postId) => {
+        if (!ensureAuth()) return;
+        setFactcheckingPostId(postId);
+        try {
+            const res = await factCheckPostService(postId);
+            if (res.success) {
+                setPosts((prev) =>
+                    prev.map((p) => {
+                        if (p.id === postId) {
+                            return {
+                                ...p,
+                                factCheck: res.data,
+                            };
+                        }
+                        return p;
+                    })
+                );
+                showToast("✓ Post successfully fact-checked by Professor Ross!");
+            }
+        } catch (err) {
+            console.error("Fact-check failed:", err);
+            showToast("Failed to verify post fact-check.");
+        } finally {
+            setFactcheckingPostId(null);
         }
     };
 
@@ -747,6 +855,18 @@ export default function Community() {
                             </button>
 
                             <button
+                                onClick={() => { setActiveTab("trending"); setSelectedTag(null); setSearchQuery(""); }}
+                                className={`flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold transition cursor-pointer ${
+                                    activeTab === "trending"
+                                        ? "bg-[#1E3A23] text-white shadow-xs"
+                                        : "text-[#4A554B] hover:bg-[#EFEFE6] hover:text-[#1E3A23]"
+                                }`}
+                            >
+                                <Sparkles size={18} />
+                                <span>Trending</span>
+                            </button>
+
+                            <button
                                 onClick={() => { setActiveTab("following"); setSelectedTag(null); setSearchQuery(""); }}
                                 className={`flex w-full items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-bold transition cursor-pointer ${
                                     activeTab === "following"
@@ -912,6 +1032,51 @@ export default function Community() {
                             </div>
                         )}
 
+                        {/* Feed Filters Bar */}
+                        <div className="flex flex-wrap gap-2.5 items-center justify-between bg-white/70 backdrop-blur-md border border-[#EBE8DB] rounded-2xl p-4 shadow-sm">
+                            <div className="flex flex-wrap items-center gap-2">
+                                {/* Post Type Filter */}
+                                <select
+                                    value={selectedPostType}
+                                    onChange={(e) => setSelectedPostType(e.target.value)}
+                                    className="rounded-xl border border-[#E1DEC9] bg-white px-3 py-1.5 text-xs text-[#4A554B] focus:border-[#1E3A23] focus:outline-none cursor-pointer"
+                                >
+                                    <option value="all">All Types</option>
+                                    <option value="text">Text Posts</option>
+                                    <option value="image">Image Posts</option>
+                                    <option value="question">Questions</option>
+                                    <option value="opinion">Opinions</option>
+                                    <option value="discovery">Discoveries</option>
+                                    <option value="educational">Educational</option>
+                                    <option value="discussion">Discussions</option>
+                                    <option value="fact">Facts</option>
+                                </select>
+
+                                {/* Dinosaur Filter */}
+                                <select
+                                    value={selectedDinosaurId}
+                                    onChange={(e) => setSelectedDinosaurId(e.target.value)}
+                                    className="rounded-xl border border-[#E1DEC9] bg-white px-3 py-1.5 text-xs text-[#4A554B] focus:border-[#1E3A23] focus:outline-none cursor-pointer max-w-[150px]"
+                                >
+                                    <option value="">All Dinosaurs</option>
+                                    {dinosaursList.map(d => (
+                                        <option key={d._id} value={d._id}>{d.name}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {/* Sort Filter */}
+                            <select
+                                value={selectedSort}
+                                onChange={(e) => setSelectedSort(e.target.value)}
+                                className="rounded-xl border border-[#E1DEC9] bg-white px-3 py-1.5 text-xs text-[#4A554B] focus:border-[#1E3A23] focus:outline-none cursor-pointer"
+                            >
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                                <option value="popular">Most Engaging</option>
+                            </select>
+                        </div>
+
                         {/* Feed Items */}
                         {loading ? (
                             <div className="rounded-2xl border border-white/60 bg-white/90 p-8 text-center shadow-md">
@@ -986,8 +1151,8 @@ export default function Community() {
                                                 <MoreHorizontal size={18} />
                                             </button>
                                             {activeMenuPostId === post.id && (
-                                                <div className="absolute right-0 top-8 z-30 w-36 rounded-xl border border-[#EBE8DB] bg-white p-1.5 shadow-lg animate-in fade-in slide-in-from-top-1 duration-150">
-                                                    {(post.author?.id === currentUser?.id || post.author?.name === currentUser?.name) && (
+                                                <div className="absolute right-0 top-8 z-30 w-44 rounded-xl border border-[#EBE8DB] bg-white p-1.5 shadow-lg animate-in fade-in slide-in-from-top-1 duration-150">
+                                                    {(post.permissions?.canEdit || post.author?.id === currentUser?.id || post.author?.name === currentUser?.name) && (
                                                         <button
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
@@ -1002,7 +1167,18 @@ export default function Community() {
                                                             Edit Post
                                                         </button>
                                                     )}
-                                                    {(post.author?.id === currentUser?.id || post.author?.name === currentUser?.name || currentUser?.role === "admin") && (
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleFactCheckPost(post.id);
+                                                            setActiveMenuPostId(null);
+                                                        }}
+                                                        disabled={factcheckingPostId === post.id}
+                                                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-bold text-[#1E3A23] hover:bg-[#FAF9F5] cursor-pointer disabled:opacity-50"
+                                                    >
+                                                        {factcheckingPostId === post.id ? "Fact-checking..." : "Fact-check with Ross"}
+                                                    </button>
+                                                    {(post.permissions?.canDelete || post.author?.id === currentUser?.id || post.author?.name === currentUser?.name || currentUser?.role === "admin") && (
                                                         <button
                                                             onClick={(e) => {
                                                                 e.stopPropagation();
@@ -1047,6 +1223,27 @@ export default function Community() {
                                                         <p className="mt-1 text-xs leading-relaxed text-[#4A554B]">
                                                             {post.description}
                                                         </p>
+                                                        {post.factCheck && (
+                                                            <div className="mt-2 rounded-xl border border-[#D1E2D3] bg-[#EBF5EE] p-2 text-[11px] text-[#1E3A23]">
+                                                                <div 
+                                                                    onClick={() => toggleFactcheckExpand(post.id)}
+                                                                    className="flex items-center justify-between font-bold cursor-pointer hover:text-[#2F7D4D]"
+                                                                >
+                                                                    <div className="flex items-center gap-1.5">
+                                                                        <ShieldCheck size={14} className="text-[#10B981]" />
+                                                                        <span>Fact-checked by Ross: <span className="underline">{post.factCheck.verdict}</span></span>
+                                                                    </div>
+                                                                    <span>{expandedFactcheckPostIds.has(post.id) ? "▲" : "▼"}</span>
+                                                                </div>
+                                                                {expandedFactcheckPostIds.has(post.id) && (
+                                                                    <div className="mt-1.5 border-t border-[#D1E2D3]/60 pt-1.5 leading-relaxed text-[#4A554B]">
+                                                                        <p className="font-semibold mb-0.5">Verdict: {post.factCheck.verdict}</p>
+                                                                        <p>{post.factCheck.explanation}</p>
+                                                                        <p className="text-[9px] text-[#6D7A6F] mt-1 italic">Checked by {post.factCheck.checkedBy}</p>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        )}
                                                     </div>
 
                                                     {/* 4 Stat Cards */}
@@ -1092,6 +1289,27 @@ export default function Community() {
                                                 <p className="mt-1 text-xs leading-relaxed text-[#4A554B]">
                                                     {post.description}
                                                 </p>
+                                                {post.factCheck && (
+                                                    <div className="mt-2 rounded-xl border border-[#D1E2D3] bg-[#EBF5EE] p-2 text-[11px] text-[#1E3A23]">
+                                                        <div 
+                                                            onClick={() => toggleFactcheckExpand(post.id)}
+                                                            className="flex items-center justify-between font-bold cursor-pointer hover:text-[#2F7D4D]"
+                                                        >
+                                                            <div className="flex items-center gap-1.5">
+                                                                <ShieldCheck size={14} className="text-[#10B981]" />
+                                                                <span>Fact-checked by Ross: <span className="underline">{post.factCheck.verdict}</span></span>
+                                                            </div>
+                                                            <span>{expandedFactcheckPostIds.has(post.id) ? "▲" : "▼"}</span>
+                                                        </div>
+                                                        {expandedFactcheckPostIds.has(post.id) && (
+                                                            <div className="mt-1.5 border-t border-[#D1E2D3]/60 pt-1.5 leading-relaxed text-[#4A554B]">
+                                                                <p className="font-semibold mb-0.5">Verdict: {post.factCheck.verdict}</p>
+                                                                <p>{post.factCheck.explanation}</p>
+                                                                <p className="text-[9px] text-[#6D7A6F] mt-1 italic">Checked by {post.factCheck.checkedBy}</p>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     )}
@@ -1543,17 +1761,54 @@ export default function Community() {
                                                 </p>
                                                 <span className="text-[10px] text-[#8A968C]">{c.timestamp || "Just now"}</span>
                                             </div>
-                                            <p className="mt-0.5 text-xs text-[#4A554B]">{c.text}</p>
+                                            {editingCommentId === c.id ? (
+                                                <div className="flex items-center gap-1 mt-1">
+                                                    <input
+                                                        type="text"
+                                                        value={editingCommentText}
+                                                        onChange={(e) => setEditingCommentText(e.target.value)}
+                                                        className="flex-1 rounded-lg border border-[#E1DEC9] bg-white px-2 py-1 text-xs text-[#2C352E] focus:outline-none"
+                                                    />
+                                                    <button
+                                                        onClick={() => handleEditComment(activeCommentPost.id, c.id)}
+                                                        className="rounded-lg bg-[#1E3A23] px-2.5 py-1 text-[10px] font-bold text-white hover:bg-[#162D1B]"
+                                                    >
+                                                        Save
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setEditingCommentId(null)}
+                                                        className="rounded-lg border border-[#E1DEC9] px-2 py-1 text-[10px] text-gray-500 hover:bg-gray-100"
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <p className="mt-0.5 text-xs text-[#4A554B]">{c.text}</p>
+                                            )}
                                         </div>
-                                        {(c.user === currentUser.name || currentUser.role === "admin") && (
-                                            <button
-                                                onClick={() => handleDeleteComment(activeCommentPost.id, c.id)}
-                                                className="text-red-500 hover:text-red-700 p-0.5"
-                                                title="Delete Comment"
-                                            >
-                                                <X size={14} />
-                                            </button>
-                                        )}
+                                        <div className="flex items-center gap-1 shrink-0">
+                                            {(c.permissions?.canEdit || c.userId === currentUser.id) && editingCommentId !== c.id && (
+                                                <button
+                                                    onClick={() => {
+                                                        setEditingCommentId(c.id);
+                                                        setEditingCommentText(c.text);
+                                                    }}
+                                                    className="text-[#47613F] hover:text-[#385032] text-[10px] font-bold px-1"
+                                                    title="Edit Comment"
+                                                >
+                                                    Edit
+                                                </button>
+                                            )}
+                                            {(c.permissions?.canDelete || c.userId === currentUser.id || currentUser.role === "admin") && (
+                                                <button
+                                                    onClick={() => handleDeleteComment(activeCommentPost.id, c.id)}
+                                                    className="text-red-500 hover:text-red-700 p-0.5"
+                                                    title="Delete Comment"
+                                                >
+                                                    <X size={14} />
+                                                </button>
+                                            )}
+                                        </div>
                                     </div>
                                 ))
                             ) : (

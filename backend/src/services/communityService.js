@@ -7,19 +7,94 @@ const User = require("../models/User");
  * @param {number} limit - Items per page
  * @returns {Promise<object>} - Paginated posts and count
  */
-const getPosts = async (page = 1, limit = 10, authorIds = null) => {
-    const query = authorIds ? { author: { $in: authorIds } } : {};
-    const total = await Post.countDocuments(query);
+const getPosts = async (page = 1, limit = 10, queryOptions = {}) => {
+    const { authorIds, postType, dinosaurId, tag, sort = "newest", feedMode = "explore" } = queryOptions;
+    
+    let query = {};
+    
+    if (authorIds) {
+        query.author = { $in: authorIds };
+    }
+    
+    if (postType && postType !== "all") {
+        if (postType === "image") {
+            query.type = { $in: ["photo", "hybrid"] };
+        } else {
+            query.postType = postType;
+        }
+    }
+    
+    if (dinosaurId) {
+        query.dinosaur = dinosaurId;
+    }
+    
+    if (tag) {
+        query.tags = { $in: [new RegExp(tag, "i")] };
+    }
+    
     const skip = (page - 1) * limit;
+    
+    if (sort === "popular" || sort === "most_discussed" || sort === "most_liked" || feedMode === "trending") {
+        // Aggregate to calculate score/likesCount/commentsCount dynamically for sorting
+        const total = await Post.countDocuments(query);
+        
+        let sortStage = { score: -1, createdAt: -1 };
+        if (sort === "most_discussed") {
+            sortStage = { commentsCount: -1, createdAt: -1 };
+        } else if (sort === "most_liked") {
+            sortStage = { likesCount: -1, createdAt: -1 };
+        }
 
+        const pipeline = [
+            { $match: query },
+            {
+                $addFields: {
+                    likesCount: { $size: { $ifNull: ["$likes", []] } },
+                    commentsCount: { $size: { $ifNull: ["$comments", []] } },
+                    score: {
+                        $add: [
+                            { $size: { $ifNull: ["$likes", []] } },
+                            { $size: { $ifNull: ["$comments", []] } }
+                        ]
+                    }
+                }
+            },
+            { $sort: sortStage },
+            { $skip: skip },
+            { $limit: limit },
+        ];
+        
+        const posts = await Post.aggregate(pipeline);
+        const populatedPosts = await Post.populate(posts, [
+            { path: "author", select: "name avatar role" },
+            { path: "comments.author", select: "name avatar role" },
+            { path: "dinosaur", select: "name slug images" }
+        ]);
+        
+        return {
+            posts: populatedPosts,
+            total,
+            page,
+            limit,
+            totalPages: Math.ceil(total / limit),
+        };
+    }
+    
+    let sortOptions = { createdAt: -1 };
+    if (sort === "oldest") {
+        sortOptions = { createdAt: 1 };
+    }
+    
+    const total = await Post.countDocuments(query);
     const posts = await Post.find(query)
-        .sort({ createdAt: -1 })
+        .sort(sortOptions)
         .skip(skip)
         .limit(limit)
         .populate("author", "name avatar role")
         .populate("comments.author", "name avatar role")
+        .populate("dinosaur", "name slug images")
         .lean();
-
+        
     return {
         posts,
         total,
@@ -45,6 +120,7 @@ const createPost = async (authorId, postData) => {
 
     const populated = await Post.findById(post._id)
         .populate("author", "name avatar role")
+        .populate("dinosaur", "name slug images")
         .lean();
 
     return populated;
@@ -76,15 +152,27 @@ const updatePost = async (postId, userId, postData) => {
     post.type = postData.type || post.type;
     post.tags = postData.tags || post.tags;
     
+    if (postData.postType) {
+        post.postType = postData.postType;
+    }
+    if (postData.dinosaur !== undefined) {
+        post.dinosaur = postData.dinosaur || null;
+    }
+    
     if (postData.stats) {
         post.stats = postData.stats;
     }
 
     await post.save();
 
+    // Invalidate fact-check since post has been edited
+    const FactCheck = require("../models/FactCheck");
+    await FactCheck.deleteOne({ post: postId });
+
     const populated = await Post.findById(post._id)
         .populate("author", "name avatar role")
         .populate("comments.author", "name avatar role")
+        .populate("dinosaur", "name slug images")
         .lean();
 
     return populated;
@@ -219,6 +307,37 @@ const deleteComment = async (postId, commentId, userId, isAdmin) => {
 };
 
 /**
+ * Edit a comment on a post (ownership validated)
+ */
+const editComment = async (postId, commentId, userId, text) => {
+    const post = await Post.findById(postId);
+    if (!post) {
+        throw new Error("Post not found.");
+    }
+
+    const comment = post.comments.id(commentId);
+    if (!comment) {
+        throw new Error("Comment not found.");
+    }
+
+    if (comment.author.toString() !== userId) {
+        throw new Error("Unauthorized to edit this comment.");
+    }
+
+    comment.text = text;
+    await post.save();
+
+    const populated = await Post.findById(postId)
+        .populate("comments.author", "name avatar role")
+        .lean();
+
+    return {
+        comments: populated.comments,
+        commentsCount: populated.comments.length,
+    };
+};
+
+/**
  * Search users by name
  */
 const searchUsers = async (query, excludeUserId) => {
@@ -246,6 +365,7 @@ module.exports = {
     toggleLike,
     addComment,
     deleteComment,
+    editComment,
     searchUsers,
     getSuggestedUsers,
 };
