@@ -327,11 +327,14 @@ const getNotifications = async (req, res, next) => {
         const data = notifications.map(n => ({
             id: n._id,
             user: n.sender?.name || "Explorer",
+            senderId: n.sender?._id || "",
             userAvatar: n.sender?.avatar || "",
-            text: n.type === "follow" ? "started following you" : n.type === "like" ? "liked your post" : "commented on your post",
+            text: n.type === "follow" ? "started following you" : n.type === "like" ? "liked your post" : `commented: "${n.comment || "on your post"}"`,
             timeAgo: formatTimeAgo(n.createdAt),
             type: n.type,
             isUnread: n.isUnread,
+            postId: n.post,
+            commentId: n.commentId,
         }));
 
         return res.status(200).json({

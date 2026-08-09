@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { X, Bell, Heart, MessageSquare, Dna, Trophy, CheckCheck } from "lucide-react";
 import { getNotificationsService, markNotificationsReadService } from "../../services/communityService";
 
 export default function NotificationsModal({ currentUser, onClose }) {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     const loadNotifications = async () => {
         try {
@@ -30,6 +32,17 @@ export default function NotificationsModal({ currentUser, onClose }) {
             await markNotificationsReadService();
         } catch (e) {
             console.error("Error marking notifications as read:", e);
+        }
+    };
+
+    const handleNotificationClick = (n) => {
+        onClose();
+        if (n.type === "follow") {
+            navigate(`/profile/${n.senderId || n.id}`);
+        } else if (n.type === "like") {
+            navigate(`/community?postId=${n.postId}`);
+        } else if (n.type === "comment") {
+            navigate(`/community?postId=${n.postId}&commentId=${n.commentId}`);
         }
     };
 
@@ -74,10 +87,11 @@ export default function NotificationsModal({ currentUser, onClose }) {
                         notifications.map((n) => (
                             <div
                                 key={n.id}
-                                className={`flex items-start gap-3 rounded-2xl p-3 border transition ${
+                                onClick={() => handleNotificationClick(n)}
+                                className={`flex items-start gap-3 rounded-2xl p-3 border transition cursor-pointer ${
                                     n.isUnread
-                                        ? "bg-[#EFEFE6]/80 border-[#2F7D4D]/30"
-                                        : "bg-[#FAF9F5] border-[#F0ECE1]"
+                                        ? "bg-[#EFEFE6]/80 border-[#2F7D4D]/30 hover:bg-[#EBF5EE]"
+                                        : "bg-[#FAF9F5] border-[#F0ECE1] hover:bg-[#FAF9F5]/60"
                                 }`}
                             >
                                 <img
