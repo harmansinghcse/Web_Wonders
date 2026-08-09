@@ -38,6 +38,7 @@ import {
     addCommentService,
     deleteCommentService,
     updateCommentService,
+    fetchCommentsService,
     followUserService,
     unfollowUserService,
     getFollowersService,
@@ -1331,7 +1332,20 @@ export default function Community() {
                                             </button>
 
                                             <button
-                                                onClick={() => setActiveCommentPost(post)}
+                                                onClick={async () => {
+                                                    setActiveCommentPost(post);
+                                                    try {
+                                                        const res = await fetchCommentsService(post.id);
+                                                        if (res.success) {
+                                                            setActiveCommentPost(prev => prev && prev.id === post.id ? {
+                                                                ...prev,
+                                                                comments: res.comments
+                                                            } : prev);
+                                                        }
+                                                    } catch (e) {
+                                                        console.error("Failed to fetch full comments:", e);
+                                                    }
+                                                }}
                                                 className="flex items-center gap-1.5 transition hover:text-[#1E3A23] cursor-pointer"
                                             >
                                                 <MessageSquare size={16} />

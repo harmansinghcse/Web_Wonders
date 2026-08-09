@@ -18,7 +18,8 @@ import {
     CircleHelp, 
     Brain, 
     Map, 
-    Users 
+    Users,
+    MessageSquare
 } from "lucide-react";
 import UserMenu from "../UserMenu";
 import SearchBar from "../../search/SearchBar";
@@ -87,6 +88,12 @@ function Navbar() {
             icon: Users,
             label: "Community",
             desc: "Connect, share hybrids and fossil finds",
+        },
+        {
+            to: "/community/messages",
+            icon: MessageSquare,
+            label: "Direct Messages",
+            desc: "Send private messages to other explorers",
         }
     ];
 
@@ -319,6 +326,11 @@ function Navbar() {
                             {/* Community */}
                             <NavbarLink to="/community" icon={Users}>
                                 Community
+                            </NavbarLink>
+
+                            {/* Messages */}
+                            <NavbarLink to="/community/messages" icon={MessageSquare}>
+                                Messages
                             </NavbarLink>
                         </div>
 

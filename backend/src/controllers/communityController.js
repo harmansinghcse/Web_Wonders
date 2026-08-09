@@ -65,7 +65,7 @@ const transformPost = (post, currentUser, factCheck = null) => {
         isSaved: false,
         commentsCount,
         comments: Array.isArray(post.comments) 
-            ? post.comments.map(c => ({
+            ? post.comments.slice(0, 5).map(c => ({
                 id: c._id,
                 userId: c.author?._id,
                 user: c.author?.name || "Explorer",
@@ -628,6 +628,36 @@ const factCheckPost = async (req, res, next) => {
     }
 };
 
+const getComments = async (req, res, next) => {
+    try {
+        const { postId } = req.params;
+        const result = await communityService.getComments(postId);
+        const currentUserId = req.user?.id || req.user?._id;
+        const isAdmin = req.user?.role === "admin";
+        
+        const transformedComments = result.map(c => ({
+            id: c._id,
+            userId: c.author?._id,
+            user: c.author?.name || "Explorer",
+            avatar: c.author?.avatar || "",
+            role: c.author?.role || "Explorer",
+            text: c.text,
+            timestamp: formatTimeAgo(c.createdAt),
+            permissions: {
+                canEdit: !!(currentUserId && c.author?._id && c.author._id.toString() === currentUserId.toString()),
+                canDelete: !!(currentUserId && ((c.author?._id && c.author._id.toString() === currentUserId.toString()) || isAdmin))
+            }
+        }));
+        
+        return res.status(200).json({
+            success: true,
+            comments: transformedComments
+        });
+    } catch (err) {
+        next(err);
+    }
+};
+
 module.exports = {
     getPosts,
     createPost,
@@ -641,4 +671,5 @@ module.exports = {
     getSuggestedUsers,
     toggleFollowUser,
     factCheckPost,
+    getComments,
 };

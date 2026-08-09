@@ -96,4 +96,10 @@ const postSchema = new mongoose.Schema(
     }
 );
 
+postSchema.index({ author: 1, createdAt: -1 });
+postSchema.index({ dinosaur: 1, createdAt: -1 });
+postSchema.index({ postType: 1, createdAt: -1 });
+postSchema.index({ seedMarker: 1 });
+postSchema.index({ tags: 1 });
+
 module.exports = mongoose.model("Post", postSchema);

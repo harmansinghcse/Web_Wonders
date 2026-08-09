@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { X, Trophy, Heart, ShieldCheck, Sparkles, ArrowLeft } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { 
     getUserProfileService, 
     getFollowersService, 
@@ -9,6 +10,7 @@ import {
 } from "../../services/communityService";
 
 export default function ExplorerProfileModal({ explorerId, currentUser, posts = [], onFollowChanged, onUserClick, onClose }) {
+    const navigate = useNavigate();
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [currentView, setCurrentView] = useState("profile"); // "profile" | "followers" | "following"
@@ -216,17 +218,28 @@ export default function ExplorerProfileModal({ explorerId, currentUser, posts = 
                             </div>
 
                             {!isSelf && (
-                                <button
-                                    onClick={handleFollowToggle}
-                                    disabled={followPending}
-                                    className={`rounded-xl px-5 py-2.5 text-xs font-bold transition shadow-md cursor-pointer ${
-                                        profile.isFollowing
-                                            ? "border border-[#1E3A23] bg-white text-[#1E3A23] hover:bg-[#F4F4EC]"
-                                            : "bg-[#1E3A23] text-white hover:bg-[#152A19]"
-                                    }`}
-                                >
-                                    {profile.isFollowing ? "Following" : "Follow Explorer"}
-                                </button>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={handleFollowToggle}
+                                        disabled={followPending}
+                                        className={`rounded-xl px-5 py-2.5 text-xs font-bold transition shadow-md cursor-pointer ${
+                                            profile.isFollowing
+                                                ? "border border-[#1E3A23] bg-white text-[#1E3A23] hover:bg-[#F4F4EC]"
+                                                : "bg-[#1E3A23] text-white hover:bg-[#152A19]"
+                                        }`}
+                                    >
+                                        {profile.isFollowing ? "Following" : "Follow Explorer"}
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            onClose();
+                                            navigate(`/community/messages?userId=${profile.id}`);
+                                        }}
+                                        className="rounded-xl px-4 py-2.5 text-xs font-bold bg-white border border-[#EBE8DB] text-[#1E3A23] hover:bg-[#FAF9F5] transition shadow-md cursor-pointer"
+                                    >
+                                        Message
+                                    </button>
+                                </div>
                             )}
                         </div>
 

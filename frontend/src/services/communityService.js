@@ -83,6 +83,14 @@ export const updateCommentService = async (postId, commentId, text) => {
     return response.data;
 };
 
+// Fetch all comments for a post
+export const fetchCommentsService = async (postId) => {
+    const response = await axios.get(`${API_BASE}/api/community/posts/${postId}/comments`, {
+        withCredentials: true,
+    });
+    return response.data;
+};
+
 // Follow a user
 export const followUserService = async (userId) => {
     const response = await axios.post(`${API_BASE}/api/users/${userId}/follow`, {}, {

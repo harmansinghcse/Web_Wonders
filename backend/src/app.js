@@ -14,6 +14,7 @@ const mapRoutes = require("./routes/mapRoutes");
 const acquisitionRoutes = require("./routes/acquisitionRoutes");
 const communityRoutes = require("./routes/communityRoutes");
 const followRoutes = require("./routes/followRoutes");
+const messageRoutes = require("./routes/messageRoutes");
 
 // allowed origins
 const allowedOrigins = [
@@ -52,6 +53,7 @@ app.use("/api/ai", rossRoutes);
 app.use("/api/acquisition", acquisitionRoutes);
 app.use("/api/map", mapRoutes);
 app.use("/api/community", communityRoutes);
+app.use("/api/messages", messageRoutes);
 app.use(errorHandler);
 
 app.get("/", (req, res) => {

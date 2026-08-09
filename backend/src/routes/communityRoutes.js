@@ -15,6 +15,7 @@ const {
     getSuggestedUsers,
     toggleFollowUser,
     factCheckPost,
+    getComments,
 } = require("../controllers/communityController");
 
 const router = express.Router();
@@ -62,6 +63,7 @@ router.post("/posts/:id/like", protect, likePost);
 router.post("/posts/:id/fact-check", protect, factCheckPost);
 
 // Comment system (Authenticated)
+router.get("/posts/:postId/comments", optionalProtect, getComments);
 router.post("/posts/:id/comment", protect, addComment);
 router.post("/posts/:id/comments", protect, addComment); // support plural endpoint
 router.put("/posts/:postId/comments/:commentId", protect, editComment);

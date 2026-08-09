@@ -357,6 +357,16 @@ const getSuggestedUsers = async (excludeUserId) => {
     return await User.find(filter).select("name avatar role followers following bio").limit(5).lean();
 };
 
+const getComments = async (postId) => {
+    const post = await Post.findById(postId)
+        .populate("comments.author", "name avatar role")
+        .lean();
+    if (!post) {
+        throw new Error("Post not found.");
+    }
+    return post.comments || [];
+};
+
 module.exports = {
     getPosts,
     createPost,
@@ -368,4 +378,5 @@ module.exports = {
     editComment,
     searchUsers,
     getSuggestedUsers,
+    getComments,
 };

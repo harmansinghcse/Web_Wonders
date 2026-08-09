@@ -25,6 +25,7 @@ const QuizResult = lazy(() => import("./pages/QuizResult"));
 const AdminSubmissions = lazy(() => import("./pages/AdminSubmissions"));
 const ExploreMap = lazy(() => import("./pages/ExploreMap"));
 const Community = lazy(() => import("./pages/Community"));
+const Messages = lazy(() => import("./pages/Messages"));
 const Games = lazy(() => import("./pages/Games"));
 const AdminLayout = lazy(() => import("./components/admin/AdminLayout"));
 const DashboardOverview = lazy(() => import("./components/admin/DashboardOverview"));
@@ -75,6 +76,7 @@ function App() {
                         <Route path="/timeline" element={<Timeline />} />
                         <Route path="/explorer" element={<Explore />} />
                         <Route path="/community" element={<Community />} />
+                        <Route path="/community/messages" element={<Messages />} />
                         <Route path="/quiz" element={<Quiz />} />
                         <Route path="/quiz/:slug" element={<TopicDetails />} />
                         <Route path="/daily-challenge" element={<QuizDailyChallenge />} />
