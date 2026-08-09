@@ -2,8 +2,10 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Volume2, ArrowRight, X, Play, Pause, VolumeX, Sparkles, HelpCircle, Film, PartyPopper } from "lucide-react";
 
-export default function DinoSoundMysteryWidget({ videoSrc = "/dino_sound_video.mp4" }) {
-    const [isOpen, setIsOpen] = useState(false);
+export default function DinoSoundMysteryWidget({ videoSrc = "/dino_sound_video.mp4", isOpen: externalIsOpen, setIsOpen: externalSetIsOpen, hideTrigger = false }) {
+    const [internalOpen, setInternalOpen] = useState(false);
+    const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalOpen;
+    const setIsOpen = externalSetIsOpen || setInternalOpen;
     const [isPlaying, setIsPlaying] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
     const [activeFact, setActiveFact] = useState(0);
@@ -83,16 +85,18 @@ export default function DinoSoundMysteryWidget({ videoSrc = "/dino_sound_video.m
     return (
         <>
             {/* HERO BUTTON SHORTCUT TRIGGER */}
-            <motion.button 
-                onClick={() => setIsOpen(true)}
-                whileHover={{ scale: 1.02, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                className="inline-flex items-center gap-2.5 rounded-full border-2 border-[#005611] bg-white/70 backdrop-blur-sm px-6 py-[10px] text-sm font-bold text-[#005611] shadow-md transition hover:bg-[#005611] hover:text-white cursor-pointer group"
-            >
-                <Volume2 size={18} className="animate-pulse text-[#005611] group-hover:text-white transition-colors" />
-                <span>Dinosaur Sound Mystery 🔊</span>
-                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-            </motion.button>
+            {!hideTrigger && (
+                <motion.button 
+                    onClick={() => setIsOpen(true)}
+                    whileHover={{ scale: 1.02, y: -2 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="inline-flex items-center gap-2.5 rounded-full border-2 border-[#005611] bg-white/70 backdrop-blur-sm px-6 py-[10px] text-sm font-bold text-[#005611] shadow-md transition hover:bg-[#005611] hover:text-white cursor-pointer group"
+                >
+                    <Volume2 size={18} className="animate-pulse text-[#005611] group-hover:text-white transition-colors" />
+                    <span>Dinosaur Sound Mystery 🔊</span>
+                    <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                </motion.button>
+            )}
 
             {/* EXPANDED FULL-SCREEN SOUND MYSTERY MODAL */}
             <AnimatePresence>

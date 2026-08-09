@@ -38,7 +38,15 @@ const DinoPage = () => {
     }, [slug]);
 
     if (loading) {
-        return <h1>Loading...</h1>;
+        return (
+            <div className="relative flex min-h-screen items-center justify-center bg-[#0E1A11] text-white">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#1E3326_0%,transparent_60%)]" />
+                <div className="relative z-10 flex flex-col items-center gap-4">
+                    <div className="h-10 w-10 animate-spin rounded-full border-2 border-white/10 border-t-[#C9AA5B]" />
+                    <p className="text-sm font-medium text-gray-300">Loading dinosaur data...</p>
+                </div>
+            </div>
+        );
     }
 
     return (

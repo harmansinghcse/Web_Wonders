@@ -83,7 +83,7 @@ export default function QuickFacts({ stats }) {
                                 y: -8,
                                 transition: { duration: 0.2 },
                             }}
-                            className={`flex flex-col items-center justify-center border-[#36342e] p-8 transition-colors hover:bg-[#292720] ${
+                            className={`flex flex-col items-center justify-center border-[#36342e] p-4 sm:p-8 transition-colors hover:bg-[#292720] ${
                                 index !== quickFacts.length - 1
                                     ? "lg:border-r"
                                     : ""

@@ -25,7 +25,7 @@ export default function ExplorerHero({
 
             <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center px-6 pt-40 pb-24">
                 {/* Heading */}
-                <h1 className="text-center text-5xl font-black uppercase tracking-wider text-white md:text-7xl">
+                <h1 className="text-center text-3xl sm:text-5xl font-black uppercase tracking-wider text-white md:text-7xl">
                     Explore the
                     <br />
                     Prehistoric World
