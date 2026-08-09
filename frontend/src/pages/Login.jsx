@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { GoogleLogin } from "@react-oauth/google";
+import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 
 const API_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -76,7 +76,7 @@ function Login() {
                 <div className="mx-4 flex w-full max-w-md flex-col items-center rounded-4xl bg-[#14221c]/60 px-6 pt-6 pb-10 sm:px-8">
                     <Link to="/">
                         <img
-                            src="jurassic-explorer-logo.png"
+                            src="jurassic-explorer-logo.webp"
                             alt="logo"
                             className="w-24 sm:w-30"
                         />
@@ -182,40 +182,42 @@ function Login() {
                             <div className="flex-1 h-px bg-gray-400"></div>
                         </div>
 
-                        <GoogleLogin
-                            onSuccess={async (credentialResponse) => {
-                                try {
-                                    const response = await fetch(
-                                        `${API_URL}/api/users/google`,
-                                        {
-                                            method: "POST",
-                                            credentials: "include",
-                                            headers: {
-                                                "Content-Type":
-                                                    "application/json",
+                        <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+                            <GoogleLogin
+                                onSuccess={async (credentialResponse) => {
+                                    try {
+                                        const response = await fetch(
+                                            `${API_URL}/api/users/google`,
+                                            {
+                                                method: "POST",
+                                                credentials: "include",
+                                                headers: {
+                                                    "Content-Type":
+                                                        "application/json",
+                                                },
+                                                body: JSON.stringify({
+                                                    token: credentialResponse.credential,
+                                                }),
                                             },
-                                            body: JSON.stringify({
-                                                token: credentialResponse.credential,
-                                            }),
-                                        },
-                                    );
+                                        );
 
-                                    const data = await response.json();
+                                        const data = await response.json();
 
-                                    if (!response.ok) {
-                                        toast.error(data.message);
-                                        return;
+                                        if (!response.ok) {
+                                            toast.error(data.message);
+                                            return;
+                                        }
+
+                                        await checkAuth(); // now correctly pulls from context
+                                        toast.success("Login Successful");
+                                        navigate("/");
+                                    } catch (error) {
+                                        console.error(error);
+                                        toast.error("Something went wrong.");
                                     }
-
-                                    await checkAuth(); // now correctly pulls from context
-                                    toast.success("Login Successful");
-                                    navigate("/");
-                                } catch (error) {
-                                    console.error(error);
-                                    toast.error("Something went wrong.");
-                                }
-                            }}
-                        />
+                                }}
+                            />
+                        </GoogleOAuthProvider>
                         <div>
                             <Link to="/signup" className="text-white font-bold">
                                 Don't have an account ? Sign up

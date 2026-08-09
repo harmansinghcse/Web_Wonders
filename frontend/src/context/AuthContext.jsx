@@ -20,15 +20,18 @@ export function AuthProvider({ children }) {
 
             if (!response.ok) {
                 setUser(null);
+                localStorage.removeItem("isLoggedIn");
                 return;
             }
 
             const data = await response.json();
 
             setUser(data.user);
+            localStorage.setItem("isLoggedIn", "true");
         } catch (error) {
             console.error("Auth check failed:", error);
             setUser(null);
+            localStorage.removeItem("isLoggedIn");
         } finally {
             setLoading(false);
         }
@@ -39,11 +42,13 @@ export function AuthProvider({ children }) {
             await fetch(`${API_URL}/api/users/logout`, {
                 method: "POST",
                 credentials: "include",
-            });
+                });
+            localStorage.removeItem("isLoggedIn");
         } catch (error) {
             console.error(error);
         } finally {
             setUser(null);
+            localStorage.removeItem("isLoggedIn");
         }
     };
 

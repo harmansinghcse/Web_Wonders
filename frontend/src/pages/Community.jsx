@@ -802,7 +802,7 @@ export default function Community() {
             {/* FRONT PAGE PARCHMENT & ATMOSPHERIC BACKGROUND */}
             <div className="fixed inset-0 z-0">
                 <img
-                    src="/jurrasic-home-bg.png"
+                    src="/jurrasic-home-bg.webp"
                     alt="Jurassic Background"
                     className="h-full w-full object-cover object-center"
                 />

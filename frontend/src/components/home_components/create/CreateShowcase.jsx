@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-const dinoImage = "/create-dino-preview1.png";
+const dinoImage = "/create-dino-preview1.webp";
 
 const containerVariants = {
     hidden: {},

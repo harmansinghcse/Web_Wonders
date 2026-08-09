@@ -4,8 +4,9 @@ import { useAuth } from "../../context/AuthContext";
 
 function UserMenu({ mobile = false, onClose = () => {} }) {
     const { user, isLoggedIn, loading } = useAuth();
+    const lastKnownLoggedIn = typeof window !== "undefined" && localStorage.getItem("isLoggedIn") === "true";
 
-    if (loading) {
+    if (loading && lastKnownLoggedIn) {
         return (
             <div className="h-10 w-32 animate-pulse rounded-full bg-white/20" />
         );

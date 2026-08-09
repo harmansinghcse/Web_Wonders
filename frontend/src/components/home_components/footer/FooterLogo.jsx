@@ -28,7 +28,7 @@ const FooterLogo = () => {
             >
                 {/* Logo Placeholder */}
                 <img
-                    src="/jurassic-explorer-logo.png"
+                    src="/jurassic-explorer-logo.webp"
                     alt="Jurassic Explorer"
                     className="w-36  h-auto object-contain transition-transform duration-300 ease-out hover:scale-[1.02]"
                 />

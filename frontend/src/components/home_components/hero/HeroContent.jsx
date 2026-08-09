@@ -4,25 +4,23 @@ import HeroButtons from "./HeroButtons";
 import DinoSoundMysteryWidget from "./DinoSoundMysteryWidget";
 
 const containerVariants = {
-    hidden: { opacity: 0 },
+    hidden: { opacity: 1 },
     visible: {
         opacity: 1,
         transition: {
-            staggerChildren: 0.12,
-            delayChildren: 0.15
+            staggerChildren: 0.02,
+            delayChildren: 0.02
         }
     }
 };
 
 const itemVariants = {
-    hidden: { opacity: 0, y: 25 },
+    hidden: { opacity: 1, y: 0 },
     visible: {
         opacity: 1,
         y: 0,
         transition: {
-            type: "spring",
-            stiffness: 100,
-            damping: 16
+            duration: 0.1
         }
     }
 };
