@@ -12,10 +12,16 @@ const {
     getTopics,
     getTopicQuestions,
     startQuizSession,
-    submitQuizSession
+    submitQuizSession,
+    getDailyChallenge,
+    startDailyChallenge,
+    submitDailyChallenge
 } = require("../controllers/quizcontroller");
 
 router.get("/dashboard", protect, getDashboard);
+router.get("/daily", protect, getDailyChallenge);
+router.post("/daily/start", protect, startDailyChallenge);
+router.post("/daily/submit", protect, submitDailyChallenge);
 router.get("/topics", protect, getTopics);
 router.post("/topics", protect, authorize("admin"), createTopic);
 router.get("/topics/:slug", protect, getTopicDetails);

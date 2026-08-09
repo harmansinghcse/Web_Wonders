@@ -11,12 +11,18 @@ const quizSessionSchema = new mongoose.Schema(
         topic: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Topic",
-            required: true,
+            required: false,
         },
         difficulty: {
             type: String,
-            enum: ["easy", "medium", "hard"],
-            required: true,
+            enum: ["easy", "medium", "hard", "mixed"],
+            required: false,
+        },
+        dailyChallenge: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "DailyChallenge",
+            index: true,
+            required: false,
         },
         questions: [
             {

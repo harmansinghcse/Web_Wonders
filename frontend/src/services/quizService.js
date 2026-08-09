@@ -19,3 +19,18 @@ export const submitQuiz = async (sessionId, answers) => {
     const response = await api.post("/api/quiz/result", { sessionId, answers });
     return response.data.data;
 };
+
+export const getDailyChallenge = async () => {
+    const response = await api.get("/api/quiz/daily");
+    return response.data.data;
+};
+
+export const startDailyChallenge = async () => {
+    const response = await api.post("/api/quiz/daily/start");
+    return response.data.data;
+};
+
+export const submitDailyChallenge = async (sessionId, answers) => {
+    const response = await api.post("/api/quiz/daily/submit", { sessionId, answers });
+    return response.data.data;
+};

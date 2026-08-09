@@ -3,6 +3,8 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 const QuizNavigation = ({
     onPrevious,
     onNext,
+    nextLabel = "Next",
+    disabled = false,
 }) => {
 
     return (
@@ -15,9 +17,16 @@ const QuizNavigation = ({
                 </button>
 
                 {/* Next Button */}
-                <button onClick={onNext} className="
-                        flex items-center gap-2 rounded-2xl bg-[#47613F] px-8 py-4 font-semibold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-[#385032]">
-                    Next
+                <button 
+                    onClick={onNext} 
+                    disabled={disabled}
+                    className={`flex items-center gap-2 rounded-2xl px-8 py-4 font-semibold text-white transition-all duration-300 ${
+                        disabled 
+                            ? "bg-gray-300 cursor-not-allowed opacity-70" 
+                            : "bg-[#47613F] hover:-translate-y-1 hover:bg-[#385032]"
+                    }`}
+                >
+                    {nextLabel}
                     <ArrowRight size={18} />
                 </button>
             </div>

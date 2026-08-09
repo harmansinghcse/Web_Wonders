@@ -12,13 +12,20 @@ const quizAttemptSchema = new mongoose.Schema(
         topic: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Topic",
-            required: true,
+            required: false,
         },
 
         difficulty: {
             type: String,
-            enum: ["easy", "medium", "hard"],
-            required: true,
+            enum: ["easy", "medium", "hard", "mixed"],
+            required: false,
+        },
+
+        dailyChallenge: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "DailyChallenge",
+            index: true,
+            required: false,
         },
 
         score: {
@@ -71,6 +78,14 @@ const quizAttemptSchema = new mongoose.Schema(
     {
         timestamps: true,
     },
+);
+
+quizAttemptSchema.index(
+    { user: 1, dailyChallenge: 1 },
+    {
+        unique: true,
+        partialFilterExpression: { dailyChallenge: { $exists: true, $ne: null } },
+    }
 );
 
 module.exports = mongoose.model("QuizAttempt", quizAttemptSchema);

@@ -122,3 +122,45 @@ exports.submitQuizSession = async (req, res, next) => {
         next(error);
     }
 };
+
+const dailyChallengeService = require("../services/dailyChallengeService");
+
+exports.getDailyChallenge = async (req, res, next) => {
+    try {
+        const challenge = await dailyChallengeService.getTodayDailyChallenge(req.user.id);
+        res.status(200).json({
+            success: true,
+            data: challenge,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.startDailyChallenge = async (req, res, next) => {
+    try {
+        const session = await dailyChallengeService.startDailyChallenge(req.user.id);
+        res.status(200).json({
+            success: true,
+            data: session,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.submitDailyChallenge = async (req, res, next) => {
+    try {
+        const result = await dailyChallengeService.submitDailyChallenge(
+            req.user.id,
+            req.body.sessionId,
+            req.body.answers
+        );
+        res.status(200).json({
+            success: true,
+            data: result,
+        });
+    } catch (error) {
+        next(error);
+    }
+};

@@ -102,6 +102,9 @@ exports.getDashboard = async (userId) => {
         })
     );
 
+    const dailyChallengeService = require("./dailyChallengeService");
+    const dailyChallenge = await dailyChallengeService.getTodayDailyChallenge(userId);
+
     return {
         user: {
             name: user.name,
@@ -111,7 +114,7 @@ exports.getDashboard = async (userId) => {
             questionsSolved: totalQuestionsSolved,
         },
         topics: topicsData,
-        dailyChallenge: null,
+        dailyChallenge,
     };
 };
 

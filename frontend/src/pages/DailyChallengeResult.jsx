@@ -2,26 +2,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowLeft, Dna, Trophy } from "lucide-react";
 import Navbar from "../components/home_components/hero/Navbar";
 
-const getDnaReward = (score) => {
-    switch (score) {
-        case 3:
-            return 50;
-        case 2:
-            return 25;
-        case 1:
-            return 10;
-        default:
-            return 0;
-    }
-};
-
 const DailyChallengeResult = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
     const score = location.state?.score ?? 0;
-    const totalQuestions = 3;
-    const dnaReward = getDnaReward(score);
+    const totalQuestions = location.state?.totalQuestions ?? 5;
+    const dnaReward = location.state?.dnaEarned ?? 0;
+    const title = location.state?.title ?? "Jurassic Sprint";
 
     return (
         <>
@@ -49,7 +37,7 @@ const DailyChallengeResult = () => {
                         </p>
 
                         <h1 className="mt-3 text-4xl font-bold text-[#222] md:text-5xl">
-                            Jurassic Sprint
+                            {title}
                         </h1>
 
                         <p className="mx-auto mt-4 max-w-xl leading-7 text-gray-600">

@@ -77,7 +77,7 @@ const Quiz = () => {
                     <>
                         <DashboardHero user={data?.user} />
                         <StatsCards user={data?.user} />
-                        <TopicGrid topics={data?.topics} />
+                        <TopicGrid topics={data?.topics} dailyChallenge={data?.dailyChallenge} />
                     </>
                 )}
             </main>
