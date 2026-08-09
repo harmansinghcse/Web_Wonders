@@ -137,16 +137,16 @@ function Navbar() {
             {/*optimized navbar component structure*/}
             <div className={menuOpen ? "hidden lg:block" : "block"}>
 
-                <header className="absolute top-4 left-1/2 z-50 w-full -translate-x-1/2 px-6">
-                    <nav className="mx-auto flex h-18 w-[97%] max-w-420 items-center justify-between rounded-[28px] border border-[#e3d7c2] bg-[#ffffff]/95 px-4 xl:px-8 shadow-[0_12px_35px_rgba(0,0,0,0.08)] backdrop-blur-md transition-all duration-300">
-                        <div className="flex items-center">
-                            <Link to="/">
+                <header className="absolute top-4 left-1/2 z-50 w-full -translate-x-1/2 px-2 sm:px-6">
+                    <nav className="mx-auto flex h-16 sm:h-18 w-full sm:w-[97%] max-w-420 items-center justify-between rounded-[24px] sm:rounded-[28px] border border-[#e3d7c2] bg-[#ffffff]/95 px-2.5 sm:px-4 xl:px-8 shadow-[0_12px_35px_rgba(0,0,0,0.08)] backdrop-blur-md transition-all duration-300">
+                        <div className="flex items-center shrink-0">
+                            <Link to="/" className="flex items-center shrink-0">
                                 <img
                                     src={logo}
                                     alt="Jurassic Explorer"
                                     width={180}
                                     height={56}
-                                    className="h-12 xl:h-14 w-auto object-contain transition duration-300 hover:scale-105"
+                                    className="h-8 sm:h-12 xl:h-14 w-auto object-contain shrink-0 transition duration-300 hover:scale-105"
                                 />
                             </Link>
                         </div>
@@ -181,20 +181,20 @@ function Navbar() {
                         )}
 
                         {/* Hamburger & Small AI Button (Mobile) */}
-                        <div className="flex items-center gap-2 lg:hidden">
+                        <div className="flex items-center gap-1 sm:gap-2 lg:hidden shrink-0">
                             {/* Mobile Small AI Button */}
                             <button
                                 onClick={toggleChat}
                                 title="Ask Professor Ross AI"
-                                className="flex items-center gap-1 rounded-full bg-gradient-to-r from-[#173822] via-[#234E31] to-[#2D5B3A] px-2.5 py-1 text-[11px] font-semibold text-[#E2F1E5] border border-[#52B788]/45 shadow-[0_2px_10px_rgba(23,56,34,0.3)] active:scale-95 cursor-pointer shrink-0"
+                                className="relative flex items-center gap-1 rounded-full bg-gradient-to-r from-[#173822] via-[#234E31] to-[#2D5B3A] px-2 py-1 text-[10.5px] sm:text-[11px] font-semibold text-[#E2F1E5] border border-[#52B788]/45 shadow-xs active:scale-95 cursor-pointer shrink-0"
                             >
                                 <Brain size={13} className="text-amber-200 animate-pulse shrink-0" />
                                 <span>Ross</span>
-                                <span className="text-[7.5px] font-black uppercase text-amber-200 bg-amber-500/15 px-1 py-0.2 rounded border border-amber-300/30">
+                                <span className="text-[7.5px] font-black uppercase text-amber-200 bg-amber-500/15 px-0.8 py-0.1 rounded border border-amber-300/30">
                                     AI
                                 </span>
                                 {unreadCount > 0 && (
-                                    <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-400 text-[8px] font-black text-stone-950">
+                                    <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-amber-400 text-[8px] font-black text-stone-950 shadow-xs">
                                         {unreadCount}
                                     </span>
                                 )}
@@ -202,11 +202,11 @@ function Navbar() {
 
                             <button
                                 onClick={() => setIsNotificationsOpen(true)}
-                                className="relative rounded-full p-2 transition hover:bg-[#36593D]/10 cursor-pointer text-[#36593D]"
+                                className="relative rounded-full p-1.5 sm:p-2 transition hover:bg-[#36593D]/10 cursor-pointer text-[#36593D]"
                             >
-                                <Bell size={22} />
+                                <Bell size={19} />
                                 {unreadCounts.unreadNotifications > 0 && (
-                                    <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[8px] font-bold text-white">
+                                    <span className="absolute top-0.5 right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-red-500 text-[8px] font-bold text-white">
                                         {unreadCounts.unreadNotifications}
                                     </span>
                                 )}
@@ -217,9 +217,9 @@ function Navbar() {
                                     setSearchOpen(true);
                                     setMenuOpen(false);
                                 }}
-                                className="rounded-full p-2 transition hover:bg-[#36593D]/10 cursor-pointer"
+                                className="rounded-full p-1.5 sm:p-2 transition hover:bg-[#36593D]/10 cursor-pointer"
                             >
-                                <Search size={22} className="text-[#36593D]" />
+                                <Search size={19} className="text-[#36593D]" />
                             </button>
 
                             <button
@@ -227,9 +227,9 @@ function Navbar() {
                                     setSearchOpen(false);
                                     setMenuOpen(true);
                                 }}
-                                className="rounded-full p-2 transition hover:bg-[#36593D]/10 cursor-pointer"
+                                className="rounded-full p-1.5 sm:p-2 transition hover:bg-[#36593D]/10 cursor-pointer"
                             >
-                                <Menu size={26} className="text-[#36593D]" />
+                                <Menu size={20} className="text-[#36593D]" />
                             </button>
                         </div>
 
