@@ -10,6 +10,7 @@ import AchievementSection from "../components/profile-components/AchievementSect
 import ContributionSection from "../components/profile-components/ContributionSection";
 import ContributionTable from "../components/profile-components/ContributionTable";
 import EditProfileModal from "../components/profile-components/EditProfileModal";
+import logo from "../assets/jurrasic-logo.webp";
 
 export default function Profile() {
     const { userId } = useParams();
@@ -93,27 +94,35 @@ export default function Profile() {
 
             <main className="relative z-10 flex-1 overflow-y-auto">
                 {/* Mobile top bar to open sidebar */}
-                <div className="flex items-center justify-between border-b border-[#D8D2C5]/50 bg-white/80 backdrop-blur-md px-4 py-4 lg:hidden">
-                    <button
-                        onClick={() => setIsSidebarOpen(true)}
-                        className="rounded-full border border-slate-200 p-2 text-slate-700 transition hover:bg-slate-100"
-                        aria-label="Open menu"
-                    >
-                        <svg
-                            width="20"
-                            height="20"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
+                <div className="flex items-center justify-between border-b border-[#D8D2C5]/50 bg-white/80 backdrop-blur-md px-4 py-3 lg:hidden">
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setIsSidebarOpen(true)}
+                            className="rounded-full border border-slate-200 p-2 text-slate-700 transition hover:bg-slate-100 cursor-pointer"
+                            aria-label="Open menu"
                         >
-                            <path d="M3 6h18M3 12h18M3 18h18" />
-                        </svg>
-                    </button>
-                    <span className="text-sm font-bold text-slate-800">
-                        My Profile
-                    </span>
-                    <div className="w-9" />
+                            <svg
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                            >
+                                <path d="M3 6h18M3 12h18M3 18h18" />
+                            </svg>
+                        </button>
+                        <div className="flex items-center gap-2">
+                            <img
+                                src={logo}
+                                alt="Jurassic Explorer"
+                                className="h-8 w-auto object-contain"
+                            />
+                            <span className="text-sm font-bold text-slate-800">
+                                My Profile
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="mx-auto max-w-7xl space-y-6 p-4 sm:space-y-8 sm:p-6 lg:p-10">

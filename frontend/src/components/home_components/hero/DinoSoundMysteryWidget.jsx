@@ -93,7 +93,7 @@ export default function DinoSoundMysteryWidget({ videoSrc = "/dino_sound_video.m
                     className="inline-flex items-center gap-2.5 rounded-full border-2 border-[#005611] bg-white/70 backdrop-blur-sm px-6 py-[10px] text-sm font-bold text-[#005611] shadow-md transition hover:bg-[#005611] hover:text-white cursor-pointer group"
                 >
                     <Volume2 size={18} className="animate-pulse text-[#005611] group-hover:text-white transition-colors" />
-                    <span>Dinosaur Sound Mystery 🔊</span>
+                    <span>Dinosaur Sound Mystery</span>
                     <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </motion.button>
             )}
@@ -189,7 +189,7 @@ export default function DinoSoundMysteryWidget({ videoSrc = "/dino_sound_video.m
                                 <div className="flex items-center justify-between text-xs text-[#FBBF24] font-serif font-bold uppercase tracking-wider">
                                     <span className="flex items-center gap-2">
                                         <Film size={16} className="text-[#FBBF24]" />
-                                        Interactive Human Dinosaur Voice Showcase 🎬🎉
+                                        Human Dinosaur Voice Showcase 🎬🎉
                                     </span>
 
                                     {/* Mute/Unmute Audio Control */}

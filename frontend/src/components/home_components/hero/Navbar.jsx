@@ -20,7 +20,8 @@ import {
     Map, 
     Users,
     MessageSquare,
-    Bell
+    Bell,
+    Volume2
 } from "lucide-react";
 import UserMenu from "../UserMenu";
 import SearchBar from "../../search/SearchBar";
@@ -28,6 +29,7 @@ import NavbarLink from "./NavbarLinks";
 import { useProfessor } from "../../../context/ProfessorContext";
 import { getUnreadCountsService } from "../../../services/communityService";
 import NotificationsModal from "../../community/NotificationsModal";
+import DinoSoundMysteryWidget from "./DinoSoundMysteryWidget";
 
 
 function Navbar() {
@@ -38,6 +40,7 @@ function Navbar() {
     const location = useLocation();
     const [unreadCounts, setUnreadCounts] = useState({ unreadNotifications: 0, unreadMessages: 0, totalCount: 0 });
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+    const [soundMysteryOpen, setSoundMysteryOpen] = useState(false);
 
     useEffect(() => {
         if (menuOpen || searchOpen) {
@@ -183,11 +186,11 @@ function Navbar() {
                             <button
                                 onClick={toggleChat}
                                 title="Ask Professor Ross AI"
-                                className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#173822] via-[#234E31] to-[#2D5B3A] px-3 py-1.5 text-xs font-semibold text-[#E2F1E5] border border-[#52B788]/45 shadow-[0_4px_14px_rgba(23,56,34,0.3),0_0_12px_rgba(245,158,11,0.18)] active:scale-95 cursor-pointer"
+                                className="flex items-center gap-1 rounded-full bg-gradient-to-r from-[#173822] via-[#234E31] to-[#2D5B3A] px-2.5 py-1 text-[11px] font-semibold text-[#E2F1E5] border border-[#52B788]/45 shadow-[0_2px_10px_rgba(23,56,34,0.3)] active:scale-95 cursor-pointer shrink-0"
                             >
-                                <Brain size={15} className="text-amber-200 animate-pulse" />
+                                <Brain size={13} className="text-amber-200 animate-pulse shrink-0" />
                                 <span>Ross</span>
-                                <span className="text-[8px] font-black uppercase text-amber-200 bg-amber-500/15 px-1 py-0.2 rounded border border-amber-300/30">
+                                <span className="text-[7.5px] font-black uppercase text-amber-200 bg-amber-500/15 px-1 py-0.2 rounded border border-amber-300/30">
                                     AI
                                 </span>
                                 {unreadCount > 0 && (
@@ -338,7 +341,7 @@ function Navbar() {
                                     <ChevronDown size={13} className="transition-transform duration-200 group-hover:rotate-180 opacity-70" />
                                 </button>
 
-                                {/* Dropdown Menu Panel with Exactly 2 Options: Interactive Quiz & Games */}
+                                {/* Dropdown Menu Panel with 3 Options: Interactive Quiz, Games & Sound Mystery */}
                                 <div className="absolute top-full left-0 mt-2 w-52 rounded-2xl border border-[#e3d7c2] bg-white p-2 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition-all duration-200 z-50">
                                     
                                     {/* Option 1: Interactive Quiz */}
@@ -366,6 +369,15 @@ function Navbar() {
                                         <Gamepad2 size={18} className="text-[#36593D] shrink-0" />
                                         <span>Game Hub</span>
                                     </Link>
+
+                                    {/* Option 3: Dinosaur Sound Mystery */}
+                                    <button
+                                        onClick={() => setSoundMysteryOpen(true)}
+                                        className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-stone-700 hover:bg-[#F4F8F4] hover:text-[#36593D] transition-colors cursor-pointer text-left"
+                                    >
+                                        <Volume2 size={18} className="text-[#36593D] shrink-0" />
+                                        <span>Sound Mystery</span>
+                                    </button>
                                 </div>
                             </div>
 
@@ -473,7 +485,7 @@ function Navbar() {
                                                 openChat();
                                             }
                                         }}
-                                        className={`group flex items-center gap-4 rounded-2xl px-5 py-4 transition
+                                        className={`group flex items-center gap-3.5 rounded-2xl px-4 py-3 sm:px-5 sm:py-3.5 transition
                                         ${
                                             label.includes("Games")
                                                 ? "border border-[#52B788]/40 bg-[#1F5C38]/30 shadow-[0_0_20px_rgba(34,197,94,0.2)]"
@@ -543,6 +555,11 @@ function Navbar() {
                     onClose={() => setIsNotificationsOpen(false)}
                 />
             )}
+            <DinoSoundMysteryWidget
+                isOpen={soundMysteryOpen}
+                setIsOpen={setSoundMysteryOpen}
+                hideTrigger={true}
+            />
         </>
     );
 }
