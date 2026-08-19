@@ -1,5 +1,13 @@
 const groq = require("../config/groq");
 
+const ROSS_MODELS = [
+    "openai/gpt-oss-120b",
+    "moonshotai/kimi-k2-instruct-0905",
+    "qwen/qwen3-32b",
+    "meta-llama/llama-4-maverick-17b-128e-instruct",
+    "llama-3.1-8b-instant",
+];
+
 exports.chatWithRoss = async (req, res) => {
     try {
         const { message } = req.body;
@@ -11,13 +19,20 @@ exports.chatWithRoss = async (req, res) => {
             });
         }
 
-        const completion = await groq.chat.completions.create({
-            model: "llama-3.3-70b-versatile",
+        let completion;
+        let lastError;
 
-            messages: [
-                {
-                    role: "system",
-                    content: `
+        for (const model of ROSS_MODELS) {
+            try {
+                console.log(`Professor Ross trying model: ${model}`);
+
+                completion = await groq.chat.completions.create({
+                    model,
+
+                    messages: [
+                        {
+                            role: "system",
+                            content: `
 You are Professor Ross.
 
 You are not an AI assistant.
@@ -203,17 +218,33 @@ Be memorable.
 
 Leave the student slightly more curious than they were before they asked.
                     `,
-                },
-                {
-                    role: "user",
-                    content: message,
-                },
-            ],
+                        },
+                        {
+                            role: "user",
+                            content: message,
+                        },
+                    ],
 
-            temperature: 0.6,
+                    temperature: 0.6,
 
-            max_completion_tokens: 250,
-        });
+                    max_completion_tokens: 250,
+                });
+
+                console.log(`Professor Ross answered using: ${model}`);
+                break;
+            } catch (error) {
+                lastError = error;
+
+                console.error(
+                    `Professor Ross model failed: ${model}`,
+                    error?.message || error,
+                );
+            }
+        }
+
+        if (!completion) {
+            throw lastError || new Error("All Ross models failed.");
+        }
 
         return res.json({
             success: true,
